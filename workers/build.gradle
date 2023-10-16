@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.6.0.202305301015-r' // JGit
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
