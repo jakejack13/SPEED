@@ -24,12 +24,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
     - name: Build
-      run: cd workers && ./gradlew build
-    - name: Test 
-      run: cd workers && ./gradlew test
+      run: cd workers && docker build -t jakejack13/workers .
+

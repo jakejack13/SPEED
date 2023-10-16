@@ -21,7 +21,6 @@ out/
 .classpath
 .factorypath
 .repository
-.project
 .settings
 .springBeans
 .sts4-cache
