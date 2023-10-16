@@ -22,7 +22,7 @@ public class Main {
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
         try {
-            Repository repository = RepositoryFactory.fromGitRepo(url,branch);
+            Repository repository = RepositoryFactory.fromGitRepo(url, branch);
             Config config = repository.getConfig();
             TestOutputStream output = new TestOutputStream();
             repository.build(config.getBuildCommands());
