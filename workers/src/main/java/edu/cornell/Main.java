@@ -1,7 +1,9 @@
 package edu.cornell;
 
-import edu.cornell.project.Project;
-import edu.cornell.project.ProjectFactory;
+import edu.cornell.repository.Repository;
+import edu.cornell.repository.RepositoryBuildException;
+import edu.cornell.repository.RepositoryFactory;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
@@ -9,10 +11,14 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 public class Main {
 
     public static void main(String[] args) {
+        String url = "https://github.com/apache/kafka";
+        String branch = "trunk";
         try {
-            Project project = ProjectFactory.fromGitLab("https://github.com/jakejack13/SPEED","","");
-            LOGGER.info(project.toString());
-        } catch (GitAPIException e) {
+            Repository repository = RepositoryFactory.fromGitRepo(url,branch);
+            repository.build(List.of());
+            repository.test(List.of());
+            LOGGER.info(repository.toString());
+        } catch (GitAPIException | RepositoryBuildException e) {
             LOGGER.error(e.getMessage());
         }
     }
