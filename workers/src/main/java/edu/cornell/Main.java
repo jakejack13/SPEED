@@ -2,18 +2,18 @@ package edu.cornell;
 
 import edu.cornell.project.Project;
 import edu.cornell.project.ProjectFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+@Slf4j
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello world!");
-
         try {
             Project project = ProjectFactory.fromGitLab("https://github.com/jakejack13/SPEED","","");
-            System.out.println(project);
+            LOGGER.info(project.toString());
         } catch (GitAPIException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
     }
 }
