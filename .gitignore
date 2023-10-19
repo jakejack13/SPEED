@@ -1,2 +1,4 @@
 # Mac files
 .DS_Store
+.idea
+*.iml
