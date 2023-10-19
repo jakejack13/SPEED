@@ -1,4 +1,6 @@
 # Mac files
 .DS_Store
+
+#IntelliJ
 .idea
 *.iml
