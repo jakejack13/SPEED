@@ -29,9 +29,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Change to workers directory
-      run: cd workers
     - name: Build
-      run: ./gradlew build
+      run: cd workers && ./gradlew build
     - name: Test 
-      run: ./gradlew test
+      run: cd workers && ./gradlew test
