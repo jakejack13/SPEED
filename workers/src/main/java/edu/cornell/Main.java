@@ -24,8 +24,9 @@ public class Main {
         try {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
+            TestOutputStream output = new TestOutputStream();
             repository.build(config.getBuildCommands());
-            repository.test(listOfTests);
+            repository.test(listOfTests, output);
             LOGGER.info(repository.toString());
         } catch (GitAPIException | RepositoryBuildException e) {
             LOGGER.error(e.getMessage());

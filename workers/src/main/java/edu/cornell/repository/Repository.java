@@ -1,5 +1,6 @@
 package edu.cornell.repository;
 
+import edu.cornell.TestOutputStream;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -34,6 +35,7 @@ public abstract class Repository {
     /**
      * Runs the given JUnit test classes found in the repository
      * @param tests the list of names of test classes to run
+     * @param output the output stream to log test results to
      */
-    public abstract void test(@NonNull List<String> tests);
+    public abstract void test(@NonNull List<String> tests, TestOutputStream output);
 }

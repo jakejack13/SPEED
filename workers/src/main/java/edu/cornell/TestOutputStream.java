@@ -26,9 +26,9 @@ public class TestOutputStream {
 
     /**
      * Sends a test result to the client
-     * @param testClassName - the name of the test class
-     * @param testMethodName - the name of the test method
-     * @param result - the result of the test
+     * @param testClassName the name of the test class
+     * @param testMethodName the name of the test method
+     * @param result the result of the test
      */
     public void sendTestResult(String testClassName, String testMethodName, TestResult result) {
 
