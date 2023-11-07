@@ -15,6 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class Repository {
 
     /**
+     * Returns the Config object representing the config file
+     * @return the Config object representing the config file
+     */
+    public Config getConfig() {
+        return null;
+    }
+
+    /**
      * Builds the repository and generates build artifacts
      * @param commands the shell commands to run, in order, to build the project
      * @throws RepositoryBuildException if the repository fails to build
