@@ -1,5 +1,6 @@
 package edu.cornell.repository;
 
+import edu.cornell.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.Data;
@@ -20,7 +21,7 @@ final class JUnit5RepositoryImpl extends Repository {
     private final @NonNull File rootDir;
 
     @Override
-    public void test(@NonNull List<String> tests) {
+    public void test(@NonNull List<String> tests, TestOutputStream output) {
         // TODO: Owen
     }
 }
