@@ -51,7 +51,7 @@ public final class RepositoryFactory {
                 .setDepth(1)
                 .setProgressMonitor(new GitProgressLog())
                 .call();
-            return new RepositoryImpl(repo.getRepository().getDirectory().getParentFile());
+            return new JUnit5RepositoryImpl(repo.getRepository().getDirectory().getParentFile());
     }
 
     @Slf4j
