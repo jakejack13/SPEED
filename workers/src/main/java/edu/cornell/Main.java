@@ -13,7 +13,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 public class Main {
 
     public static void main(String[] args) {
-        //TODO: Jacob
         String url = System.getenv("SPEED_REPO_URL");
         String branch = System.getenv("SPEED_REPO_BRANCH");
         String tests = System.getenv("SPEED_REPO_TESTS");
