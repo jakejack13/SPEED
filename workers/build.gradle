@@ -20,6 +20,10 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'org.slf4j:slf4j-simple:2.0.7'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+    implementation 'org.junit.platform:junit-platform-launcher:1.9.1'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+
     //implementation 'org.apache.logging.log4j:log4j:3.0.0-alpha1'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')
