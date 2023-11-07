@@ -16,19 +16,19 @@ public class Main {
         String url = System.getenv("SPEED_REPO_URL");
         String branch = System.getenv("SPEED_REPO_BRANCH");
         String tests = System.getenv("SPEED_REPO_TESTS");
-        if (url == null || branch == null || tests == null) {
+        String kafkaAddress = System.getenv("SPEED_KAFKA_ADDRESS");
+        if (url == null || branch == null || tests == null || kafkaAddress == null) {
             LOGGER.error("Environment variables missing");
             System.exit(1);
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
-        try {
-            Repository repository = RepositoryFactory.fromGitRepo(url, branch);
+        try (TestOutputStream output = new TestOutputStream(kafkaAddress)) {
+            Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
-            TestOutputStream output = new TestOutputStream();
             repository.build(config.getBuildCommands());
             repository.test(listOfTests, output);
             LOGGER.info(repository.toString());
-        } catch (GitAPIException | RepositoryBuildException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             System.exit(1);
         }
