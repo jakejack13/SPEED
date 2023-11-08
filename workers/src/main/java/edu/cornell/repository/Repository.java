@@ -1,6 +1,8 @@
 package edu.cornell.repository;
 
 import edu.cornell.TestOutputStream;
+
+import java.io.IOException;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -29,7 +31,21 @@ public abstract class Repository {
      * @throws RepositoryBuildException if the repository fails to build
      */
     public void build(@NonNull List<String> commands) throws RepositoryBuildException {
-        // TODO: Mitch
+        for (String command : commands) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder();
+                if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
+                    builder.command("cmd.exe", "/c", command);
+                else
+                    builder.command("sh", "-c", command);
+
+                Process process = builder.start();
+                if (process.waitFor() != 0)
+                    throw new RepositoryBuildException("Error executing command: " + command, null);
+            } catch (IOException | InterruptedException e) {
+                throw new RepositoryBuildException("Error executing command: " + command, e);
+            }
+        }
     }
 
     /**

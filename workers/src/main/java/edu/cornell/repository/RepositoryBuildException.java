@@ -10,5 +10,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RepositoryBuildException extends Exception {
-
+    public RepositoryBuildException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
