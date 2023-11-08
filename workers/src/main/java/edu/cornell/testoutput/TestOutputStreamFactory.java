@@ -1,6 +1,6 @@
-package edu.cornell.testresultproducer;
+package edu.cornell.testoutput;
 
-import lombok.NonNull;
+import edu.cornell.Main;
 
 /**
  * A factory for creating new TestOutputStreams
@@ -12,7 +12,10 @@ public class TestOutputStreamFactory {
      * @param kafkaAddress the address of the Kafka message bus
      * @return a new TestOutputStream
      */
-    public static @NonNull TestOutputStream createTestOutputStream(@NonNull String kafkaAddress) {
+    public static TestOutputStream createTestOutputStream(String kafkaAddress) {
+        if (Main.DEBUG_MODE) {
+            return new PrintTestOutputStream();
+        }
         return new KafkaTestOutputStream(kafkaAddress);
     }
 }

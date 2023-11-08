@@ -1,4 +1,4 @@
-package edu.cornell.testresultproducer;
+package edu.cornell.testoutput;
 
 /**
  * An interface allowing the test runner to log its results with clients
