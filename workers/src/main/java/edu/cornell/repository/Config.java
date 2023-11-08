@@ -12,6 +12,6 @@ public class Config {
      * @return the list of commands to build the repository
      */
     public List<String> getBuildCommands() {
-        return null;
+        return List.of();
     }
 }

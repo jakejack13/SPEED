@@ -1,6 +1,7 @@
 package edu.cornell.repository;
 
-import edu.cornell.TestOutputStream;
+import edu.cornell.testoutput.TestOutputStream;
+import java.io.File;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -16,11 +17,20 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class Repository {
 
     /**
+     * The root directory of the project once it's on disk
+     */
+    protected final @NonNull File rootDir;
+
+    protected Repository(@NonNull File rootDir) {
+        this.rootDir = rootDir;
+    }
+
+    /**
      * Returns the Config object representing the config file
      * @return the Config object representing the config file
      */
     public Config getConfig() {
-        return null;
+        return new Config();
     }
 
     /**

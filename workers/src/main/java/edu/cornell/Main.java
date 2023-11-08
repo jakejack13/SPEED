@@ -2,15 +2,29 @@ package edu.cornell;
 
 import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
-import edu.cornell.repository.RepositoryBuildException;
 import edu.cornell.repository.RepositoryFactory;
+import edu.cornell.testoutput.TestOutputStream;
+import edu.cornell.testoutput.TestOutputStreamFactory;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
+/**
+ * The main worker application
+ * Environment variables:
+ * SPEED_REPO_URL: the url of the repository to clone
+ * SPEED_REPO_BRANCH: the branch of the repository to clone
+ * SPEED_REPO_TESTS: the comma-separated list of tests to run
+ * SPEED_KAFKA_ADDRESS: the address of the message bus to send tests to
+ */
 @Slf4j
 public class Main {
+
+    /**
+     * Debug mode flag, used for turning on debug mode
+     */
+    public static final boolean DEBUG_MODE = System.getProperty("debugMode") != null &&
+            "true".equalsIgnoreCase(System.getProperty("debugMode"));
 
     public static void main(String[] args) {
         String url = System.getenv("SPEED_REPO_URL");
@@ -22,7 +36,7 @@ public class Main {
             System.exit(1);
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
-        try (TestOutputStream output = new TestOutputStream(kafkaAddress)) {
+        try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
             repository.build(config.getBuildCommands());

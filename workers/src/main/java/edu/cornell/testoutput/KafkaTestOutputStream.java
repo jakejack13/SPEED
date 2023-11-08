@@ -1,4 +1,4 @@
-package edu.cornell;
+package edu.cornell.testoutput;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,28 +10,25 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 /**
- * A class allowing the test runner to log its results with clients
+ * A class allowing the test runner to log its results with clients through a Kafka message bus
  */
 @Slf4j
-public class TestOutputStream implements AutoCloseable {
+public class KafkaTestOutputStream implements TestOutputStream {
 
     /**
-     * An enum representing the possible results of a test
+     * The Kafka producer for logging messages
      */
-    public enum TestResult {
-        SUCCESS,
-        FAILURE,
-        EXCEPTION
-    }
-
     private final Producer<String,String> producer;
+    /**
+     * The topic to log Kafka messages to, which is the name of the container
+     */
     private String topicName;
 
     /**
      * Creates a new TestOutputStream
      * @param kafkaAddress the address of the Kafka cluster
      */
-    public TestOutputStream(String kafkaAddress) {
+    public KafkaTestOutputStream(String kafkaAddress) {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(Runtime.getRuntime().exec("hostname").getInputStream()))) {
@@ -62,19 +59,14 @@ public class TestOutputStream implements AutoCloseable {
         producer = new KafkaProducer<>(props);
     }
 
-    /**
-     * Sends a test result to the client
-     * @param testClassName the name of the test class
-     * @param testMethodName the name of the test method
-     * @param result the result of the test
-     */
+    @Override
     public void sendTestResult(String testClassName, String testMethodName, TestResult result) {
         producer.send(new ProducerRecord<>(topicName,
                     testClassName + ":" + testMethodName, result.toString()));
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         producer.close();
     }
 }

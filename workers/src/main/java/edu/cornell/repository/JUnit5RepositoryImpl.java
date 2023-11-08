@@ -1,11 +1,12 @@
 package edu.cornell.repository;
 
-import edu.cornell.TestOutputStream;
+import edu.cornell.testoutput.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,10 +14,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
-@Data
+@ToString
 final class JUnit5RepositoryImpl extends Repository {
-    /** The root directory of the project once it's cloned */
-    private final @NonNull File rootDir;
+
+    public JUnit5RepositoryImpl(@NonNull File rootDir) {
+        super(rootDir);
+    }
 
     @Override
     public void test(@NonNull List<String> tests, TestOutputStream output) {
