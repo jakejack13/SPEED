@@ -37,6 +37,12 @@ application {
     mainClass = 'edu.cornell.Main'
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.foo.bar.MainClass'
+    }
+}
+
 test {
     useJUnitPlatform()
 
