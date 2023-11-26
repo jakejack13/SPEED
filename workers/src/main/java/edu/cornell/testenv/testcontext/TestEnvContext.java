@@ -1,7 +1,15 @@
 package edu.cornell.testenv.testcontext;
 
-public interface TestEnvContext {
+import java.util.List;
 
-    Class<?> getTestClass();
+public interface TestEnvContext<T> {
+
+    /**
+     * TODO:
+     * Temporary Placeholder Template For Potential Modularity
+     * Will likely be refactored/removed depending on needs
+     */
+
+    List<T> getTestClasses();
 
 }

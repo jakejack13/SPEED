@@ -32,4 +32,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    exclude 'edu/cornell/testenv/testclasses/**'
 }

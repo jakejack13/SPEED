@@ -1,10 +1,18 @@
 package edu.cornell.testenv.testcontext;
 
-public class JUnitTestContext implements TestEnvContext {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Class<?> getTestClass() {
-        //TODO: TEMP PLACEHOLDER FOR RETURNING JUNIT TEST CLASSES
-        return getClass();
+public class JUnitTestContext implements TestEnvContext<String> {
+
+    List<String> classNames;
+
+    public JUnitTestContext(List<String> classNames) {
+        this.classNames = classNames;
+    }
+
+    public List<String> getTestClasses() {
+        return classNames;
     }
 
 }

@@ -1,19 +1,57 @@
 package edu.cornell.testenv.testrunner;
 
 import edu.cornell.testenv.testcontext.TestEnvContext;
+import org.junit.platform.engine.DiscoverySelector;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.*;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
-public class JUnit5TestRunner implements TestRunner {
+import java.util.List;
 
-    @Override
-    public boolean runTest(TestEnvContext envInput) {
+public class JUnit5TestRunner {
+
+//    @Override
+    public boolean runTest(List<String> classPaths) {
         try {
 
+            LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                    .selectors(classPaths.stream().map(
+                            path -> DiscoverySelectors.selectClass(path)
+                    ).toList()).build();
 
-            return true; // If the execution reaches here, the tests were successful.
+            SummaryGeneratingListener listener = new SummaryGeneratingListener();
+
+            try (LauncherSession session = LauncherFactory.openSession()) {
+                Launcher launcher = session.getLauncher();
+                // Register a listener of your choice
+                launcher.registerTestExecutionListeners(listener);
+                // Discover tests and build a test plan
+                TestPlan testPlan = launcher.discover(request);
+                // Execute test plan
+                launcher.execute(testPlan);
+            }
+
+            TestExecutionSummary summary = listener.getSummary();
+
+            System.out.println("Test Execution Summary:");
+            System.out.println("Total Tests: " + summary.getTestsFoundCount());
+            System.out.println("Successful Tests: " + summary.getTestsSucceededCount());
+            System.out.println("Failed Tests: " + summary.getTestsFailedCount());
+
+            // Print specific information about failures
+            System.out.println("\nDetails of Failed Tests:");
+            summary.getFailures().forEach(failure -> {
+                System.out.println("Test: " + failure.getTestIdentifier().getDisplayName());
+            });
+
+            return summary.getFailures().isEmpty();
         } catch (Throwable t) {
+            t.printStackTrace();
             return false; // Return false in case of any exceptions.
         }
     }
 
-    // You may need to implement CustomTestExecutionListener for specific handling of results.
 }
