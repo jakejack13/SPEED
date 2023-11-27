@@ -11,11 +11,12 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import java.util.List;
 
-public class JUnit5TestRunner {
-
-//    @Override
-    public boolean runTest(List<String> classPaths) {
+public class JUnit5TestRunner implements TestRunner {
+    @Override
+    public boolean runTest(TestEnvContext context) {
         try {
+
+            List<String> classPaths = context.getTestClasses();
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(classPaths.stream().map(
