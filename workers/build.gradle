@@ -19,7 +19,6 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.6.0.202305301015-r'
-    implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'org.slf4j:slf4j-simple:2.0.7'
 
@@ -36,12 +35,6 @@ dependencies {
 
 application {
     mainClass = 'edu.cornell.Main'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.foo.bar.MainClass'
-    }
 }
 
 test {
