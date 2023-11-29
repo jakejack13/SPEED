@@ -1,5 +1,6 @@
 package edu.cornell.testoutput;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -9,8 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 public class PrintTestOutputStream implements TestOutputStream {
 
     @Override
-    public void sendTestResult(String testClassName, String testMethodName, TestResult result) {
-        System.out.println(testClassName + ":" + testMethodName + "; " + result.toString());
+    public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
+            @NonNull TestResult result) {
+        System.out.println(testClassName + ":" + testMethodName + "; " + result);
     }
 
     @Override

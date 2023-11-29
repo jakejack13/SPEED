@@ -3,6 +3,7 @@ package edu.cornell.testoutput;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.Producer;
@@ -18,22 +19,23 @@ public class KafkaTestOutputStream implements TestOutputStream {
     /**
      * The Kafka producer for logging messages
      */
-    private final Producer<String,String> producer;
+    private final @NonNull Producer<String,String> producer;
     /**
      * The topic to log Kafka messages to, which is the name of the container
      */
-    private String topicName;
+    private @NonNull String topicName;
 
     /**
      * Creates a new TestOutputStream
      * @param kafkaAddress the address of the Kafka cluster
      */
-    public KafkaTestOutputStream(String kafkaAddress) {
+    public KafkaTestOutputStream(@NonNull String kafkaAddress) {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(Runtime.getRuntime().exec("hostname").getInputStream()))) {
             topicName = inputStream.readLine();
         } catch (IOException e) {
+            topicName = "error";
             LOGGER.error("Error getting hostname from container");
             System.exit(1);
         }
@@ -60,7 +62,8 @@ public class KafkaTestOutputStream implements TestOutputStream {
     }
 
     @Override
-    public void sendTestResult(String testClassName, String testMethodName, TestResult result) {
+    public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
+            @NonNull TestResult result) {
         producer.send(new ProducerRecord<>(topicName,
                     testClassName + ":" + testMethodName, result.toString()));
     }

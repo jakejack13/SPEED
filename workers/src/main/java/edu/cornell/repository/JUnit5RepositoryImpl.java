@@ -1,6 +1,6 @@
 package edu.cornell.repository;
 
-import edu.cornell.testresultproducer.TestOutputStream;
+import edu.cornell.testoutput.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.EqualsAndHashCode;
@@ -20,6 +20,5 @@ final class JUnit5RepositoryImpl extends Repository {
 
     @Override
     public void test(@NonNull List<String> tests, @NonNull TestOutputStream output) {
-
     }
 }
