@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 final class JUnit5RepositoryImpl extends Repository {
 
-    public JUnit5RepositoryImpl(@NonNull File rootDir) {
+    JUnit5RepositoryImpl(@NonNull File rootDir) {
         super(rootDir);
     }
 
