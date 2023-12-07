@@ -14,9 +14,6 @@ public class TestOutputStreamFactory {
      * @return a new TestOutputStream
      */
     public static @NonNull TestOutputStream createTestOutputStream(@NonNull String kafkaAddress) {
-        if (Main.DEBUG_MODE) {
-            return new PrintTestOutputStream();
-        }
         return new KafkaTestOutputStream(kafkaAddress);
     }
 }
