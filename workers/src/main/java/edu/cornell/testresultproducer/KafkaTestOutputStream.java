@@ -1,4 +1,4 @@
-package edu.cornell.testoutput;
+package edu.cornell.testresultproducer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 /**
  * A class allowing the test runner to log its results with clients through a Kafka message bus
@@ -41,24 +43,24 @@ public class KafkaTestOutputStream implements TestOutputStream {
         }
 
         // create instance for properties to access producer configs
-        Properties props = new Properties();
+        Properties properties = new Properties();
         //Assign localhost id
-        props.put("bootstrap.servers", kafkaAddress);
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
         //Set acknowledgements for producer requests.
-        props.put("acks", "all");
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
         //If the request fails, the producer can automatically retry,
-        props.put("retries", 0);
+        properties.setProperty(ProducerConfig.RETRIES_CONFIG, "0");
         //Specify buffer size in config
-        props.put("batch.size", 16384);
+        properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
         //Reduce the no of requests less than 0
-        props.put("linger.ms", 1);
+        properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "1");
         //The buffer.memory controls the total amount of memory available to the producer for buffering.
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer");
-        producer = new KafkaProducer<>(props);
+        properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class.getName());
+        producer = new KafkaProducer<>(properties);
     }
 
     @Override

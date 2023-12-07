@@ -3,8 +3,8 @@ package edu.cornell;
 import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
-import edu.cornell.testoutput.TestOutputStream;
-import edu.cornell.testoutput.TestOutputStreamFactory;
+import edu.cornell.testresultproducer.TestOutputStream;
+import edu.cornell.testresultproducer.TestOutputStreamFactory;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +23,8 @@ public class Main {
     /**
      * Debug mode flag, used for turning on debug mode
      */
-    public static final boolean DEBUG_MODE = System.getProperty("debugMode") != null &&
-            "true".equalsIgnoreCase(System.getProperty("debugMode"));
+    public static final boolean DEBUG_MODE = System.getProperty("speed.debug") != null &&
+            "true".equalsIgnoreCase(System.getProperty("speed.debug"));
 
     public static void main(String[] args) {
         String url = System.getenv("SPEED_REPO_URL");

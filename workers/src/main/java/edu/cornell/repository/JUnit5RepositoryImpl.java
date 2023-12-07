@@ -1,9 +1,8 @@
 package edu.cornell.repository;
 
-import edu.cornell.testoutput.TestOutputStream;
+import edu.cornell.testresultproducer.TestOutputStream;
 import java.io.File;
 import java.util.List;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
