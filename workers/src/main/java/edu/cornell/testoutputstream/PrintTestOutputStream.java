@@ -1,4 +1,4 @@
-package edu.cornell.testoutput;
+package edu.cornell.testoutputstream;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;

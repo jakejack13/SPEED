@@ -1,10 +1,6 @@
 package edu.cornell.repository;
 
-<<<<<<< HEAD
-import edu.cornell.testresultproducer.TestOutputStream;
-=======
-import edu.cornell.testoutput.TestOutputStream;
->>>>>>> e4197fd (Added more test output options)
+import edu.cornell.testoutputstream.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.EqualsAndHashCode;

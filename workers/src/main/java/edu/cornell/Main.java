@@ -26,6 +26,7 @@ public class Main {
      */
     public static final boolean DEBUG_MODE = System.getProperty("speed.debug") != null &&
             "true".equalsIgnoreCase(System.getProperty("speed.debug"));
+<<<<<<< HEAD
 
     /**
      * The name of the REPO_URL environment variable
@@ -46,6 +47,8 @@ public class Main {
      * The name of the KAFKA_ADDRESS environment variable
      */
     private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
+=======
+>>>>>>> 709895c (Intial kafka consumer model)
 
     public static void main(String[] args) {
         String url = System.getenv(ENV_REPO_BRANCH);
