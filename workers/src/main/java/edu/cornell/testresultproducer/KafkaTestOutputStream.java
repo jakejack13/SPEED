@@ -1,5 +1,6 @@
 package edu.cornell.testresultproducer;
 
+import edu.cornell.Main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,13 +34,18 @@ public class KafkaTestOutputStream implements TestOutputStream {
      */
     public KafkaTestOutputStream(@NonNull String kafkaAddress) {
         //Assign topicName to hostname
-        try (BufferedReader inputStream = new BufferedReader(
-                new InputStreamReader(Runtime.getRuntime().exec("hostname").getInputStream()))) {
-            topicName = inputStream.readLine();
-        } catch (IOException e) {
-            topicName = "error";
-            LOGGER.error("Error getting hostname from container");
-            System.exit(1);
+        if (Main.DEBUG_MODE) {
+            topicName = "localhost";
+        } else {
+            try (BufferedReader inputStream = new BufferedReader(
+                    new InputStreamReader(
+                            Runtime.getRuntime().exec("hostname").getInputStream()))) {
+                topicName = inputStream.readLine();
+            } catch (IOException e) {
+                topicName = "error";
+                LOGGER.error("Error getting hostname from container");
+                System.exit(1);
+            }
         }
 
         // create instance for properties to access producer configs

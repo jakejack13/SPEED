@@ -11,7 +11,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 /** The thread that listens for updates from the workers via the Kafka cluster */
-public class KafkaConsumerThread implements Runnable {
+public class KafkaConsumerThread implements Runnable, AutoCloseable {
 
     private final KafkaConsumer<String, String> consumer;
 
@@ -28,7 +28,6 @@ public class KafkaConsumerThread implements Runnable {
 
         consumer = new KafkaConsumer<>(properties);
         consumer.subscribe(workerIds);
-
     }
 
     @Override
@@ -43,5 +42,10 @@ public class KafkaConsumerThread implements Runnable {
                 System.out.println("Partition: " + record.partition() + ", Offset:" + record.offset());
             }
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        consumer.close();
     }
 }

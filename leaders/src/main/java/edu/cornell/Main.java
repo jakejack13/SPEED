@@ -17,8 +17,17 @@ public class Main {
 
     public static void main(String[] args) {
         String kafkaAddress = System.getenv("SPEED_KAFKA_ADDRESS");
-        List<String> workerIds = List.of("dhcp-vl2041-39795.eduroam.cornell.edu"); // FIXME: Replace
-        KafkaConsumerThread consumer = new KafkaConsumerThread(kafkaAddress, workerIds);
-        consumer.run();
+        List<String> workerIds;
+        if (DEBUG_MODE) {
+             workerIds = List.of("localhost");
+        } else {
+            workerIds = List.of(); // FIXME: Replace
+        }
+        try (KafkaConsumerThread consumer = new KafkaConsumerThread(kafkaAddress, workerIds)) {
+            consumer.run();
+        } catch (Exception e) {
+            LOGGER.error(e.getLocalizedMessage());
+            System.exit(1);
+        }
     }
 }
