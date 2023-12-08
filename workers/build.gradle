@@ -13,6 +13,7 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 
@@ -20,6 +21,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'org.slf4j:slf4j-simple:2.0.7'
+
     implementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     implementation 'org.junit.platform:junit-platform-launcher:1.9.1'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
@@ -34,4 +36,5 @@ test {
     useJUnitPlatform()
 
     exclude 'edu/cornell/testenv/testclasses/**'
+
 }
