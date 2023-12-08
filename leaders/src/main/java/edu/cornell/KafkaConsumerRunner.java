@@ -1,22 +1,41 @@
 package edu.cornell;
 
+import edu.cornell.testconsumer.TestConsumer;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-/** The thread that listens for updates from the workers via the Kafka cluster */
-public class KafkaConsumerThread implements Runnable, AutoCloseable {
+/** The runner that listens for test result updates from the workers via the Kafka cluster */
+@Slf4j
+public class KafkaConsumerRunner implements Runnable, AutoCloseable {
 
-    private final KafkaConsumer<String, String> consumer;
+    /**
+     * The Kafka consumer to receive test results from
+     */
+    private final @NonNull KafkaConsumer<String, String> consumer;
 
-    public KafkaConsumerThread(@NonNull String kafkaAddress, @NonNull List<String> workerIds) {
+    /**
+     * The test consumer to send test results to
+     */
+    private final @NonNull TestConsumer testConsumer;
 
+    /**
+     * Creates a new test consumer runner
+     * @param kafkaAddress the address of the Kafka message bus
+     * @param workerIds the list of workers to subscribe to on the message bus
+     * @param testConsumer the test consumer to send test results to
+     */
+    public KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull List<String> workerIds,
+            @NonNull TestConsumer testConsumer) {
+
+        this.testConsumer = testConsumer;
 
         // create consumer configs
         Properties properties = new Properties();
@@ -33,19 +52,20 @@ public class KafkaConsumerThread implements Runnable, AutoCloseable {
     @Override
     public void run() {
     // poll for new data
-        while(true){
+        while(!testConsumer.isDone()){
             ConsumerRecords<String, String> records =
                     consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, String> record : records){
-                System.out.println("Key: " + record.key() + ", Value: " + record.value());
-                System.out.println("Partition: " + record.partition() + ", Offset:" + record.offset());
+                LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
+                LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
+                testConsumer.processTestOutput(record.key(), record.value());
             }
         }
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         consumer.close();
     }
 }

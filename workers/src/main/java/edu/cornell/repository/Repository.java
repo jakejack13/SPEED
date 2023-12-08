@@ -6,12 +6,10 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A representation of a Java project to build and test
  */
-@Slf4j
 @EqualsAndHashCode
 @ToString
 public abstract class Repository {

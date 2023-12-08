@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  * SPEED_REPO_URL: the url of the repository to clone
  * SPEED_REPO_BRANCH: the branch of the repository to clone
  * SPEED_REPO_TESTS: the comma-separated list of tests to run
- * SPEED_KAFKA_ADDRESS: the address of the message bus to send tests to
+ * SPEED_KAFKA_ADDRESS: the address of the message bus to send test results to
  */
 @Slf4j
 public class Main {
@@ -36,6 +36,7 @@ public class Main {
             System.exit(1);
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
+        LOGGER.info("listOfTest: " + listOfTests);
         try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();

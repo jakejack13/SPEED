@@ -1,6 +1,5 @@
 package edu.cornell.testresultproducer;
 
-import edu.cornell.Main;
 import lombok.NonNull;
 
 /**
