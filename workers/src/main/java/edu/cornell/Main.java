@@ -60,6 +60,7 @@ public class Main {
             System.exit(1);
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
+        LOGGER.info("listOfTest: " + listOfTests);
         try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();

@@ -72,6 +72,7 @@ public class KafkaTestOutputStream implements TestOutputStream {
     @Override
     public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
             @NonNull TestResult result) {
+        LOGGER.info(testClassName + ":" + testMethodName + ";" + result);
         producer.send(new ProducerRecord<>(topicName,
                     testClassName + ":" + testMethodName, result.toString()));
     }

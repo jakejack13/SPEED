@@ -1,6 +1,5 @@
 package edu.cornell.testoutputstream;
 
-import edu.cornell.Main;
 import lombok.NonNull;
 
 /**

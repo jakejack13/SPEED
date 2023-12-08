@@ -4,7 +4,10 @@ import edu.cornell.testconsumer.PrintTestConsumer;
 import edu.cornell.testconsumer.TestConsumer;
 import java.util.List;
 import java.util.Map;
+<<<<<<< HEAD
 import lombok.NonNull;
+=======
+>>>>>>> 0fcbda6 (Added better tracking of test results consumed from kafka)
 import lombok.extern.slf4j.Slf4j;
 
 /**
