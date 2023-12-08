@@ -4,3 +4,6 @@
 #IntelliJ
 .idea
 *.iml
+
+#VSCode
+.vscode/

@@ -3,11 +3,8 @@ package edu.cornell;
 import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
-<<<<<<< HEAD
 import edu.cornell.testresultproducer.TestOutputStream;
 import edu.cornell.testresultproducer.TestOutputStreamFactory;
-=======
->>>>>>> 13b6eb0 (Added config file information)
 import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
@@ -87,7 +84,6 @@ public class Main {
         try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
-            TestOutputStream output = new TestOutputStream();
             repository.build(config.getBuildCommands());
             repository.test(listOfTests, output);
             LOGGER.info(repository.toString());
