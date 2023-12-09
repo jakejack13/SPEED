@@ -50,6 +50,26 @@ public class Main {
 =======
 >>>>>>> 709895c (Intial kafka consumer model)
 
+    /**
+     * The name of the REPO_URL environment variable
+     */
+    private static final @NonNull String REPO_URL = "SPEED_REPO_URL";
+
+    /**
+     * The name of the REPO_BRANCH environment variable
+     */
+    private static final @NonNull String REPO_BRANCH = "SPEED_REPO_BRANCH";
+
+    /**
+     * The name of the REPO_TESTS environment variable
+     */
+    private static final @NonNull String REPO_TESTS = "SPEED_REPO_TESTS";
+
+    /**
+     * The name of the KAFKA_ADDRESS environment variable
+     */
+    private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
+
     public static void main(String[] args) {
         String url = System.getenv(ENV_REPO_BRANCH);
         String branch = System.getenv(ENV_REPO_BRANCH);
