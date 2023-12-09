@@ -11,13 +11,15 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import java.util.List;
 
+/**
+ * Runs the given Environment Context and Tracks JUnit Test Results
+ */
 public class JUnit5TestRunner implements TestRunner {
 
     /**
-     * Implemented from TestRunner
-     * Runs the given Environment Context and Tracks Test Results
+     * Main runner that takes in the context and returns the result of JUnit Tests
      * @param context - The environment needed to run the tests
-     * @return boolean of whether or not all JUnit tests passed
+     * @return boolean of whether all JUnit tests passed
      */
     @Override
     public boolean runTest(TestEnvContext context) {
