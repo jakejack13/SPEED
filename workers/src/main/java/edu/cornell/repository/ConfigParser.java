@@ -9,15 +9,28 @@ import java.util.List;
 
 /**
  * Parses the config file of the repository.
+ * Expected format of config file is as follows:
+ * CATEGORY::
+ * - inputOne of the category
+ * - inputTwo of the category
+ * this is still inputTwo because there was no dash
+ * ::
+ *
+ * CATEGORY::
+ * - inputOne of the category
+ * this is still inputOne because there was no dash
+ * ::
  */
 public class ConfigParser {
+    /**
+     * Maps the category to the category's respective information from the config file.
+     */
     private EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
+
+    /**
+     * Path of the config file
+     */
     private Path configFilePath;
-    public static class ConfigSyntaxException extends Exception {
-        public ConfigSyntaxException(String message) {
-            super(message);
-        }
-    }
 
     /**
      * Parses config files
@@ -81,10 +94,13 @@ public class ConfigParser {
         return configMap.get(categoryType);
     }
 
+    /**
+     * The currently supported categories of information in the config file.
+     * Needs updated for each new category supported.
+     */
     public enum Category {
         BUILD_COMMANDS,
         TEST_PATHS,
         TEST_RUNNER
     }
 }
-
