@@ -53,17 +53,17 @@ public class Main {
     /**
      * The name of the REPO_URL environment variable
      */
-    private static final @NonNull String REPO_URL = "SPEED_REPO_URL";
+    private static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
 
     /**
      * The name of the REPO_BRANCH environment variable
      */
-    private static final @NonNull String REPO_BRANCH = "SPEED_REPO_BRANCH";
+    private static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
 
     /**
      * The name of the REPO_TESTS environment variable
      */
-    private static final @NonNull String REPO_TESTS = "SPEED_REPO_TESTS";
+    private static final @NonNull String ENV_REPO_TESTS = "SPEED_REPO_TESTS";
 
     /**
      * The name of the KAFKA_ADDRESS environment variable
