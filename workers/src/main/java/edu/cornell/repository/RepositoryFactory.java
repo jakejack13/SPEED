@@ -62,7 +62,7 @@ public final class RepositoryFactory {
         /** The number of completed tasks */
         private int currentTasks;
         /** The name of the current task */
-        private String currentTaskName;
+        private @NonNull String currentTaskName;
         /** The total number of work units to be done on the current task */
         private int totalWork;
         /** The number of completed work units */
