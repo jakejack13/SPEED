@@ -26,5 +26,5 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cd workers && docker build -t jakejack13/workers .
+      run: cd workers && docker build -t ghcr.io/jakejack13/speed-workers:latest .
 

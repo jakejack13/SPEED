@@ -20,9 +20,6 @@ jobs:
           run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jakejack13 --password-stdin
         - uses: actions/checkout@v3
         - name: Build
-          run: cd workers && docker build \
-            --label "org.opencontainers.image.source=https://github.com/jakejack13/SPEED" \
-            --label "org.opencontainers.image.description=worker image" \
-             -t ghcr.io/jakejack13/workers:latest .
+          run: cd workers && docker build -t ghcr.io/jakejack13/speed-workers:latest .
         - name: Deploy
-          run: docker push ghcr.io/jakejack13/SPEED:latest
+          run: docker push ghcr.io/jakejack13/speed-workers:latest

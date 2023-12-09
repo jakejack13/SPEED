@@ -26,5 +26,5 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cd leaders && docker build -t jakejack13/leaders .
+      run: cd leaders && docker build -t ghcr.io/jakejack13/speed-leaders:latest .
 
