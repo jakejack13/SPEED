@@ -21,9 +21,6 @@ final class JUnit5RepositoryImpl extends Repository {
 
     @Override
     public void test(@NonNull List<String> tests, @NonNull TestOutputStream output) {
-        // TODO: Owen
-        for (String test : tests) { // FIXME: Remove
-            output.sendTestResult(test, "main", TestResult.SUCCESS);
-        }
+
     }
 }
