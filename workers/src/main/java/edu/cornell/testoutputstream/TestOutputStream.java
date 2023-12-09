@@ -1,9 +1,11 @@
 package edu.cornell.testoutputstream;
 
+import java.io.Closeable;
+
 /**
  * An interface allowing the test runner to log its results with clients
  */
-public interface TestOutputStream extends AutoCloseable {
+public interface TestOutputStream extends Closeable {
 
     /**
      * An enum representing the possible results of a test

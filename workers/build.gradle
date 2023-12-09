@@ -33,6 +33,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+compileJava {
+    options.compilerArgs << '-Xlint:all' << "-Werror"
+}
+
 application {
     mainClass = 'edu.cornell.Main'
 }
