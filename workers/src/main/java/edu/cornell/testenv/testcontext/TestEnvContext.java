@@ -5,11 +5,9 @@ import java.util.List;
 public interface TestEnvContext<T> {
 
     /**
-     * TODO:
-     * Temporary Placeholder Template For Potential Modularity
-     * Will likely be refactored/removed depending on needs
+     * Provide The Necessary Environment Context To Run Tests
+     * Ex: JUnit needs the location of test classes for the Launcher to run
      */
-
     List<T> getTestClasses();
 
 }

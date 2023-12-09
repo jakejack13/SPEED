@@ -12,31 +12,41 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import java.util.List;
 
 public class JUnit5TestRunner implements TestRunner {
+
+    /**
+     * Implemented from TestRunner
+     * Runs the given Environment Context and Tracks Test Results
+     * @param context - The environment needed to run the tests
+     * @return boolean of whether or not all JUnit tests passed
+     */
     @Override
     public boolean runTest(TestEnvContext context) {
         try {
 
             List<String> classPaths = context.getTestClasses();
 
+            // Setup Launcher to find and builder test map for JUnit
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(classPaths.stream().map(
                             path -> DiscoverySelectors.selectClass(path)
                     ).toList()).build();
 
+            // Test Result Listener
             SummaryGeneratingListener listener = new SummaryGeneratingListener();
 
             try (LauncherSession session = LauncherFactory.openSession()) {
                 Launcher launcher = session.getLauncher();
-                // Register a listener of your choice
+
                 launcher.registerTestExecutionListeners(listener);
-                // Discover tests and build a test plan
+
                 TestPlan testPlan = launcher.discover(request);
-                // Execute test plan
+
                 launcher.execute(testPlan);
             }
 
             TestExecutionSummary summary = listener.getSummary();
 
+            //TODO: Placeholder Logging Until Logging Object Properly Set
             System.out.println("Test Execution Summary:");
             System.out.println("Total Tests: " + summary.getTestsFoundCount());
             System.out.println("Successful Tests: " + summary.getTestsSucceededCount());

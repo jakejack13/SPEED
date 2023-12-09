@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class TestJUnit5TestRunner {
 
     @Test
@@ -16,7 +18,7 @@ public class TestJUnit5TestRunner {
         JUnit5TestRunner runner = new JUnit5TestRunner();
         boolean result = runner.runTest(context);
 
-        System.out.println("Tests passed: " + result);
+        assertFalse(result);
     }
 
 }
