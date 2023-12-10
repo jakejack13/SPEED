@@ -40,7 +40,12 @@ public class Main {
 
     public static void main(String[] args) {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
-
+        String url = System.getenv(ENV_REPO_URL);
+        String branch = System.getenv(ENV_REPO_BRANCH);
+        if (url == null || branch == null || kafkaAddress == null) {
+            LOGGER.error("Environment variables missing");
+            System.exit(1);
+        }
         // TODO: Find tests, create workers, assign tests to workers
 
         List<String> workerIds;
