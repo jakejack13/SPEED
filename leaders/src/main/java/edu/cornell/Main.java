@@ -1,21 +1,17 @@
 package edu.cornell;
 
-import edu.cornell.repository.Config;
-import edu.cornell.repository.Repository;
-import edu.cornell.repository.RepositoryFactory;
-import edu.cornell.testoutputstream.TestOutputStream;
-import edu.cornell.testoutputstream.TestOutputStreamFactory;
-import java.util.Arrays;
+import edu.cornell.testconsumer.PrintTestConsumer;
+import edu.cornell.testconsumer.TestConsumer;
 import java.util.List;
+import java.util.Map;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The main worker application
+ * The main leader application
  * Environment variables:
  * SPEED_REPO_URL: the url of the repository to clone
  * SPEED_REPO_BRANCH: the branch of the repository to clone
- * SPEED_REPO_TESTS: the comma-separated list of tests to run
  * SPEED_KAFKA_ADDRESS: the address of the message bus to send test results to
  */
 @Slf4j
@@ -38,34 +34,33 @@ public class Main {
     private static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
 
     /**
-     * The name of the REPO_TESTS environment variable
-     */
-    private static final @NonNull String ENV_REPO_TESTS = "SPEED_REPO_TESTS";
-
-    /**
      * The name of the KAFKA_ADDRESS environment variable
      */
     private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     public static void main(String[] args) {
+        String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
-        String tests = System.getenv(ENV_REPO_TESTS);
-        String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
-        if (url == null || branch == null || tests == null || kafkaAddress == null) {
+        if (url == null || branch == null || kafkaAddress == null) {
             LOGGER.error("Environment variables missing");
             System.exit(1);
         }
-        List<String> listOfTests = Arrays.asList(tests.split(","));
-        LOGGER.info("listOfTest: " + listOfTests);
-        try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
-            Repository repository = RepositoryFactory.fromGitRepo(url,branch);
-            Config config = repository.getConfig();
-            repository.build(config.getBuildCommands());
-            repository.test(listOfTests, output);
-            LOGGER.info(repository.toString());
+        // TODO: Find tests, create workers, assign tests to workers
+
+        List<String> workerIds;
+        if (DEBUG_MODE) {
+             workerIds = List.of("localhost");
+        } else {
+            workerIds = List.of(); // FIXME: Replace
+        }
+        Map<String, Integer> testMethods = Map.of(); // FIXME: Replace
+        TestConsumer testConsumer = new PrintTestConsumer(testMethods);
+        try (KafkaConsumerRunner consumer =
+                new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)) {
+            consumer.run();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getLocalizedMessage());
             System.exit(1);
         }
     }

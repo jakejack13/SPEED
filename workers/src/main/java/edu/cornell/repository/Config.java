@@ -2,7 +2,7 @@ package edu.cornell.repository;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import lombok.NonNull;
 
 /**
  * An object representing the SPEED config file in the repository
@@ -10,13 +10,13 @@ import java.util.List;
 public class Config {
 
     /**
-    Parser for parsing config file.
-    */
+     * Parser for parsing config file.
+     */
     private ConfigParser parser;
 
     /**
-    Creates config file.
-    */
+     * Creates config file.
+     */
     public Config(String configFilePath) throws ConfigSyntaxException, IOException {
         parser = new ConfigParser(Path.of(configFilePath));
     }
@@ -24,7 +24,7 @@ public class Config {
      * Returns the list of commands to build the repository
      * @return the list of commands to build the repository
      */
-    public List<String> getBuildCommands() {
+    public @NonNull List<String> getBuildCommands() {
         return parser.getConfigMapCategory(ConfigParser.Category.BUILD_COMMANDS);
     }
 }
