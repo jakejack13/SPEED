@@ -1,15 +1,18 @@
 package edu.cornell.repository;
 
+import java.io.IOException;
 import edu.cornell.testoutputstream.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A representation of a Java project to build and test
  */
+@Slf4j
 @EqualsAndHashCode
 @ToString
 public abstract class Repository {
@@ -19,8 +22,11 @@ public abstract class Repository {
      */
     protected final @NonNull File rootDir;
 
-    protected Repository(@NonNull File rootDir) {
+    private final @NonNull Config config;
+
+    protected Repository(@NonNull File rootDir) throws ConfigSyntaxException {
         this.rootDir = rootDir;
+        this.config = new Config(rootDir.getAbsolutePath() + "/.speed");
     }
 
     /**
@@ -28,7 +34,7 @@ public abstract class Repository {
      * @return the Config object representing the config file
      */
     public @NonNull Config getConfig() {
-        return new Config();
+        return config;
     }
 
     /**
@@ -37,7 +43,21 @@ public abstract class Repository {
      * @throws RepositoryBuildException if the repository fails to build
      */
     public void build(@NonNull List<String> commands) throws RepositoryBuildException {
-        // TODO: Mitch
+        for (String command : commands) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder();
+                if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
+                    builder.command("cmd.exe", "/c", command);
+                else
+                    builder.command("sh", "-c", command);
+
+                Process process = builder.start();
+                if (process.waitFor() != 0)
+                    throw new RepositoryBuildException("Error executing command: " + command, null);
+            } catch (IOException | InterruptedException e) {
+                throw new RepositoryBuildException("Error executing command: " + command, e);
+            }
+        }
     }
 
     /**
