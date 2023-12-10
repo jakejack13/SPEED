@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import lombok.NonNull;
 
 /**
  * Parses the config file of the repository.
@@ -30,7 +31,7 @@ public class ConfigParser {
     /**
      * Path of the config file
      */
-    private Path configFilePath;
+    private final @NonNull Path configFilePath;
 
     /**
      * Parses config files

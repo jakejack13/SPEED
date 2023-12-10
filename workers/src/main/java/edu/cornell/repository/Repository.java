@@ -22,8 +22,11 @@ public abstract class Repository {
      */
     protected final @NonNull File rootDir;
 
-    protected Repository(@NonNull File rootDir) {
+    private final @NonNull Config config;
+
+    protected Repository(@NonNull File rootDir) throws ConfigSyntaxException {
         this.rootDir = rootDir;
+        this.config = new Config(rootDir.getAbsolutePath() + "/.speed");
     }
 
     /**
@@ -31,7 +34,7 @@ public abstract class Repository {
      * @return the Config object representing the config file
      */
     public @NonNull Config getConfig() {
-        return new Config();
+        return config;
     }
 
     /**
