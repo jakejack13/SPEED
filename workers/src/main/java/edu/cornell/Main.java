@@ -64,7 +64,7 @@ public class Main {
             repository.test(listOfTests, output);
             LOGGER.info(repository.toString());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Worker failed", e);
             System.exit(1);
         }
     }

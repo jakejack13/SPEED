@@ -43,7 +43,7 @@ class KafkaTestOutputStream implements TestOutputStream {
                 topicName = inputStream.readLine();
             } catch (IOException e) {
                 topicName = "error";
-                LOGGER.error("Error getting hostname from container");
+                LOGGER.error("Error getting hostname from container", e);
                 System.exit(1);
             }
         }

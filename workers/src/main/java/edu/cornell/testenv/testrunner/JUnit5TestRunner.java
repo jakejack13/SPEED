@@ -1,8 +1,10 @@
 package edu.cornell.testenv.testrunner;
 
+import edu.cornell.repository.Repository;
 import edu.cornell.testenv.testcontext.TestEnvContext;
 import edu.cornell.testoutputstream.TestOutputStream;
 import edu.cornell.testoutputstream.TestOutputStream.TestResult;
+import java.io.File;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.engine.TestExecutionResult;
@@ -51,7 +53,7 @@ public class JUnit5TestRunner implements TestRunner {
      * @return boolean of whether all JUnit tests passed
      */
     @Override
-    public boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream) {
+    public boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream, File rootDir) {
         try {
 
             List<String> classPaths = context.getTestClasses();
@@ -60,7 +62,8 @@ public class JUnit5TestRunner implements TestRunner {
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(classPaths.stream().map(
                             DiscoverySelectors::selectClass
-                    ).toList()).build();
+                    ).toList())
+                    .build();
 
             // Test Result Listeners
             SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
@@ -77,7 +80,7 @@ public class JUnit5TestRunner implements TestRunner {
             TestExecutionSummary summary = summaryListener.getSummary();
             return summary.getFailures().isEmpty();
         } catch (Throwable t) {
-            LOGGER.error(t.getLocalizedMessage());
+            LOGGER.error("Test execution failed", t);
             return false; // Return false in case of any exceptions.
         }
     }

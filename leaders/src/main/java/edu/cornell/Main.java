@@ -60,7 +60,7 @@ public class Main {
                 new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)) {
             consumer.run();
         } catch (Exception e) {
-            LOGGER.error(e.getLocalizedMessage());
+            LOGGER.error("Leader failed", e);
             System.exit(1);
         }
     }

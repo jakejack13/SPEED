@@ -1,5 +1,6 @@
 package edu.cornell.testenv.testcontext;
 
+import edu.cornell.repository.Repository;
 import java.util.List;
 
 /**
@@ -9,6 +10,9 @@ import java.util.List;
  */
 public interface TestEnvContext<T> {
 
+    /**
+     * @return Test Class locations as a list of strings
+     */
     List<T> getTestClasses();
 
 }

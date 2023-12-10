@@ -24,7 +24,7 @@ public class Config {
         try {
             parser = new ConfigParser(Path.of(configFilePath));
         } catch (IOException e) {
-            LOGGER.error("Error reading config file from disk: " + e.getLocalizedMessage());
+            LOGGER.error("Error reading config file from disk", e);
             System.exit(1);
         }
     }
