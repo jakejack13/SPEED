@@ -1,8 +1,12 @@
 package edu.cornell.testenv.testrunner;
 
 import edu.cornell.testenv.testcontext.TestEnvContext;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
-import org.junit.platform.launcher.*;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.LauncherSession;
+import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
@@ -13,6 +17,7 @@ import java.util.List;
 /**
  * Runs the given Environment Context and Tracks JUnit Test Results
  */
+@Slf4j
 public class JUnit5TestRunner implements TestRunner {
 
     /**
@@ -61,7 +66,7 @@ public class JUnit5TestRunner implements TestRunner {
 
             return summary.getFailures().isEmpty();
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOGGER.error(t.getLocalizedMessage());
             return false; // Return false in case of any exceptions.
         }
     }

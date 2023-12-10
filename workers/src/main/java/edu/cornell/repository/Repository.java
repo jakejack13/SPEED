@@ -19,7 +19,7 @@ public abstract class Repository {
      */
     protected final @NonNull File rootDir;
 
-    protected Repository(@NonNull File rootDir) {
+    Repository(@NonNull File rootDir) {
         this.rootDir = rootDir;
     }
 

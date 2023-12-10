@@ -4,22 +4,22 @@ import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
 import edu.cornell.testoutputstream.TestOutputStream;
-import edu.cornell.testoutputstream.TestOutputStreamFactory;
 import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The main worker application
- * Environment variables:
- * SPEED_REPO_URL: the url of the repository to clone
- * SPEED_REPO_BRANCH: the branch of the repository to clone
- * SPEED_REPO_TESTS: the comma-separated list of tests to run
- * SPEED_KAFKA_ADDRESS: the address of the message bus to send test results to
+ * The main worker application Environment variables: SPEED_REPO_URL: the url of the repository to
+ * clone SPEED_REPO_BRANCH: the branch of the repository to clone SPEED_REPO_TESTS: the
+ * comma-separated list of tests to run SPEED_KAFKA_ADDRESS: the address of the message bus to send
+ * test results to
  */
 @Slf4j
-public class Main {
+public final class Main {
+
+    private Main() {
+    }
 
     /**
      * Debug mode flag, used for turning on debug mode
@@ -58,8 +58,9 @@ public class Main {
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
         LOGGER.info("listOfTest: " + listOfTests);
-        try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
-            Repository repository = RepositoryFactory.fromGitRepo(url,branch);
+        try (TestOutputStream output = TestOutputStream.createTestOutputStream(
+                kafkaAddress)) {
+            Repository repository = RepositoryFactory.fromGitRepo(url, branch);
             Config config = repository.getConfig();
             repository.build(config.getBuildCommands());
             repository.test(listOfTests, output);

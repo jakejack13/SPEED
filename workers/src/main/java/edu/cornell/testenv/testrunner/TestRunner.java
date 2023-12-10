@@ -5,7 +5,8 @@ import edu.cornell.testenv.testcontext.TestEnvContext;
 /**
  * Runs the given Environment Context and Tracks Test Results
  */
-public interface TestRunner {
+@FunctionalInterface
+interface TestRunner {
 
     boolean runTest(TestEnvContext<String> context);
 

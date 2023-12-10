@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.Producer;
@@ -17,12 +18,13 @@ import org.apache.kafka.common.serialization.StringSerializer;
  * A class allowing the test runner to log its results with clients through a Kafka message bus
  */
 @Slf4j
-public class KafkaTestOutputStream implements TestOutputStream {
+@ToString
+class KafkaTestOutputStreamImpl implements TestOutputStream {
 
     /**
      * The Kafka producer for logging messages
      */
-    private final @NonNull Producer<String,String> producer;
+    private final @NonNull Producer<String, String> producer;
     /**
      * The topic to log Kafka messages to, which is the name of the container
      */
@@ -30,9 +32,10 @@ public class KafkaTestOutputStream implements TestOutputStream {
 
     /**
      * Creates a new TestOutputStream
+     *
      * @param kafkaAddress the address of the Kafka cluster
      */
-    public KafkaTestOutputStream(@NonNull String kafkaAddress) {
+    KafkaTestOutputStreamImpl(@NonNull String kafkaAddress) {
         //Assign topicName to hostname
         if (Main.DEBUG_MODE) {
             topicName = "localhost";
@@ -60,7 +63,8 @@ public class KafkaTestOutputStream implements TestOutputStream {
         properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
         //Reduce the no of requests less than 0
         properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "1");
-        //The buffer.memory controls the total amount of memory available to the producer for buffering.
+        //The buffer.memory controls the total amount of memory available to the producer for
+        // buffering.
         properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class.getName());
@@ -74,7 +78,7 @@ public class KafkaTestOutputStream implements TestOutputStream {
             @NonNull TestResult result) {
         LOGGER.info(testClassName + ":" + testMethodName + ";" + result);
         producer.send(new ProducerRecord<>(topicName,
-                    testClassName + ":" + testMethodName, result.toString()));
+                testClassName + ":" + testMethodName, result.toString()));
     }
 
     @Override

@@ -1,16 +1,17 @@
 package edu.cornell.testenv.testcontext;
 
-import java.util.ArrayList;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * Implements Test Environment Context Class
  * Uses the TestEnvContext to create the necessary context
  * needed to run JUnit Tests
  */
+@ToString
 public class JUnitTestContext implements TestEnvContext<String> {
 
-    List<String> classNames;
+    private final List<String> classNames;
 
     /**
      * Create The Test Environment Context to Run JUnit Tests

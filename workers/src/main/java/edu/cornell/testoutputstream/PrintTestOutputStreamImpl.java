@@ -5,7 +5,7 @@ import lombok.NonNull;
 /**
  * A class allowing the test runner to log its results with clients through a given output stream
  */
-public class PrintTestOutputStream implements TestOutputStream {
+class PrintTestOutputStreamImpl implements TestOutputStream {
 
     @Override
     public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,

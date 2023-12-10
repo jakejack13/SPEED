@@ -1,6 +1,7 @@
 package edu.cornell.testoutputstream;
 
 import java.io.Closeable;
+import lombok.NonNull;
 
 /**
  * An interface allowing the test runner to log its results with clients
@@ -24,4 +25,12 @@ public interface TestOutputStream extends Closeable {
      */
     void sendTestResult(String testClassName, String testMethodName, TestResult result);
 
+    /**
+     * Creates and returns a new TestOutputStream
+     * @param kafkaAddress the address of the Kafka message bus
+     * @return a new TestOutputStream
+     */
+    static @NonNull TestOutputStream createTestOutputStream(@NonNull String kafkaAddress) {
+        return new KafkaTestOutputStreamImpl(kafkaAddress);
+    }
 }

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.Cleanup;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -13,12 +14,18 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 
 /**
  * A factory class to create Projects from repositories and artifact storage
+ *
  * @author Jacob Kerr
  */
 @Slf4j
 public final class RepositoryFactory {
 
-    /** The directory to clone the workplace to */
+    private RepositoryFactory() {
+    }
+
+    /**
+     * The directory to clone the workplace to
+     */
     private static final @NonNull File WORKSPACE = generateWorkplace();
 
     private static @NonNull File generateWorkplace() {
@@ -33,9 +40,10 @@ public final class RepositoryFactory {
     }
 
     /**
-     * Clones a project from a git repository. Assumes you have already set up your git
-     * credentials if cloning from a private or otherwise protected repository
-     * @param url the url to clone the repo from
+     * Clones a project from a git repository. Assumes you have already set up your git credentials
+     * if cloning from a private or otherwise protected repository
+     *
+     * @param url    the url to clone the repo from
      * @param branch the branch to clone
      * @return a Project object representing the clone project
      * @throws GitAPIException when a problem arises with cloning the repository
@@ -43,7 +51,7 @@ public final class RepositoryFactory {
     public static @NonNull Repository fromGitRepo(@NonNull String url, @NonNull String branch)
             throws GitAPIException {
         String[] split = url.split("/");
-        String name = split[split.length-1].replaceAll(".git","");
+        String name = split[split.length - 1].replaceAll(".git", "");
         @Cleanup Git repo = Git.cloneRepository()
                 .setURI(url)
                 .setBranch(branch)
@@ -51,21 +59,32 @@ public final class RepositoryFactory {
                 .setDepth(1)
                 .setProgressMonitor(new GitProgressLog())
                 .call();
-            return new JUnit5RepositoryImpl(repo.getRepository().getDirectory().getParentFile());
+        return new JUnit5RepositoryImpl(repo.getRepository().getDirectory().getParentFile());
     }
 
     @Slf4j
+    @ToString
     private static final class GitProgressLog implements ProgressMonitor {
 
-        /** The total number of tasks to run */
+        /**
+         * The total number of tasks to run
+         */
         private int totalTasks;
-        /** The number of completed tasks */
+        /**
+         * The number of completed tasks
+         */
         private int currentTasks;
-        /** The name of the current task */
+        /**
+         * The name of the current task
+         */
         private @NonNull String currentTaskName;
-        /** The total number of work units to be done on the current task */
+        /**
+         * The total number of work units to be done on the current task
+         */
         private int totalWork;
-        /** The number of completed work units */
+        /**
+         * The number of completed work units
+         */
         private int currentWork;
 
         private GitProgressLog() {
@@ -104,9 +123,12 @@ public final class RepositoryFactory {
         }
 
         @Override
-        public boolean isCancelled() {return false;} // Should never be cancelled by user
+        public boolean isCancelled() {
+            return false;
+        } // Should never be cancelled by user
 
         @Override
-        public void showDuration(boolean enabled) { } // Do nothing
+        public void showDuration(boolean enabled) {
+        } // Do nothing
     }
 }

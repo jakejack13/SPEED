@@ -6,7 +6,7 @@ import lombok.NonNull;
 /**
  * A test consumer that simply prints the results of the tests
  */
-public class PrintTestConsumer extends TestConsumer {
+final class PrintTestConsumerImpl extends TestConsumer {
 
     /**
      * Creates a new TestConsumer with the specified number of test class methods
@@ -14,7 +14,7 @@ public class PrintTestConsumer extends TestConsumer {
      * @param testClassMethods a mapping from test class name to number of test methods in the test
      *                         class
      */
-    public PrintTestConsumer(@NonNull Map<String, Integer> testClassMethods) {
+    PrintTestConsumerImpl(@NonNull Map<String, Integer> testClassMethods) {
         super(testClassMethods);
     }
 
