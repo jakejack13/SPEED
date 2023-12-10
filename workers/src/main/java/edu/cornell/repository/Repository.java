@@ -1,6 +1,6 @@
 package edu.cornell.repository;
 
-import edu.cornell.testresultproducer.TestOutputStream;
+import edu.cornell.testoutputstream.TestOutputStream;
 import java.io.File;
 import java.util.List;
 import lombok.EqualsAndHashCode;

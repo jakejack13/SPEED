@@ -1,12 +1,11 @@
 package edu.cornell.repository;
 
-import edu.cornell.testresultproducer.TestOutputStream;
-import edu.cornell.testresultproducer.TestOutputStream.TestResult;
 import java.io.File;
 import java.util.List;
 import edu.cornell.testenv.testcontext.JUnitTestContext;
 import edu.cornell.testenv.testrunner.JUnit5TestRunner;
 import lombok.Data;
+import edu.cornell.testoutputstream.TestOutputStream;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
