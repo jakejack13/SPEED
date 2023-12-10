@@ -1,6 +1,7 @@
 package edu.cornell.repository;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import edu.cornell.testenv.testcontext.JUnitTestContext;
 import edu.cornell.testenv.testrunner.JUnit5TestRunner;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @ToString
 final class JUnit5RepositoryImpl extends Repository {
 
-    JUnit5RepositoryImpl(@NonNull File rootDir) {
+    JUnit5RepositoryImpl(@NonNull File rootDir) throws ConfigSyntaxException {
         super(rootDir);
     }
 

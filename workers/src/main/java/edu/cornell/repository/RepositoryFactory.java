@@ -41,7 +41,7 @@ public final class RepositoryFactory {
      * @throws GitAPIException when a problem arises with cloning the repository
      */
     public static @NonNull Repository fromGitRepo(@NonNull String url, @NonNull String branch)
-            throws GitAPIException {
+            throws GitAPIException, ConfigSyntaxException {
         String[] split = url.split("/");
         String name = split[split.length-1].replaceAll(".git","");
         @Cleanup Git repo = Git.cloneRepository()
