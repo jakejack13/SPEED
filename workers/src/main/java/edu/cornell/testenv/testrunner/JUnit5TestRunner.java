@@ -1,7 +1,6 @@
 package edu.cornell.testenv.testrunner;
 
 import edu.cornell.testenv.testcontext.TestEnvContext;
-import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -22,7 +21,7 @@ public class JUnit5TestRunner implements TestRunner {
      * @return boolean of whether all JUnit tests passed
      */
     @Override
-    public boolean runTest(TestEnvContext context) {
+    public boolean runTest(TestEnvContext<String> context) {
         try {
 
             List<String> classPaths = context.getTestClasses();

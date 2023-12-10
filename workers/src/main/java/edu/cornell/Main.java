@@ -3,8 +3,8 @@ package edu.cornell;
 import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
-import edu.cornell.testresultproducer.TestOutputStream;
-import edu.cornell.testresultproducer.TestOutputStreamFactory;
+import edu.cornell.testoutputstream.TestOutputStream;
+import edu.cornell.testoutputstream.TestOutputStreamFactory;
 import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
@@ -48,7 +48,7 @@ public class Main {
     private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     public static void main(String[] args) {
-        String url = System.getenv(ENV_REPO_BRANCH);
+        String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
         String tests = System.getenv(ENV_REPO_TESTS);
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);

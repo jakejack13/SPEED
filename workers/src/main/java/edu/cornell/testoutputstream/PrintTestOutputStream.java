@@ -1,4 +1,4 @@
-package edu.cornell.testresultproducer;
+package edu.cornell.testoutputstream;
 
 import lombok.NonNull;
 
