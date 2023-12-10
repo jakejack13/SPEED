@@ -17,7 +17,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
  * A class allowing the test runner to log its results with clients through a Kafka message bus
  */
 @Slf4j
-public class KafkaTestOutputStream implements TestOutputStream {
+class KafkaTestOutputStream implements TestOutputStream {
 
     /**
      * The Kafka producer for logging messages
@@ -32,7 +32,7 @@ public class KafkaTestOutputStream implements TestOutputStream {
      * Creates a new TestOutputStream
      * @param kafkaAddress the address of the Kafka cluster
      */
-    public KafkaTestOutputStream(@NonNull String kafkaAddress) {
+    KafkaTestOutputStream(@NonNull String kafkaAddress) {
         //Assign topicName to hostname
         if (Main.DEBUG_MODE) {
             topicName = "localhost";
@@ -70,11 +70,16 @@ public class KafkaTestOutputStream implements TestOutputStream {
     }
 
     @Override
-    public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
-            @NonNull TestResult result) {
-        LOGGER.info(testClassName + ":" + testMethodName + ";" + result);
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
+        LOGGER.info(testName + ":" + result);
         producer.send(new ProducerRecord<>(topicName,
-                    testClassName + ":" + testMethodName, result.toString()));
+                    testName, result.toString()));
+    }
+
+    @Override
+    public void done() {
+        producer.send(new ProducerRecord<>(topicName,
+                topicName, "DONE"));
     }
 
     @Override

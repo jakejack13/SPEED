@@ -4,7 +4,6 @@ import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
 import edu.cornell.testoutputstream.TestOutputStream;
-import edu.cornell.testoutputstream.TestOutputStreamFactory;
 import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
@@ -58,7 +57,7 @@ public class Main {
         }
         List<String> listOfTests = Arrays.asList(tests.split(","));
         LOGGER.info("listOfTest: " + listOfTests);
-        try (TestOutputStream output = TestOutputStreamFactory.createTestOutputStream(kafkaAddress)) {
+        try (TestOutputStream output = TestOutputStream.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
             repository.build(config.getBuildCommands());

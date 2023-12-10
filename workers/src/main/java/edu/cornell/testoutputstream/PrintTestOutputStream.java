@@ -5,12 +5,16 @@ import lombok.NonNull;
 /**
  * A class allowing the test runner to log its results with clients through a given output stream
  */
-public class PrintTestOutputStream implements TestOutputStream {
+class PrintTestOutputStream implements TestOutputStream {
 
     @Override
-    public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
-            @NonNull TestResult result) {
-        System.out.println(testClassName + ":" + testMethodName + "; " + result);
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
+        System.out.println(testName + ":" + result);
+    }
+
+    @Override
+    public void done() {
+        // No-op
     }
 
     @Override

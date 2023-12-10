@@ -1,6 +1,11 @@
 package edu.cornell.testenv.testrunner;
 
 import edu.cornell.testenv.testcontext.TestEnvContext;
+import edu.cornell.testoutputstream.TestOutputStream;
+import edu.cornell.testoutputstream.TestOutputStream.TestResult;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -13,7 +18,32 @@ import java.util.List;
 /**
  * Runs the given Environment Context and Tracks JUnit Test Results
  */
+@Slf4j
 public class JUnit5TestRunner implements TestRunner {
+
+    @ToString
+    private static class OutputTestExecutionListener implements TestExecutionListener {
+
+        private final TestOutputStream outputStream;
+
+        OutputTestExecutionListener(TestOutputStream outputStream) {
+            this.outputStream = outputStream;
+        }
+
+        @Override
+        public void executionFinished(TestIdentifier testIdentifier,
+                TestExecutionResult testExecutionResult) {
+            if (!testIdentifier.isTest()) {
+                return;
+            }
+            TestResult result = switch (testExecutionResult.getStatus()) {
+                case ABORTED -> TestResult.EXCEPTION;
+                case FAILED -> TestResult.FAILURE;
+                case SUCCESSFUL -> TestResult.SUCCESS;
+            };
+            outputStream.sendTestResult(testIdentifier.getDisplayName(), result);
+        }
+    }
 
     /**
      * Main runner that takes in the context and returns the result of JUnit Tests
@@ -21,7 +51,7 @@ public class JUnit5TestRunner implements TestRunner {
      * @return boolean of whether all JUnit tests passed
      */
     @Override
-    public boolean runTest(TestEnvContext<String> context) {
+    public boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream) {
         try {
 
             List<String> classPaths = context.getTestClasses();
@@ -29,39 +59,25 @@ public class JUnit5TestRunner implements TestRunner {
             // Setup Launcher to find and builder test map for JUnit
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(classPaths.stream().map(
-                            path -> DiscoverySelectors.selectClass(path)
+                            DiscoverySelectors::selectClass
                     ).toList()).build();
 
-            // Test Result Listener
-            SummaryGeneratingListener listener = new SummaryGeneratingListener();
+            // Test Result Listeners
+            SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+            OutputTestExecutionListener outputListener =
+                    new OutputTestExecutionListener(outputStream);
 
             try (LauncherSession session = LauncherFactory.openSession()) {
                 Launcher launcher = session.getLauncher();
-
-                launcher.registerTestExecutionListeners(listener);
-
+                launcher.registerTestExecutionListeners(summaryListener, outputListener);
                 TestPlan testPlan = launcher.discover(request);
-
                 launcher.execute(testPlan);
             }
 
-            TestExecutionSummary summary = listener.getSummary();
-
-            //TODO: Placeholder Logging Until Logging Object Properly Set
-            System.out.println("Test Execution Summary:");
-            System.out.println("Total Tests: " + summary.getTestsFoundCount());
-            System.out.println("Successful Tests: " + summary.getTestsSucceededCount());
-            System.out.println("Failed Tests: " + summary.getTestsFailedCount());
-
-            // Print specific information about failures
-            System.out.println("\nDetails of Failed Tests:");
-            summary.getFailures().forEach(failure -> {
-                System.out.println("Test: " + failure.getTestIdentifier().getDisplayName());
-            });
-
+            TestExecutionSummary summary = summaryListener.getSummary();
             return summary.getFailures().isEmpty();
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOGGER.error(t.getLocalizedMessage());
             return false; // Return false in case of any exceptions.
         }
     }
