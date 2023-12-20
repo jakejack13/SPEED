@@ -49,9 +49,9 @@ public class TestJUnit5TestRunner {
         assertFalse(result);
     }
 
-    @Test
+    // @Test
     public void testJUnitRunnerExternal() {
-        String path_to_speed_test = "/Users/owenralbovsky/Projects/SPEED-TESTER";
+        String path_to_speed_test = "PATH_TO_SPEED_TESTER";
 
         JUnitTestContext context = new JUnitTestContext( new ArrayList<>(
                 List.of(
