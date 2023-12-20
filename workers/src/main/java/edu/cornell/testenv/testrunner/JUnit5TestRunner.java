@@ -1,5 +1,6 @@
 package edu.cornell.testenv.testrunner;
 
+import edu.cornell.Main;
 import edu.cornell.repository.Repository;
 import edu.cornell.testenv.testcontext.TestEnvContext;
 import edu.cornell.testoutputstream.TestOutputStream;
@@ -7,6 +8,7 @@ import edu.cornell.testoutputstream.TestOutputStream.TestResult;
 import java.io.File;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.*;
@@ -15,7 +17,10 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Runs the given Environment Context and Tracks JUnit Test Results
@@ -23,18 +28,11 @@ import java.util.List;
 @Slf4j
 public class JUnit5TestRunner implements TestRunner {
 
-    @ToString
-    private static class OutputTestExecutionListener implements TestExecutionListener {
+    private record OutputTestExecutionListener(TestOutputStream outputStream) implements TestExecutionListener {
 
-        private final TestOutputStream outputStream;
-
-        OutputTestExecutionListener(TestOutputStream outputStream) {
-            this.outputStream = outputStream;
-        }
-
-        @Override
+    @Override
         public void executionFinished(TestIdentifier testIdentifier,
-                TestExecutionResult testExecutionResult) {
+                                      TestExecutionResult testExecutionResult) {
             if (!testIdentifier.isTest()) {
                 return;
             }
@@ -58,12 +56,27 @@ public class JUnit5TestRunner implements TestRunner {
 
             List<String> classPaths = context.getTestClasses();
 
+            // Convert classPaths to absolute paths
+            List<Path> absolutePaths = classPaths.stream()
+                    .map(path ->
+                            Paths.get(String.valueOf(rootDir), path + ".java")
+                    )
+                    .toList();
+
             // Setup Launcher to find and builder test map for JUnit
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                    .selectors(classPaths.stream().map(
-                            DiscoverySelectors::selectClass
+                    .selectors(absolutePaths.stream().map(
+                            path -> DiscoverySelectors.selectFile(path.toFile())
                     ).toList())
                     .build();
+
+            if(Main.DEBUG_MODE) {
+                LOGGER.info("DEBUG: Printing Selectors");
+                List<DiscoverySelector> selectors = request.getSelectorsByType(DiscoverySelector.class);
+                for (DiscoverySelector selector : selectors) {
+                    LOGGER.info("DEBUG: Selector: {}", selector);
+                }
+            }
 
             // Test Result Listeners
             SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
