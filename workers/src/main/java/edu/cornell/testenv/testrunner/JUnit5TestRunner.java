@@ -2,6 +2,7 @@ package edu.cornell.testenv.testrunner;
 
 import edu.cornell.Main;
 import edu.cornell.repository.Repository;
+import edu.cornell.testenv.testcontext.JUnitContextClassLoader;
 import edu.cornell.testenv.testcontext.TestEnvContext;
 import edu.cornell.testoutputstream.TestOutputStream;
 import edu.cornell.testoutputstream.TestOutputStream.TestResult;
@@ -10,6 +11,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -17,9 +19,11 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,11 +42,15 @@ public class JUnit5TestRunner implements TestRunner {
         }
 
         @Override
+        public void executionSkipped(TestIdentifier testIdentifier, String reason) {
+            System.out.println(testIdentifier.getDisplayName() + " skipped for " + reason);
+        }
+
+        @Override
         public void executionFinished(TestIdentifier testIdentifier,
                                       TestExecutionResult testExecutionResult) {
-            if (!testIdentifier.isTest()) {
-                return;
-            }
+            if(!testIdentifier.isTest()) { return; }
+
             TestResult result = switch (testExecutionResult.getStatus()) {
                 case ABORTED -> TestResult.EXCEPTION;
                 case FAILED -> TestResult.FAILURE;
@@ -52,6 +60,40 @@ public class JUnit5TestRunner implements TestRunner {
         }
     }
 
+    private static class CustomTestExecutionListener implements TestExecutionListener {
+        @Override
+        public void testPlanExecutionStarted(TestPlan testPlan) {
+            LOGGER.info("Test plan execution started");
+        }
+
+        @Override
+        public void testPlanExecutionFinished(TestPlan testPlan) {
+            LOGGER.info("Test plan execution finished");
+        }
+
+        @Override
+        public void dynamicTestRegistered(TestIdentifier testIdentifier) {
+            LOGGER.info("Dynamic test registered: {}", testIdentifier);
+        }
+
+        @Override
+        public void executionSkipped(TestIdentifier testIdentifier, String reason) {
+            LOGGER.info("Execution skipped for test {}: {}", testIdentifier, reason);
+        }
+
+        @Override
+        public void executionStarted(TestIdentifier testIdentifier) {
+            LOGGER.info("Execution started for test: {}", testIdentifier);
+        }
+
+        @Override
+        public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+            LOGGER.info("Execution finished for test {}: {}", testIdentifier, testExecutionResult);
+        }
+    }
+
+
+
     /**
      * Main runner that takes in the context and returns the result of JUnit Tests
      * @param context - The environment needed to run the tests
@@ -60,49 +102,94 @@ public class JUnit5TestRunner implements TestRunner {
     @Override
     public boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream, File rootDir) {
         try {
-
-            List<String> classPaths = context.getTestClasses();
-
-            // Convert classPaths to absolute paths
-            List<Path> absolutePaths = classPaths.stream()
-                    .map(path ->
-                            Paths.get(String.valueOf(rootDir), path + ".java")
-                    )
-                    .toList();
-
-            // Setup Launcher to find and builder test map for JUnit
-            LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                    .selectors(absolutePaths.stream().map(
-                            path -> DiscoverySelectors.selectFile(path.toFile())
-                    ).toList())
-                    .build();
-
-            if(Main.DEBUG_MODE) {
-                LOGGER.debug("DEBUG: Printing Selectors");
-                List<DiscoverySelector> selectors = request.getSelectorsByType(DiscoverySelector.class);
-                for (DiscoverySelector selector : selectors) {
-                    LOGGER.debug("DEBUG: Selector: {}", selector);
-                }
-            }
-
-            // Test Result Listeners
-            SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
-            OutputTestExecutionListener outputListener =
-                    new OutputTestExecutionListener(outputStream);
+            String baseRootPath = rootDir.toString() + "/build/classes/java/".replaceAll("/", File.separator);
+            String baseTestRootPath = baseRootPath + "test" + File.separator;
 
             try (LauncherSession session = LauncherFactory.openSession()) {
                 Launcher launcher = session.getLauncher();
-                launcher.registerTestExecutionListeners(summaryListener, outputListener);
-                TestPlan testPlan = launcher.discover(request);
-                launcher.execute(testPlan);
+                SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+                launcher.registerTestExecutionListeners(summaryListener, new CustomTestExecutionListener());
+
+                JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+
+                List<DiscoverySelector> selectors = new ArrayList<>();
+
+                for (String classPath : context.getTestClasses()) {
+                    List<String> splitString = Arrays.asList(classPath.split("\\."));
+                    String classRootPath = String.join(File.separator, splitString) + ".class";
+                    String pathToTestClass = baseTestRootPath + classRootPath;
+
+                    selectors.add(DiscoverySelectors.selectClass(classPath));
+                }
+
+                LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                        .selectors(selectors)
+                        .build();
+
+                launcher.execute(request);
+
+                TestExecutionSummary summary = summaryListener.getSummary();
+                LOGGER.info("Number of Tests Run: {}", summary.getTestsFoundCount());
+                LOGGER.info("Number of Tests Successful: {}", summary.getTestsSucceededCount());
+                LOGGER.info("Number of Tests Failed: {}", summary.getTestsFailedCount());
+                LOGGER.info("Number of Tests Skipped: {}", summary.getTestsSkippedCount());
+
+                // Return true if all tests passed
+                return summary.getTestsFailedCount() == 0 && summary.getTestsSkippedCount() == 0;
             }
 
-            TestExecutionSummary summary = summaryListener.getSummary();
-            return summary.getFailures().isEmpty();
-        } catch (Throwable t) {
-            LOGGER.error("Test execution failed", t);
-            return false; // Return false in case of any exceptions.
+        } catch (Exception e) {
+            LOGGER.error("Test execution failed", e);
+            return false;
         }
     }
+
+    private void executeTest(String classPath, Class<?> clazz, Launcher launcher) {
+//
+    }
+
+//    // Setup Launcher to find and builder test map for JUnit
+//    LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+//            .selectors(selectors)
+//            .build();
+//
+//
+//            if(Main.DEBUG_MODE) {
+//        LOGGER.info("DEBUG: Printing Selectors");
+//        List<DiscoverySelector> selectorsList = request.getSelectorsByType(DiscoverySelector.class);
+//        for (DiscoverySelector selector : selectorsList) {
+//            LOGGER.info("DEBUG: Selector: {}", selector);
+//        }
+//    }
+//
+//    // Test Result Listeners
+//    SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+//    OutputTestExecutionListener outputListener =
+//            new OutputTestExecutionListener(outputStream);
+//
+//            try (LauncherSession session = LauncherFactory.openSession()) {
+//        Launcher launcher = session.getLauncher();
+//        launcher.registerTestExecutionListeners(summaryListener, new CustomTestExecutionListener());
+//        TestPlan testPlan = launcher.discover(request);
+//
+//        testPlan.getRoots().forEach(root -> {
+//            LOGGER.info("Root: {}", root.getUniqueId());
+//            LOGGER.info("Children: {}", testPlan.getChildren(root.getUniqueId()));
+//            testPlan.getChildren(root.getUniqueId()).forEach(testIdentifier -> {
+//                LOGGER.info("Test Identifier: {}", testIdentifier);
+//            });
+//        });
+//
+//        launcher.execute(testPlan);
+//    }
+//
+//    TestExecutionSummary summary = summaryListener.getSummary();
+//
+//    // Print information about the run tests
+//            LOGGER.info("Number of Tests Run: {}", summary.getTestsFoundCount());
+//            LOGGER.info("Number of Tests Successful: {}", summary.getTestsSucceededCount());
+//            LOGGER.info("Number of Tests Failed: {}", summary.getTestsFailedCount());
+//            LOGGER.info("Number of Tests Skipped: {}", summary.getTestsSkippedCount());
+
 
 }

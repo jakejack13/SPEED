@@ -5,6 +5,7 @@ import edu.cornell.testoutputstream.TestOutputStream;
 import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +33,35 @@ public class TestJUnit5TestRunner {
     }
 
     @Test
-    public void testJUnitRunner() {
+    public void testJUnitRunnerInternal() {
 
-        JUnitTestContext context = new JUnitTestContext( new ArrayList<>(List.of("edu.cornell.testenv.testclasses.TestClassJUnit")));
+        String currentWorkingDirectory = System.getProperty("user.dir");
+
+        JUnitTestContext context = new JUnitTestContext( new ArrayList<>(
+                List.of(
+                        "edu.cornell.testenv.testclasses.JUnitClassRunnerTest"
+                )
+        ));
 
         JUnit5TestRunner runner = new JUnit5TestRunner();
-        boolean result = runner.runTest(context, new NoopTestOutputStream(), null);
+        boolean result = runner.runTest(context, new NoopTestOutputStream(), new File(currentWorkingDirectory));
+        System.out.println(currentWorkingDirectory);
+        assertFalse(result);
+    }
 
+    @Test
+    public void testJUnitRunnerExternal() {
+        String path_to_speed_test = "/Users/owenralbovsky/Projects/SPEED-TESTER";
+
+        JUnitTestContext context = new JUnitTestContext( new ArrayList<>(
+                List.of(
+                        "org.example.CalcTest"
+                )
+        ));
+
+        JUnit5TestRunner runner = new JUnit5TestRunner();
+        boolean result = runner.runTest(context, new NoopTestOutputStream(), new File(path_to_speed_test));
+        System.out.println(path_to_speed_test);
         assertFalse(result);
     }
 
