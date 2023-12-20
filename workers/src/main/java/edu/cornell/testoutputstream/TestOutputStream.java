@@ -1,7 +1,8 @@
 package edu.cornell.testoutputstream;
 
-import java.io.Closeable;
 import lombok.NonNull;
+
+import java.io.Closeable;
 
 /**
  * An interface allowing the test runner to log its results with clients

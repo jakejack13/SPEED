@@ -1,17 +1,18 @@
 package edu.cornell.testoutputstream;
 
 import edu.cornell.Main;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import java.util.Properties;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 /**
  * A class allowing the test runner to log its results with clients through a Kafka message bus

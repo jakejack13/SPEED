@@ -4,10 +4,11 @@ import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryFactory;
 import edu.cornell.testoutputstream.TestOutputStream;
-import java.util.Arrays;
-import java.util.List;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The main worker application

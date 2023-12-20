@@ -1,7 +1,5 @@
 package edu.cornell.testenv.testcontext;
 
-import edu.cornell.repository.Repository;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,8 +13,8 @@ public class JUnitTestContext implements TestEnvContext<String> {
 
     /**
      * Create The Test Environment Context to Run JUnit Tests
-     * @param classNames - List of String paths to JUnit classes to run
-     * @param repo the repository on disk
+     * @param classNames - List of String paths to JUnit classes to run.
+     * @Precondition: classNames are in the format "org.example.Test"
      */
     public JUnitTestContext(List<String> classNames) {
         this.classNames = classNames;

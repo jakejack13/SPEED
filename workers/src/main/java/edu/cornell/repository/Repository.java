@@ -1,13 +1,14 @@
 package edu.cornell.repository;
 
-import java.io.IOException;
 import edu.cornell.testoutputstream.TestOutputStream;
-import java.io.File;
-import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * A representation of a Java project to build and test
