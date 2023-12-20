@@ -28,9 +28,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JUnit5TestRunner implements TestRunner {
 
-    private record OutputTestExecutionListener(TestOutputStream outputStream) implements TestExecutionListener {
+    @ToString
+    private static class OutputTestExecutionListener implements TestExecutionListener {
 
-    @Override
+        private final TestOutputStream outputStream;
+
+        OutputTestExecutionListener(TestOutputStream outputStream) {
+            this.outputStream = outputStream;
+        }
+
+        @Override
         public void executionFinished(TestIdentifier testIdentifier,
                                       TestExecutionResult testExecutionResult) {
             if (!testIdentifier.isTest()) {
@@ -71,10 +78,10 @@ public class JUnit5TestRunner implements TestRunner {
                     .build();
 
             if(Main.DEBUG_MODE) {
-                LOGGER.info("DEBUG: Printing Selectors");
+                LOGGER.debug("DEBUG: Printing Selectors");
                 List<DiscoverySelector> selectors = request.getSelectorsByType(DiscoverySelector.class);
                 for (DiscoverySelector selector : selectors) {
-                    LOGGER.info("DEBUG: Selector: {}", selector);
+                    LOGGER.debug("DEBUG: Selector: {}", selector);
                 }
             }
 
