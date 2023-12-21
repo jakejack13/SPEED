@@ -27,7 +27,7 @@ public final class RepositoryFactory {
 
     private static @NonNull File generateWorkplace() {
         try {
-            return Files.createTempDirectory("tmpDirPrefix_").toFile();
+            return Files.createTempDirectory("speed_").toFile();
         } catch (IOException e) {
             LOGGER.error("Unable to make cloning directory", e);
             System.exit(1);
