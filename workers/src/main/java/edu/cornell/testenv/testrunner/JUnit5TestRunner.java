@@ -32,7 +32,7 @@ public class JUnit5TestRunner implements TestRunner {
     @Override
     public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File rootDir) {
         try {
-            //TODO: Assumption is class files live in /build/classes/java/ likely needing a resolve
+            //Assumption is class files live in /build/classes/java/
             String baseRootPath = rootDir.toString() + "/build/classes/java/".replaceAll("/", File.separator);
 
             // Open a Launcher session
