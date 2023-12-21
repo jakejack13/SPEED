@@ -12,6 +12,8 @@ import lombok.NonNull;
  */
 public abstract class TestConsumer {
 
+    private final String DONE = "DONE";
+
     /**
      * An enum representing the possible results of a test
      */
@@ -47,7 +49,7 @@ public abstract class TestConsumer {
      * @param serializedValue the value in the Kafka message
      */
     public void processTestOutput(String serializedKey, String serializedValue) {
-        if (serializedValue.equals("DONE")) {
+        if (serializedValue.equals(DONE)) {
             workersSoFar.add(serializedKey);
             return;
         }
