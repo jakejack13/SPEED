@@ -17,5 +17,5 @@ public interface TestRunner {
      * @param classPath the directory to find all of the test classes from
      * @return true if all tests passed, false otherwise
      */
-    boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream, File classPath);
+    boolean runTest(TestEnvContext context, TestOutputStream outputStream, File classPath);
 }

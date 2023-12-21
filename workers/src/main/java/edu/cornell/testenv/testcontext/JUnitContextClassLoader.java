@@ -18,13 +18,12 @@ public class JUnitContextClassLoader extends ClassLoader {
      * @Precondition: Both the test .class files and its dependencies (as a transitive closure)
      * are in the given directoryPath.
      */
-    public static void loadClassesFromDirectory(String directoryPath) {
+    public static void loadClassesFromDirectory(String directoryPath) throws PathIsNotValidException {
         File directory = new File(directoryPath);
 
         // Check if the directory is valid
         if (!directory.exists() || !directory.isDirectory()) {
-            System.out.println("Invalid directory: " + directoryPath);
-            return;
+            throw new PathIsNotValidException("The given path " + directory.toPath() + " is invalid (missing or not a directory).", null);
         }
 
         List<File> subdirectories = getSubdirectories(directory);

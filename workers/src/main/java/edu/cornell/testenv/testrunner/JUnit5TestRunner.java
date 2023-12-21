@@ -30,7 +30,7 @@ public class JUnit5TestRunner implements TestRunner {
      * @return boolean of whether all JUnit tests passed
      */
     @Override
-    public boolean runTest(TestEnvContext<String> context, TestOutputStream outputStream, File rootDir) {
+    public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File rootDir) {
         try {
             //TODO: Assumption is class files live in /build/classes/java/ likely needing a resolve
             String baseRootPath = rootDir.toString() + "/build/classes/java/".replaceAll("/", File.separator);
