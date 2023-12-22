@@ -1,23 +1,24 @@
 package edu.cornell.testoutputstream;
 
 import edu.cornell.Main;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import java.util.Properties;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 /**
  * A class allowing the test runner to log its results with clients through a Kafka message bus
  */
 @Slf4j
-public class KafkaTestOutputStream implements TestOutputStream {
+class KafkaTestOutputStream implements TestOutputStream {
 
     /**
      * The Kafka producer for logging messages
@@ -32,7 +33,7 @@ public class KafkaTestOutputStream implements TestOutputStream {
      * Creates a new TestOutputStream
      * @param kafkaAddress the address of the Kafka cluster
      */
-    public KafkaTestOutputStream(@NonNull String kafkaAddress) {
+    KafkaTestOutputStream(@NonNull String kafkaAddress) {
         //Assign topicName to hostname
         if (Main.DEBUG_MODE) {
             topicName = "localhost";
@@ -43,7 +44,7 @@ public class KafkaTestOutputStream implements TestOutputStream {
                 topicName = inputStream.readLine();
             } catch (IOException e) {
                 topicName = "error";
-                LOGGER.error("Error getting hostname from container");
+                LOGGER.error("Error getting hostname from container", e);
                 System.exit(1);
             }
         }
@@ -70,11 +71,16 @@ public class KafkaTestOutputStream implements TestOutputStream {
     }
 
     @Override
-    public void sendTestResult(@NonNull String testClassName, @NonNull String testMethodName,
-            @NonNull TestResult result) {
-        LOGGER.info(testClassName + ":" + testMethodName + ";" + result);
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
+        LOGGER.info(testName + ":" + result);
         producer.send(new ProducerRecord<>(topicName,
-                    testClassName + ":" + testMethodName, result.toString()));
+                    testName, result.toString()));
+    }
+
+    @Override
+    public void done() {
+        producer.send(new ProducerRecord<>(topicName,
+                topicName, "DONE"));
     }
 
     @Override

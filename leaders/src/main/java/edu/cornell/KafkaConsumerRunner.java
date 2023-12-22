@@ -2,8 +2,8 @@ package edu.cornell;
 
 import edu.cornell.testconsumer.TestConsumer;
 import java.time.Duration;
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -32,7 +32,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
      * @param workerIds the list of workers to subscribe to on the message bus
      * @param testConsumer the test consumer to send test results to
      */
-    public KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull List<String> workerIds,
+    public KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull Set<String> workerIds,
             @NonNull TestConsumer testConsumer) {
 
         this.testConsumer = testConsumer;

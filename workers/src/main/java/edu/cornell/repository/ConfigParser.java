@@ -1,12 +1,13 @@
 package edu.cornell.repository;
 
+import lombok.NonNull;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import lombok.NonNull;
 
 /**
  * Parses the config file of the repository.

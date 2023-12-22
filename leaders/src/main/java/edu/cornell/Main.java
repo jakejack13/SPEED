@@ -4,6 +4,7 @@ import edu.cornell.testconsumer.PrintTestConsumer;
 import edu.cornell.testconsumer.TestConsumer;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,19 +49,18 @@ public class Main {
         }
         // TODO: Find tests, create workers, assign tests to workers
 
-        List<String> workerIds;
+        Set<String> workerIds;
         if (DEBUG_MODE) {
-             workerIds = List.of("localhost");
+             workerIds = Set.of("localhost");
         } else {
-            workerIds = List.of(); // FIXME: Replace
+            workerIds = Set.of(); // FIXME: Replace
         }
-        Map<String, Integer> testMethods = Map.of(); // FIXME: Replace
-        TestConsumer testConsumer = new PrintTestConsumer(testMethods);
+        TestConsumer testConsumer = new PrintTestConsumer(workerIds);
         try (KafkaConsumerRunner consumer =
                 new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)) {
             consumer.run();
         } catch (Exception e) {
-            LOGGER.error(e.getLocalizedMessage());
+            LOGGER.error("Leader failed", e);
             System.exit(1);
         }
     }

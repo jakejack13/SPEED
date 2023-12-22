@@ -1,8 +1,10 @@
 package edu.cornell.testconsumer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import lombok.NonNull;
 
 /**
@@ -10,45 +12,35 @@ import lombok.NonNull;
  */
 public abstract class TestConsumer {
 
+    private final String DONE = "DONE";
+
     /**
      * An enum representing the possible results of a test
      */
-    enum TestResult {
+    protected enum TestResult {
         SUCCESS,
         FAILURE,
         EXCEPTION
     }
 
     /**
-     * A record representing the result of executing a test method
-     * @param testClass the name of the test class
-     * @param testMethod the name of the test method inside the test class
-     * @param result the result of the test
+     * The set of all worker ids
      */
-    public record TestResultTuple(@NonNull String testClass, @NonNull String testMethod,
-                                  @NonNull TestResult result) { }
+    private final @NonNull Set<String> workerIds;
 
     /**
-     * A mapping from test class name to number of test methods in the test class
+     * The set of all workers who have returned results so far
      */
-    private final @NonNull Map<String, Integer> testClassMethods;
-
-    /**
-     * A mapping from test class name to number of test methods tested so far the test class
-     */
-    private final @NonNull Map<String, Integer> methodsTested;
+    private final @NonNull Set<String> workersSoFar;
 
     /**
      * Creates a new TestConsumer with the specified number of test class methods
-     * @param testClassMethods a mapping from test class name to number of test methods
-     *                         in the test class
+     * @param workerIds the set of all worker ids
      */
-    protected TestConsumer(@NonNull Map<String, Integer> testClassMethods) {
-        this.testClassMethods = testClassMethods;
-        methodsTested = new HashMap<>();
-        for (String testClass : testClassMethods.keySet()) {
-            methodsTested.put(testClass, 0);
-        }
+    protected TestConsumer(@NonNull Set<String> workerIds) {
+        this.workerIds = workerIds;
+        workersSoFar = new HashSet<>();
+
     }
 
     /**
@@ -57,28 +49,29 @@ public abstract class TestConsumer {
      * @param serializedValue the value in the Kafka message
      */
     public void processTestOutput(String serializedKey, String serializedValue) {
-        String[] splitKey = serializedKey.split(":");
-        String testClass = splitKey[0];
-        String testMethod = splitKey[1];
-        TestResult result = TestResult.valueOf(serializedValue);
-        methodsTested.put(testClass, methodsTested.get(testClass)+1);
+        if (serializedValue.equals(DONE)) {
+            workersSoFar.add(serializedKey);
+            return;
+        }
 
-        displayTestResult(new TestResultTuple(testClass, testMethod, result));
+        String testName = serializedKey;
+        TestResult result = TestResult.valueOf(serializedValue);
+
+        displayTestResult(testName, result);
     }
 
     /**
      * Displays the test result via this class' specific route
+     * @param testName the name of the test to display
      * @param result the result to display
      */
-    protected abstract void displayTestResult(TestResultTuple result);
+    protected abstract void displayTestResult(String testName, TestResult result);
 
     /**
      * Returns whether all test methods have been executed
      * @return true if all test methods have been executed, false otherwise
      */
     public boolean isDone() {
-        return testClassMethods.keySet().stream().allMatch(
-                s -> Objects.equals(testClassMethods.get(s),
-                        methodsTested.get(s)));
+        return workersSoFar.equals(workerIds);
     }
 }

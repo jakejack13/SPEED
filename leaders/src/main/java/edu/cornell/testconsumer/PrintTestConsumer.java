@@ -1,6 +1,7 @@
 package edu.cornell.testconsumer;
 
 import java.util.Map;
+import java.util.Set;
 import lombok.NonNull;
 
 /**
@@ -9,17 +10,16 @@ import lombok.NonNull;
 public class PrintTestConsumer extends TestConsumer {
 
     /**
-     * Creates a new TestConsumer with the specified number of test class methods
+     * Creates a new PrintTestConsumer with the specified number of test class methods
      *
-     * @param testClassMethods a mapping from test class name to number of test methods in the test
-     *                         class
+     * @param workerIds the set of all worker ids
      */
-    public PrintTestConsumer(@NonNull Map<String, Integer> testClassMethods) {
-        super(testClassMethods);
+    public PrintTestConsumer(@NonNull Set<String> workerIds) {
+        super(workerIds);
     }
 
     @Override
-    protected void displayTestResult(TestResultTuple result) {
-        System.out.println(result);
+    protected void displayTestResult(String testName, TestResult testResult) {
+        System.out.println(testName + ":" + testResult);
     }
 }

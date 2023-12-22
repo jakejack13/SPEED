@@ -1,15 +1,16 @@
 package edu.cornell.repository;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ProgressMonitor;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * A factory class to create Projects from repositories and artifact storage
@@ -21,12 +22,14 @@ public final class RepositoryFactory {
     /** The directory to clone the workplace to */
     private static final @NonNull File WORKSPACE = generateWorkplace();
 
+    private RepositoryFactory() {
+    }
+
     private static @NonNull File generateWorkplace() {
         try {
-            return Files.createTempDirectory("tmpDirPrefix").toFile();
+            return Files.createTempDirectory("speed_").toFile();
         } catch (IOException e) {
-            LOGGER.error("Unable to make cloning directory");
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Unable to make cloning directory", e);
             System.exit(1);
             return null; // Unreachable statement
         }
@@ -41,17 +44,23 @@ public final class RepositoryFactory {
      * @throws GitAPIException when a problem arises with cloning the repository
      */
     public static @NonNull Repository fromGitRepo(@NonNull String url, @NonNull String branch)
-            throws GitAPIException, ConfigSyntaxException {
-        String[] split = url.split("/");
-        String name = split[split.length-1].replaceAll(".git","");
-        @Cleanup Git repo = Git.cloneRepository()
-                .setURI(url)
-                .setBranch(branch)
-                .setDirectory(Paths.get(WORKSPACE.getAbsolutePath() + name).toFile())
-                .setDepth(1)
-                .setProgressMonitor(new GitProgressLog())
-                .call();
-            return new JUnit5RepositoryImpl(repo.getRepository().getDirectory().getParentFile());
+            throws RepositoryCloneException {
+        try {
+            String[] split = url.split("/");
+            String name = split[split.length - 1].replaceAll(".git", "");
+            File topDir = Paths.get(WORKSPACE.getAbsolutePath() + name).toFile();
+            @Cleanup Git repo = Git.cloneRepository()
+                    .setURI(url)
+                    .setBranch(branch)
+                    .setDirectory(topDir)
+                    .setDepth(1)
+                    .setProgressMonitor(new GitProgressLog())
+                    .call();
+            return new JUnit5RepositoryImpl(topDir);
+        } catch (GitAPIException | ConfigSyntaxException e) {
+            LOGGER.error("Error while cloning repository " + url, e);
+            throw new RepositoryCloneException("Error while cloning repository " + url, e);
+        }
     }
 
     @Slf4j

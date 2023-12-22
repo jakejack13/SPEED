@@ -1,10 +1,11 @@
 package edu.cornell.repository;
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An object representing the SPEED config file in the repository
@@ -24,7 +25,7 @@ public class Config {
         try {
             parser = new ConfigParser(Path.of(configFilePath));
         } catch (IOException e) {
-            LOGGER.error("Error reading config file from disk: " + e.getLocalizedMessage());
+            LOGGER.error("Error reading config file from disk", e);
             System.exit(1);
         }
     }
