@@ -7,10 +7,10 @@ import lombok.NonNull;
 /**
  * A test consumer that simply prints the results of the tests
  */
-public class PrintTestConsumer extends TestConsumer {
+class PrintTestConsumer extends TestConsumer {
 
     /**
-     * Creates a new PrintTestConsumer with the specified number of test class methods
+     * Creates a new PrintTestConsumer for the specified workers
      *
      * @param workerIds the set of all worker ids
      */

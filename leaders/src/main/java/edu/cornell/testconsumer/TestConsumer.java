@@ -12,7 +12,16 @@ import lombok.NonNull;
  */
 public abstract class TestConsumer {
 
-    private final String DONE = "DONE";
+    /**
+     * Creates a new TestConsumer for the specified workers
+     * @param workerIds the ids of the workers to log test results with
+     * @return a new TestConsumer object
+     */
+    public static @NonNull TestConsumer createTestConsumer(Set<String> workerIds) {
+        return new PrintTestConsumer(workerIds);
+    }
+
+    private final @NonNull String DONE = "DONE";
 
     /**
      * An enum representing the possible results of a test

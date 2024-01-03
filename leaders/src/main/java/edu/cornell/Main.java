@@ -1,9 +1,7 @@
 package edu.cornell;
 
-import edu.cornell.testconsumer.PrintTestConsumer;
 import edu.cornell.testconsumer.TestConsumer;
-import java.util.List;
-import java.util.Map;
+import edu.cornell.worker.Worker;
 import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -21,23 +19,29 @@ public class Main {
     /**
      * Debug mode flag, used for turning on debug mode
      */
-    public static final boolean DEBUG_MODE = System.getProperty("speed.debug") != null &&
-            "true".equalsIgnoreCase(System.getProperty("speed.debug"));
+    public static final boolean DEBUG_MODE = System.getenv("speed.debug") != null &&
+            "true".equalsIgnoreCase(System.getenv("speed.debug"));
 
     /**
      * The name of the REPO_URL environment variable
      */
-    private static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
+    public static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
 
     /**
      * The name of the REPO_BRANCH environment variable
      */
-    private static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
+    public static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
+
+    /**
+     * The name of the REPO_TESTS environment variable.
+     * NOTE: Only used for worker communication, not a leader env variable
+     */
+    public static final @NonNull String ENV_REPO_TESTS = "SPEED_REPO_TESTS";
 
     /**
      * The name of the KAFKA_ADDRESS environment variable
      */
-    private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
+    public static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     public static void main(String[] args) {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
@@ -55,10 +59,20 @@ public class Main {
         } else {
             workerIds = Set.of(); // FIXME: Replace
         }
-        TestConsumer testConsumer = new PrintTestConsumer(workerIds);
-        try (KafkaConsumerRunner consumer =
-                new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)) {
-            consumer.run();
+        Set<String> tests = Set.of("org.example.CalcTest"); // FIXME: Replace
+        TestConsumer testConsumer = TestConsumer.createTestConsumer(workerIds);
+        try (CloseableSet<Worker> workers = new CloseableSet<>();
+                WorkerRunner workerRunner = new WorkerRunner(workers);
+                KafkaConsumerRunner kafkaRunner =
+                    new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)
+                ) {
+            workers.add(Worker.createWorker(url, branch, tests, kafkaAddress));
+            Thread workerThread = new Thread(workerRunner);
+            Thread kafkaThread = new Thread(kafkaRunner);
+            workerThread.start();
+            kafkaThread.start();
+            workerThread.join();
+            kafkaThread.join();
         } catch (Exception e) {
             LOGGER.error("Leader failed", e);
             System.exit(1);

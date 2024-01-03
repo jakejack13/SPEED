@@ -24,8 +24,8 @@ public class Main {
     /**
      * Debug mode flag, used for turning on debug mode
      */
-    public static final boolean DEBUG_MODE = System.getProperty("speed.debug") != null &&
-            "true".equalsIgnoreCase(System.getProperty("speed.debug"));
+    public static final boolean DEBUG_MODE = System.getenv("speed.debug") != null &&
+            "true".equalsIgnoreCase(System.getenv("speed.debug"));
 
     /**
      * The name of the REPO_URL environment variable
@@ -63,6 +63,7 @@ public class Main {
             Config config = repository.getConfig();
             repository.build(config.getBuildCommands());
             repository.test(listOfTests, output);
+            output.done();
             LOGGER.info(repository.toString());
         } catch (Exception e) {
             LOGGER.error("Worker failed", e);
