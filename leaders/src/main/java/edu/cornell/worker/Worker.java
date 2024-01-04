@@ -22,4 +22,10 @@ public interface Worker extends Runnable, Closeable {
             @NonNull Set<String> tests, @NonNull String kafkaAddress) {
         return new DockerWorker(repoUrl, repoBranch, tests, kafkaAddress);
     }
+
+    /**
+     * Returns the id of the worker
+     * @return the id of the worker
+     */
+    @NonNull String getId();
 }

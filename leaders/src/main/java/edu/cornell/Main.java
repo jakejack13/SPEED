@@ -2,7 +2,9 @@ package edu.cornell;
 
 import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,13 +17,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class Main {
-
-    /**
-     * Debug mode flag, used for turning on debug mode
-     */
-    public static final boolean DEBUG_MODE = System.getenv("speed.debug") != null &&
-            "true".equalsIgnoreCase(System.getenv("speed.debug"));
-
     /**
      * The name of the REPO_URL environment variable
      */
@@ -51,22 +46,15 @@ public class Main {
             LOGGER.error("Environment variables missing");
             System.exit(1);
         }
-        // TODO: Find tests, create workers, assign tests to workers
+        // TODO: Find tests, assign tests to workers
 
-        Set<String> workerIds;
-        if (DEBUG_MODE) {
-             workerIds = Set.of("localhost");
-        } else {
-            workerIds = Set.of(); // FIXME: Replace
-        }
         Set<String> tests = Set.of("org.example.CalcTest"); // FIXME: Replace
-        TestConsumer testConsumer = TestConsumer.createTestConsumer(workerIds);
-        try (CloseableSet<Worker> workers = new CloseableSet<>();
+        try (CloseableSet<Worker> workers = createWorkerSet(url, branch, tests, kafkaAddress);
                 WorkerRunner workerRunner = new WorkerRunner(workers);
                 KafkaConsumerRunner kafkaRunner =
-                    new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)
+                    new KafkaConsumerRunner(kafkaAddress, getWorkerIds(workers),
+                            TestConsumer.createTestConsumer(getWorkerIds(workers)))
                 ) {
-            workers.add(Worker.createWorker(url, branch, tests, kafkaAddress));
             Thread workerThread = new Thread(workerRunner);
             Thread kafkaThread = new Thread(kafkaRunner);
             workerThread.start();
@@ -77,5 +65,29 @@ public class Main {
             LOGGER.error("Leader failed", e);
             System.exit(1);
         }
+    }
+
+    /**
+     * Creates the set of workers partitioned across the different tests
+     * @param url the url of the repository to test
+     * @param branch the branch of the repository to test
+     * @param tests the set of tests to execute
+     * @param kafkaAddress the Kafka message bus address
+     * @return the set of workers
+     */
+    private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
+            Set<String> tests, String kafkaAddress) {
+        CloseableSet<Worker> workers = new CloseableSet<>();
+        workers.add(Worker.createWorker(url, branch, tests, kafkaAddress));
+        return workers;
+    }
+
+    /**
+     * Returns the set of worker ids from the given set of workers
+     * @param workers the set of workers
+     * @return the set of worker ids
+     */
+    private static @NonNull Set<String> getWorkerIds(CloseableSet<Worker> workers) {
+        return workers.stream().map(Worker::getId).collect(Collectors.toSet());
     }
 }

@@ -4,6 +4,9 @@ import java.io.Closeable;
 import java.io.Serial;
 import java.util.HashSet;
 
+/**
+ * A set which can be closed, which closes all of its contained elements
+ */
 public class CloseableSet<T extends AutoCloseable> extends HashSet<T> implements Closeable {
 
     @Serial

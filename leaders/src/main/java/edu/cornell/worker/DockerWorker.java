@@ -1,6 +1,5 @@
 package edu.cornell.worker;
 
-import static edu.cornell.Main.DEBUG_MODE;
 import static edu.cornell.Main.ENV_KAFKA_ADDRESS;
 import static edu.cornell.Main.ENV_REPO_BRANCH;
 import static edu.cornell.Main.ENV_REPO_TESTS;
@@ -28,11 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @EqualsAndHashCode
 @ToString
 public class DockerWorker implements Worker {
-
-    /**
-     * The link to the GHCR image registry
-     */
-    private static final String REGISTRY_URL = "https://ghcr.io";
 
     /**
      * The link to the workers Docker image
@@ -69,7 +63,6 @@ public class DockerWorker implements Worker {
             @NonNull String kafkaAddress) {
         DockerClientConfig config =
                 DefaultDockerClientConfig.createDefaultConfigBuilder()
-//                        .withRegistryUrl(REGISTRY_URL)
                         .build();
         httpClient = new ApacheDockerHttpClient.Builder()
                 .dockerHost(config.getDockerHost())
@@ -80,12 +73,17 @@ public class DockerWorker implements Worker {
                 .build();
         dockerClient = DockerClientImpl.getInstance(config, httpClient);
         id = dockerClient.createContainerCmd(IMAGE_URL)
-                .withEnv("speed.debug" + '=' + DEBUG_MODE,
-                        ENV_REPO_URL + '=' + repoUrl,
+                .withPortSpecs("29092:29092")
+                .withEnv(ENV_REPO_URL + '=' + repoUrl,
                         ENV_REPO_BRANCH + '=' + repoBranch,
                         ENV_REPO_TESTS + '=' + String.join(",", tests),
                         ENV_KAFKA_ADDRESS + '=' + kafkaAddress)
                 .exec().getId();
+    }
+
+    @Override
+    public @NonNull String getId() {
+        return id;
     }
 
     @Override
@@ -139,6 +137,7 @@ public class DockerWorker implements Worker {
         @Override
         public void onError(Throwable throwable) {
             LOGGER.error("Error with Docker daemon", throwable);
+            done();
         }
 
         @Override

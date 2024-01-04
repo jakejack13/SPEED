@@ -20,13 +20,6 @@ import java.util.List;
  */
 @Slf4j
 public class Main {
-
-    /**
-     * Debug mode flag, used for turning on debug mode
-     */
-    public static final boolean DEBUG_MODE = System.getenv("speed.debug") != null &&
-            "true".equalsIgnoreCase(System.getenv("speed.debug"));
-
     /**
      * The name of the REPO_URL environment variable
      */
@@ -61,8 +54,11 @@ public class Main {
         try (TestOutputStream output = TestOutputStream.createTestOutputStream(kafkaAddress)) {
             Repository repository = RepositoryFactory.fromGitRepo(url,branch);
             Config config = repository.getConfig();
+            LOGGER.info("Building");
             repository.build(config.getBuildCommands());
+            LOGGER.info("Testing");
             repository.test(listOfTests, output);
+            LOGGER.info("Done");
             output.done();
             LOGGER.info(repository.toString());
         } catch (Exception e) {
