@@ -3,6 +3,8 @@ package edu.cornell.testenv.testcontext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -30,24 +32,25 @@ public class JUnitContextClassLoader extends ClassLoader {
             throw new PathIsNotValidException("The given path " + directory.toPath() + " is invalid (missing or not a directory).", null);
         }
 
-        List<File> subdirectories = getSubdirectories(directory);
         List<URL> urls = new ArrayList<>();
 
         // Turn all files found in subdirectories into URLs
-        for (File subdirectory : subdirectories) {
+        for (File subdirectory : getSubdirectories(directory)) {
             try {
                 URL url = subdirectory.toURI().toURL();
                 urls.add(url);
             } catch (Exception e) {
-                LOGGER.error("Error loading JUnit classes: {}", e);
+                throw new PathIsNotValidException("Error loading URL at subdirectory: " + subdirectory, e);
             }
         }
+
+        // Add all .class or .jar files within subdirectories
+        addFilesRecursively(directory, urls);
 
         URL[] urlArray = urls.toArray(new URL[0]);
 
         // Create a new class loader with the specified URLs
-        ClassLoader customClassLoader = new URLClassLoader(urlArray, ClassLoader.getSystemClassLoader());
-
+        ClassLoader customClassLoader = new URLClassLoader(urlArray, Thread.currentThread().getContextClassLoader());
         return customClassLoader;
     }
 
@@ -65,6 +68,26 @@ public class JUnitContextClassLoader extends ClassLoader {
         }
 
         return subdirectories;
+    }
+
+    //Add all the .class or .jar files from the given directory
+    private static void addFilesRecursively(File directory, List<URL> urls) {
+        File[] files = directory.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    addFilesRecursively(file, urls);
+                } else if (file.isFile() && (file.getName().endsWith(".class") || file.getName().endsWith(".jar"))) {
+                    try {
+                        URL url = file.toURI().toURL();
+                        urls.add(url);
+                    } catch (MalformedURLException e) {
+                        LOGGER.error("Error converting file to URL: {}", e);
+                    }
+                }
+            }
+        }
     }
 
 }

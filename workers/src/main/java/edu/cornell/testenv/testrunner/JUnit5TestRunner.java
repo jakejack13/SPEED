@@ -15,11 +15,9 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,7 +34,7 @@ public class JUnit5TestRunner implements TestRunner {
     @Override
     public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File rootDir) {
         try {
-            //Assumption is class files live in /build/classes/java/
+            //Assumption is class files live in /build/classes/java/ (and the .class files in some subdirectory)
             String baseRootPath = rootDir.toString() + "/build/classes/java/".replaceAll("/", File.separator);
 
             // Open a Launcher session
@@ -50,7 +48,7 @@ public class JUnit5TestRunner implements TestRunner {
                 // Register Listeners
                 launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener);
 
-                // Load all build files
+                // Load all build files and set Thread's class loader
                 ClassLoader classLoader = JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
                 Thread.currentThread().setContextClassLoader(classLoader);
 
@@ -67,10 +65,6 @@ public class JUnit5TestRunner implements TestRunner {
                 launcher.execute(request);
 
                 TestExecutionSummary summary = summaryListener.getSummary();
-
-                LOGGER.info("TESTS FAILED: {}", summary.getTestsFailedCount());
-                LOGGER.info("TESTS SKIPPED: {}", summary.getTestsSkippedCount());
-                LOGGER.info("TESTS SUCCEEDED: {}", summary.getTestsSucceededCount());
                 // Return if all test cases pass
                 return summary.getTestsFailedCount() == 0 && summary.getTestsSkippedCount() == 0;
             }
