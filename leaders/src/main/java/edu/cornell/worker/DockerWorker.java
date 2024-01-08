@@ -1,10 +1,5 @@
 package edu.cornell.worker;
 
-import static edu.cornell.Main.ENV_KAFKA_ADDRESS;
-import static edu.cornell.Main.ENV_REPO_BRANCH;
-import static edu.cornell.Main.ENV_REPO_TESTS;
-import static edu.cornell.Main.ENV_REPO_URL;
-
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.model.HostConfig;
@@ -13,15 +8,17 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import java.io.Closeable;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Set;
+
+import static edu.cornell.Main.*;
 
 /** A worker that runs inside a Docker container */
 @Slf4j

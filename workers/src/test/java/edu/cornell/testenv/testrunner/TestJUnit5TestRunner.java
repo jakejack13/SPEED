@@ -2,11 +2,10 @@ package edu.cornell.testenv.testrunner;
 
 import edu.cornell.testenv.testcontext.JUnitTestContext;
 import edu.cornell.testoutputstream.TestOutputStream;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
-
 import java.util.ArrayList;
 import java.util.List;
 

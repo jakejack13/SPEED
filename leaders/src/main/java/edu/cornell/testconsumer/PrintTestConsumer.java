@@ -1,8 +1,8 @@
 package edu.cornell.testconsumer;
 
-import java.util.Map;
-import java.util.Set;
 import lombok.NonNull;
+
+import java.util.Set;
 
 /**
  * A test consumer that simply prints the results of the tests

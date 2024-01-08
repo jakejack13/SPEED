@@ -2,11 +2,11 @@ package edu.cornell;
 
 import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The main leader application

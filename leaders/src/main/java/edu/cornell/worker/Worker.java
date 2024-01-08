@@ -1,10 +1,9 @@
 package edu.cornell.worker;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 import lombok.NonNull;
+
+import java.io.Closeable;
+import java.util.Set;
 
 /**
  * An interface representing a Worker that executes a subset of a test suite

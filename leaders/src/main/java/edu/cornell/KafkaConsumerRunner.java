@@ -1,9 +1,6 @@
 package edu.cornell;
 
 import edu.cornell.testconsumer.TestConsumer;
-import java.time.Duration;
-import java.util.Properties;
-import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -11,6 +8,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+
+import java.time.Duration;
+import java.util.Properties;
+import java.util.Set;
 
 /** The runner that listens for test result updates from the workers via the Kafka cluster */
 @Slf4j

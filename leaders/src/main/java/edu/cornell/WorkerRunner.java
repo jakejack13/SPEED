@@ -1,12 +1,13 @@
 package edu.cornell;
 
 import edu.cornell.worker.Worker;
-import java.io.Closeable;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.Closeable;
+import java.util.HashSet;
+import java.util.Set;
 
 /** The runner that spawns new workers to run test suites */
 @Slf4j

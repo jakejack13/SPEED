@@ -1,11 +1,9 @@
 package edu.cornell.testconsumer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import lombok.NonNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class representing an object that will consume and process test results
