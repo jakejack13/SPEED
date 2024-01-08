@@ -15,7 +15,7 @@ public interface TestOutputStream extends Closeable {
      * @return a new TestOutputStream
      */
     static @NonNull TestOutputStream createTestOutputStream(@NonNull String kafkaAddress) {
-        return new KafkaTestOutputStream(kafkaAddress);
+        return new KafkaTestOutputStream();
 //        return new PrintTestOutputStream();
     }
 

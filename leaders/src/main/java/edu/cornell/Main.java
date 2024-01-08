@@ -88,6 +88,8 @@ public class Main {
      * @return the set of worker ids
      */
     private static @NonNull Set<String> getWorkerIds(CloseableSet<Worker> workers) {
-        return workers.stream().map(Worker::getId).collect(Collectors.toSet());
+        return workers.stream()
+                .map(worker -> worker.getId().substring(0, Math.min(worker.getId().length(), 12)))
+                .collect(Collectors.toSet());
     }
 }

@@ -7,6 +7,7 @@ import static edu.cornell.Main.ENV_REPO_URL;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
+import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
@@ -64,6 +65,7 @@ public class DockerWorker implements Worker {
         DockerClientConfig config =
                 DefaultDockerClientConfig.createDefaultConfigBuilder()
                         .build();
+
         httpClient = new ApacheDockerHttpClient.Builder()
                 .dockerHost(config.getDockerHost())
                 .sslConfig(config.getSSLConfig())
@@ -71,13 +73,19 @@ public class DockerWorker implements Worker {
                 .connectionTimeout(Duration.ofSeconds(30))
                 .responseTimeout(Duration.ofSeconds(45))
                 .build();
+
         dockerClient = DockerClientImpl.getInstance(config, httpClient);
+
+        HostConfig hostConfig = new HostConfig()
+                .withNetworkMode("kafka_default"); //default kafka network name
+
         id = dockerClient.createContainerCmd(IMAGE_URL)
                 .withPortSpecs("29092:29092")
                 .withEnv(ENV_REPO_URL + '=' + repoUrl,
                         ENV_REPO_BRANCH + '=' + repoBranch,
                         ENV_REPO_TESTS + '=' + String.join(",", tests),
                         ENV_KAFKA_ADDRESS + '=' + kafkaAddress)
+                .withHostConfig(hostConfig)
                 .exec().getId();
     }
 

@@ -1,5 +1,7 @@
 package edu.cornell.testenv.testcontext;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,6 +11,8 @@ import java.util.List;
 /**
  * Loads .class Files into the current thread.
  */
+
+@Slf4j
 public class JUnitContextClassLoader extends ClassLoader {
 
     /**
@@ -18,7 +22,7 @@ public class JUnitContextClassLoader extends ClassLoader {
      * @Precondition: Both the test .class files and its dependencies (as a transitive closure)
      * are in the given directoryPath.
      */
-    public static void loadClassesFromDirectory(String directoryPath) throws PathIsNotValidException {
+    public static ClassLoader loadClassesFromDirectory(String directoryPath) throws PathIsNotValidException {
         File directory = new File(directoryPath);
 
         // Check if the directory is valid
@@ -35,7 +39,7 @@ public class JUnitContextClassLoader extends ClassLoader {
                 URL url = subdirectory.toURI().toURL();
                 urls.add(url);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Error loading JUnit classes: {}", e);
             }
         }
 
@@ -44,8 +48,7 @@ public class JUnitContextClassLoader extends ClassLoader {
         // Create a new class loader with the specified URLs
         ClassLoader customClassLoader = new URLClassLoader(urlArray, ClassLoader.getSystemClassLoader());
 
-        // Replace the current thread's class loader
-        Thread.currentThread().setContextClassLoader(customClassLoader);
+        return customClassLoader;
     }
 
     // Finds all files in the subdirectories of the given directory.

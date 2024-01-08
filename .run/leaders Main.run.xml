@@ -3,7 +3,7 @@
     <envs>
       <env name="SPEED_REPO_URL" value="https://github.com/owenxr/SPEED-TESTER" />
       <env name="SPEED_REPO_BRANCH" value="main" />
-      <env name="SPEED_KAFKA_ADDRESS" value="localhost:29092" />
+      <env name="SPEED_KAFKA_ADDRESS" value="localhost:9092" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="edu.cornell.Main" />
     <module name="leaders.main" />

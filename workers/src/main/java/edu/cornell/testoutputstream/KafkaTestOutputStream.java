@@ -31,9 +31,8 @@ class KafkaTestOutputStream implements TestOutputStream {
 
     /**
      * Creates a new TestOutputStream
-     * @param kafkaAddress the address of the Kafka cluster
      */
-    KafkaTestOutputStream(@NonNull String kafkaAddress) {
+    KafkaTestOutputStream() {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(
@@ -45,12 +44,12 @@ class KafkaTestOutputStream implements TestOutputStream {
             System.exit(1);
         }
 
-        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + kafkaAddress);
+        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + "kafka:29092");
 
         // create instance for properties to access producer configs
         Properties properties = new Properties();
         //Assign localhost id
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:29092");
         //Set acknowledgements for producer requests.
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
         //If the request fails, the producer can automatically retry,
@@ -71,6 +70,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     @Override
     public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
         LOGGER.info(testName + ":" + result);
+        System.out.println("Sent");
         producer.send(new ProducerRecord<>(topicName,
                     testName, result.toString()));
     }

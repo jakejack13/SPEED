@@ -15,7 +15,11 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +51,9 @@ public class JUnit5TestRunner implements TestRunner {
                 launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener);
 
                 // Load all build files
-                JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+                ClassLoader classLoader = JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+                Thread.currentThread().setContextClassLoader(classLoader);
+
                 List<DiscoverySelector> selectors = new ArrayList<>();
                 for (String classPath : context.getTestClasses()) {
                     // Select each test class
@@ -62,6 +68,9 @@ public class JUnit5TestRunner implements TestRunner {
 
                 TestExecutionSummary summary = summaryListener.getSummary();
 
+                LOGGER.info("TESTS FAILED: {}", summary.getTestsFailedCount());
+                LOGGER.info("TESTS SKIPPED: {}", summary.getTestsSkippedCount());
+                LOGGER.info("TESTS SUCCEEDED: {}", summary.getTestsSucceededCount());
                 // Return if all test cases pass
                 return summary.getTestsFailedCount() == 0 && summary.getTestsSkippedCount() == 0;
             }
