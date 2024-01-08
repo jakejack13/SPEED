@@ -8,7 +8,6 @@
     </envs>
     <option name="MAIN_CLASS_NAME" value="edu.cornell.Main" />
     <module name="workers.main" />
-    <option name="VM_PARAMETERS" value="-Dspeed.debug=true" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="edu.cornell.*" />
