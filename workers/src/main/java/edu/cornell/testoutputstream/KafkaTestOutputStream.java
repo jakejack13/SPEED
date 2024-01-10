@@ -29,6 +29,11 @@ class KafkaTestOutputStream implements TestOutputStream {
     private @NonNull String topicName;
 
     /**
+     * Current address to the kafka service <b>within the kafka network</b>
+     */
+    private final String KAFKA_ADDRESS = "kafka:29092";
+
+    /**
      * Creates a new TestOutputStream
      */
     KafkaTestOutputStream() {
@@ -43,12 +48,12 @@ class KafkaTestOutputStream implements TestOutputStream {
             System.exit(1);
         }
 
-        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + "kafka:29092");
+        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + KAFKA_ADDRESS);
 
         // create instance for properties to access producer configs
         Properties properties = new Properties();
         //Assign localhost id
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:29092");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_ADDRESS);
         //Set acknowledgements for producer requests.
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
         //If the request fails, the producer can automatically retry,
