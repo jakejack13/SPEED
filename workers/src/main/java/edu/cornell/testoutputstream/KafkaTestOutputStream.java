@@ -1,6 +1,5 @@
 package edu.cornell.testoutputstream;
 
-import edu.cornell.Main;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -30,29 +29,31 @@ class KafkaTestOutputStream implements TestOutputStream {
     private @NonNull String topicName;
 
     /**
-     * Creates a new TestOutputStream
-     * @param kafkaAddress the address of the Kafka cluster
+     * Current address to the kafka service <b>within the kafka network</b>
      */
-    KafkaTestOutputStream(@NonNull String kafkaAddress) {
+    private final String KAFKA_ADDRESS = "kafka:29092";
+
+    /**
+     * Creates a new TestOutputStream
+     */
+    KafkaTestOutputStream() {
         //Assign topicName to hostname
-        if (Main.DEBUG_MODE) {
-            topicName = "localhost";
-        } else {
-            try (BufferedReader inputStream = new BufferedReader(
-                    new InputStreamReader(
-                            Runtime.getRuntime().exec("hostname").getInputStream()))) {
-                topicName = inputStream.readLine();
-            } catch (IOException e) {
-                topicName = "error";
-                LOGGER.error("Error getting hostname from container", e);
-                System.exit(1);
-            }
+        try (BufferedReader inputStream = new BufferedReader(
+                new InputStreamReader(
+                        Runtime.getRuntime().exec("hostname").getInputStream()))) {
+            topicName = inputStream.readLine();
+        } catch (IOException e) {
+            topicName = "error";
+            LOGGER.error("Error getting hostname from container", e);
+            System.exit(1);
         }
+
+        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + KAFKA_ADDRESS);
 
         // create instance for properties to access producer configs
         Properties properties = new Properties();
         //Assign localhost id
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_ADDRESS);
         //Set acknowledgements for producer requests.
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
         //If the request fails, the producer can automatically retry,
@@ -73,6 +74,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     @Override
     public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
         LOGGER.info(testName + ":" + result);
+        System.out.println("Sent");
         producer.send(new ProducerRecord<>(topicName,
                     testName, result.toString()));
     }

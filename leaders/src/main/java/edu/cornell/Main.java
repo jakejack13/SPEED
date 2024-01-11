@@ -1,12 +1,12 @@
 package edu.cornell;
 
-import edu.cornell.testconsumer.PrintTestConsumer;
 import edu.cornell.testconsumer.TestConsumer;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import edu.cornell.worker.Worker;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The main leader application
@@ -17,27 +17,26 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class Main {
-
-    /**
-     * Debug mode flag, used for turning on debug mode
-     */
-    public static final boolean DEBUG_MODE = System.getProperty("speed.debug") != null &&
-            "true".equalsIgnoreCase(System.getProperty("speed.debug"));
-
     /**
      * The name of the REPO_URL environment variable
      */
-    private static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
+    public static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
 
     /**
      * The name of the REPO_BRANCH environment variable
      */
-    private static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
+    public static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
+
+    /**
+     * The name of the REPO_TESTS environment variable.
+     * NOTE: Only used for worker communication, not a leader env variable
+     */
+    public static final @NonNull String ENV_REPO_TESTS = "SPEED_REPO_TESTS";
 
     /**
      * The name of the KAFKA_ADDRESS environment variable
      */
-    private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
+    public static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     public static void main(String[] args) {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
@@ -47,21 +46,50 @@ public class Main {
             LOGGER.error("Environment variables missing");
             System.exit(1);
         }
-        // TODO: Find tests, create workers, assign tests to workers
+        // TODO: Find tests, assign tests to workers
 
-        Set<String> workerIds;
-        if (DEBUG_MODE) {
-             workerIds = Set.of("localhost");
-        } else {
-            workerIds = Set.of(); // FIXME: Replace
-        }
-        TestConsumer testConsumer = new PrintTestConsumer(workerIds);
-        try (KafkaConsumerRunner consumer =
-                new KafkaConsumerRunner(kafkaAddress, workerIds, testConsumer)) {
-            consumer.run();
+        Set<String> tests = Set.of("org.example.CalcTest"); // FIXME: Replace
+        try (CloseableSet<Worker> workers = createWorkerSet(url, branch, tests, kafkaAddress);
+                WorkerRunner workerRunner = new WorkerRunner(workers);
+                KafkaConsumerRunner kafkaRunner =
+                    new KafkaConsumerRunner(kafkaAddress, getWorkerIds(workers),
+                            TestConsumer.createTestConsumer(getWorkerIds(workers)))
+                ) {
+            Thread workerThread = new Thread(workerRunner);
+            Thread kafkaThread = new Thread(kafkaRunner);
+            workerThread.start();
+            kafkaThread.start();
+            workerThread.join();
+            kafkaThread.join();
         } catch (Exception e) {
             LOGGER.error("Leader failed", e);
             System.exit(1);
         }
+    }
+
+    /**
+     * Creates the set of workers partitioned across the different tests
+     * @param url the url of the repository to test
+     * @param branch the branch of the repository to test
+     * @param tests the set of tests to execute
+     * @param kafkaAddress the Kafka message bus address
+     * @return the set of workers
+     */
+    private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
+            Set<String> tests, String kafkaAddress) {
+        CloseableSet<Worker> workers = new CloseableSet<>();
+        workers.add(Worker.createWorker(url, branch, tests, kafkaAddress));
+        return workers;
+    }
+
+    /**
+     * Returns the set of worker ids from the given set of workers
+     * @param workers the set of workers
+     * @return the set of worker ids
+     */
+    private static @NonNull Set<String> getWorkerIds(CloseableSet<Worker> workers) {
+        return workers.stream()
+                .map(worker -> worker.getId().substring(0, Math.min(worker.getId().length(), 12)))
+                .collect(Collectors.toSet());
     }
 }

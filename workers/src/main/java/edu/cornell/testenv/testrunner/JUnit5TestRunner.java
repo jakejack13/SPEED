@@ -32,7 +32,7 @@ public class JUnit5TestRunner implements TestRunner {
     @Override
     public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File rootDir) {
         try {
-            //Assumption is class files live in /build/classes/java/
+            //Assumption is class files live in /build/classes/java/ (and the .class files in some subdirectory)
             String baseRootPath = rootDir.toString() + "/build/classes/java/".replaceAll("/", File.separator);
 
             // Open a Launcher session
@@ -46,8 +46,10 @@ public class JUnit5TestRunner implements TestRunner {
                 // Register Listeners
                 launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener);
 
-                // Load all build files
-                JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+                // Load all build files and set Thread's class loader
+                ClassLoader classLoader = JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+                Thread.currentThread().setContextClassLoader(classLoader);
+
                 List<DiscoverySelector> selectors = new ArrayList<>();
                 for (String classPath : context.getTestClasses()) {
                     // Select each test class
@@ -61,7 +63,6 @@ public class JUnit5TestRunner implements TestRunner {
                 launcher.execute(request);
 
                 TestExecutionSummary summary = summaryListener.getSummary();
-
                 // Return if all test cases pass
                 return summary.getTestsFailedCount() == 0 && summary.getTestsSkippedCount() == 0;
             }

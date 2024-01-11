@@ -1,18 +1,25 @@
 package edu.cornell.testconsumer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import lombok.NonNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class representing an object that will consume and process test results
  */
 public abstract class TestConsumer {
 
-    private final String DONE = "DONE";
+    /**
+     * Creates a new TestConsumer for the specified workers
+     * @param workerIds the ids of the workers to log test results with
+     * @return a new TestConsumer object
+     */
+    public static @NonNull TestConsumer createTestConsumer(Set<String> workerIds) {
+        return new PrintTestConsumer(workerIds);
+    }
+
+    private final @NonNull String DONE = "DONE";
 
     /**
      * An enum representing the possible results of a test
