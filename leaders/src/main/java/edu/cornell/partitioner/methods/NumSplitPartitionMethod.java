@@ -6,8 +6,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Provides method that divides classes equally among a set number of partitions
+ */
 public class NumSplitPartitionMethod extends PartitionMethod {
 
+    /**
+     * Split the list of classes into equal number of input partitions. <br></br> If lists cannot be divided evenly among
+     * partitions, include one extra test in each test set up until the modulus of className size and partitions.
+     * @param classNames - List of the classes by package+name
+     * @param partitions - Number of partitions to create
+     * @return
+     */
     @Override
     public List<Set<String>> partition(List<String> classNames, int partitions) {
         List<Set<String>> classes = new ArrayList<>();

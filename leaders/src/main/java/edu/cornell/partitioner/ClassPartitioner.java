@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Class that handles and stores the partitioned classes based on desired method.
+ */
 @Slf4j
 public class ClassPartitioner {
 
