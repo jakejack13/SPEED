@@ -1,6 +1,7 @@
 package edu.cornell.repository;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -19,10 +20,27 @@ public abstract class Repository {
      * The root directory of the project once it's on disk
      */
     private final @NonNull File rootDir;
+
+    /**
+     * The root directory of the project
+     * @return File - the root directory of the project
+     */
+    public File getRootDir() {
+        return rootDir;
+    }
+
     /**
      * The configuration for SPEED found in this repository
      */
     private final @NonNull Config config;
+
+    /**
+     * The configuration for SPEED
+     * @return Config - the configuration object for SPEED
+     */
+    public Config getConfig() {
+        return config;
+    }
 
     /**
      * Creates a new Repository with the given root directory

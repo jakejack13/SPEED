@@ -35,4 +35,8 @@ public class Config {
     public @NonNull List<String> getBuildCommands() {
         return parser.getConfigMapCategory(ConfigParser.Category.BUILD_COMMANDS);
     }
+
+    public @NonNull List<String> getTestPaths() {
+        return parser.getConfigMapCategory(ConfigParser.Category.TEST_PATHS);
+    }
 }

@@ -1,5 +1,8 @@
 package edu.cornell;
 
+import edu.cornell.partitioner.ClassPartitioner;
+import edu.cornell.partitioner.methods.NumSplitPartitionMethod;
+import edu.cornell.repository.Config;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryCloneException;
 import edu.cornell.repository.RepositoryFactory;
@@ -105,11 +108,13 @@ public class Main {
     private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
             Set<String> tests, int numWorkers, String kafkaAddress) {
         List<String> testsList = new ArrayList<>(tests);
+        ClassPartitioner classPartitioner = new ClassPartitioner(new NumSplitPartitionMethod(), testsList, Math.min(numWorkers, testsList.size()));
+        List<Set<String>> partitionedTestsList = classPartitioner.getClasses();
         CloseableSet<Worker> workers = new CloseableSet<>();
-        for (int i = 0; i < testsList.size(); i += testsList.size()/numWorkers) {
+        for (Set<String> testSet : partitionedTestsList) {
             workers.add(Worker.createWorker(url,
                     branch,
-                    new HashSet<>(testsList.subList(i, Math.max(i+numWorkers, testsList.size()))),
+                    testSet,
                     kafkaAddress));
         }
         return workers;
