@@ -5,12 +5,9 @@
 FROM gradle:8.4.0-jdk AS build
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
-COPY build.gradle settings.gradle $APP_HOME
 
+COPY build.gradle settings.gradle $APP_HOME
 COPY gradle $APP_HOME/gradle
-COPY --chown=gradle:gradle . /home/gradle/src
-USER root
-RUN chown -R gradle /home/gradle/src
 
 RUN gradle build || return 0
 COPY . .
