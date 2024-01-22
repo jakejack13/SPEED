@@ -24,11 +24,12 @@ public class NumSplitPartitionMethod extends PartitionMethod {
         int listSize = classNames.size();
 
         int startIndex = 0;
+        int partitionSize;
         int overflow = listSize % partitions;
         int endIndex;
 
         for (int i = 0; i < partitions; i++) {
-            int partitionSize = (listSize / partitions) + (overflow > 0 ? 1 : 0);
+            partitionSize = (listSize / partitions) + (overflow > 0 ? 1 : 0);
             endIndex = startIndex + partitionSize;
 
             if(endIndex > listSize) {
