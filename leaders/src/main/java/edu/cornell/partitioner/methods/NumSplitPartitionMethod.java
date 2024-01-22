@@ -15,7 +15,7 @@ public class NumSplitPartitionMethod extends PartitionMethod {
      * partitions, include one extra test in each test set up until the modulus of className size and partitions.
      * @param classNames - List of the classes by package+name
      * @param partitions - Number of partitions to create
-     * @return
+     * @return A list of approximately evenly split test class name partitions stored as sets
      */
     @Override
     public List<Set<String>> partition(List<String> classNames, int partitions) {
