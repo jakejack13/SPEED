@@ -55,6 +55,7 @@ public class Main {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
+
         int numWorkers = 0;
         try {
             numWorkers = Integer.parseInt(System.getenv(ENV_NUM_WORKERS));
@@ -62,6 +63,7 @@ public class Main {
             LOGGER.info("Incorrect integer format", e);
             System.exit(1);
         }
+
         if (url == null || branch == null || kafkaAddress == null) {
             LOGGER.error("Environment variables missing");
             System.exit(1);
