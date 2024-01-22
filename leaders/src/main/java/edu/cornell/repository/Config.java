@@ -37,6 +37,10 @@ public class Config {
         return parser.getConfigMapCategory(ConfigParser.Category.BUILD_COMMANDS);
     }
 
+    /**
+     * Return list of strings representing TEST_PATHS specified in the config
+     * @return list of strings of path to project files
+     */
     public @NonNull List<String> getTestPaths() {
         return parser.getConfigMapCategory(ConfigParser.Category.TEST_PATHS);
     }

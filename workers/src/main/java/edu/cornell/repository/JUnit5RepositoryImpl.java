@@ -30,6 +30,9 @@ final class JUnit5RepositoryImpl extends Repository {
     public void test(@NonNull List<String> tests, TestOutputStream output) {
         JUnitTestContext context = new JUnitTestContext(tests);
         JUnit5TestRunner runner = new JUnit5TestRunner();
-        runner.runTest(context, output, getRootDir());
+        List<String> configTestPaths = getConfig().getTestPaths();
+        for(String testPath : configTestPaths) {
+            runner.runTest(context, output, new File(getRootDir() + testPath.trim()));
+        }
     }
 }
