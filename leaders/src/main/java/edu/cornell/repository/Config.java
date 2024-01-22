@@ -1,10 +1,11 @@
 package edu.cornell.repository;
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An object representing the SPEED config file in the repository

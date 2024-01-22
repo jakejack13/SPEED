@@ -2,17 +2,17 @@ package edu.cornell;
 
 import edu.cornell.partitioner.ClassPartitioner;
 import edu.cornell.partitioner.methods.NumSplitPartitionMethod;
-import edu.cornell.repository.*;
+import edu.cornell.repository.Repository;
+import edu.cornell.repository.RepositoryBuildException;
+import edu.cornell.repository.RepositoryCloneException;
+import edu.cornell.repository.RepositoryFactory;
 import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
-
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

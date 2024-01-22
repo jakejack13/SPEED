@@ -1,17 +1,15 @@
 package edu.cornell.repository;
 
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * A class representing a Java project using JUnit 5 for testing

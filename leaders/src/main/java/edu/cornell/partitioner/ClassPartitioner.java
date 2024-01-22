@@ -1,15 +1,11 @@
 package edu.cornell.partitioner;
 
 import edu.cornell.partitioner.methods.PartitionMethod;
-import edu.cornell.repository.Config;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Class that handles and stores the partitioned classes based on desired method.
