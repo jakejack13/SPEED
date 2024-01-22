@@ -3,6 +3,8 @@ package edu.cornell.testenv.testcontext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -52,8 +54,37 @@ public class JUnitContextClassLoader extends ClassLoader {
 
         URL[] urlArray = urls.toArray(new URL[0]);
 
+        List<URL> moddedURLArray = new ArrayList<>();
+
+        for(URL url : urlArray) {
+            String fileName = url.getFile();
+
+            if(!(new File(fileName).isFile()) && fileName.length() > 0) { continue; }
+
+            String className = "";
+            for(String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
+                if(fileName.contains(s)) {
+                    className = fileName.substring(fileName.indexOf(s) + s.length() + 1, fileName.lastIndexOf(".")).replace(File.separator, ".");
+                }
+            }
+
+            try {
+                Class<?> loadedClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+                Method[] methods = loadedClass.getDeclaredMethods();
+
+                for (Method method : methods) {
+                    if (method.getAnnotation(org.junit.jupiter.api.Test.class) != null) {
+                        moddedURLArray.add(url);
+                        break;
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+
+            }
+        }
+
         // Create a new class loader with the specified URLs
-        ClassLoader customClassLoader = new URLClassLoader(urlArray, Thread.currentThread().getContextClassLoader());
+        ClassLoader customClassLoader = new URLClassLoader(moddedURLArray.toArray(new URL[0]), Thread.currentThread().getContextClassLoader());
         return customClassLoader;
     }
 
