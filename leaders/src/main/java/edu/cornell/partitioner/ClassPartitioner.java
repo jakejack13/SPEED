@@ -35,35 +35,4 @@ public class ClassPartitioner {
         return classes;
     }
 
-//    private List<String> loadClassesFromDirectory(String directoryPath) throws PathIsNotValidException {
-//        File directory = new File(directoryPath);
-//
-//        // Check if the directory is valid
-//        if (!directory.exists() || !directory.isDirectory()) {
-//            throw new PathIsNotValidException("The given path " + directory.toPath() + " is invalid (missing or not a directory).", null);
-//        }
-//
-//        List<String> classes = new ArrayList<>();
-//
-//        // Add all .class or .jar files within subdirectories
-//        addFilesRecursively(directory, classes);
-//
-//        return classes;
-//    }
-//
-//    //Add all the .class or .jar files from the given directory
-//    private void addFilesRecursively(File directory, List<String> classes) {
-//        File[] files = directory.listFiles();
-//
-//        if (files != null) {
-//            for (File file : files) {
-//                if (file.isDirectory()) {
-//                    addFilesRecursively(file, classes);
-//                } else if (file.isFile() && (file.getName().endsWith(".class") || file.getName().endsWith(".jar"))) {
-//                    classes.add(file.getName());
-//                }
-//            }
-//        }
-//    }
-
 }

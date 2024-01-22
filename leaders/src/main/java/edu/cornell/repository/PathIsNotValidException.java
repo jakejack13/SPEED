@@ -1,4 +1,4 @@
-package edu.cornell.partitioner;
+package edu.cornell.repository;
 
 import java.io.Serial;
 

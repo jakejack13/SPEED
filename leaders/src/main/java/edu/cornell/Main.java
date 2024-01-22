@@ -2,12 +2,11 @@ package edu.cornell;
 
 import edu.cornell.partitioner.ClassPartitioner;
 import edu.cornell.partitioner.methods.NumSplitPartitionMethod;
-import edu.cornell.repository.Config;
-import edu.cornell.repository.Repository;
-import edu.cornell.repository.RepositoryCloneException;
-import edu.cornell.repository.RepositoryFactory;
+import edu.cornell.repository.*;
 import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
+
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,9 +70,14 @@ public class Main {
         Set<String> tests = Set.of();
         try {
             Repository repository = RepositoryFactory.fromGitRepo(url, branch);
+            LOGGER.info("Building");
+            repository.build(repository.getConfig().getBuildCommands());
             tests = repository.getTests();
         } catch (RepositoryCloneException e) {
             LOGGER.error("Unable to clone the repository", e);
+            System.exit(1);
+        } catch (RepositoryBuildException e) {
+            LOGGER.error("Unable to build the repository", e);
             System.exit(1);
         }
 

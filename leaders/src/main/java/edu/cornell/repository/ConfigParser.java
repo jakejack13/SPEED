@@ -71,7 +71,7 @@ public class ConfigParser {
             } else if (line.startsWith("-")) {
                 if (!categoryOpen)
                     throw new ConfigSyntaxException("Item outside of a category: " + line);
-                currentItems.add(line.substring(1));
+                currentItems.add(line.substring(1).trim());
             } else if (!line.trim().isEmpty()) {
                 if (!categoryOpen || currentItems.isEmpty())
                     throw new ConfigSyntaxException("Continuation line outside of an item: " + line);

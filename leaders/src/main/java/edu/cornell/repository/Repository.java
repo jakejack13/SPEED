@@ -1,6 +1,8 @@
 package edu.cornell.repository;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
@@ -57,4 +59,32 @@ public abstract class Repository {
      * @return the set of tests found in the repository
      */
     public abstract @NonNull Set<String> getTests();
+
+    /**
+     * Builds the repository and generates build artifacts
+     * @param commands the shell commands to run, in order, to build the project
+     * @throws RepositoryBuildException if the repository fails to build
+     */
+    public void build(@NonNull List<String> commands) throws RepositoryBuildException {
+        for (String command : commands) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder();
+                builder.directory(rootDir);
+                if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
+                    builder.command("cmd.exe", "/c", command);
+                else
+                    builder.command("sh", "-c", command);
+
+                Process process = builder.start();
+                if (process.waitFor() != 0) {
+                    LOGGER.error("Command exited with nonzero exit code: " + command);
+                    throw new RepositoryBuildException("Error executing command: " + command, null);
+                }
+            } catch (IOException | InterruptedException e) {
+                LOGGER.error("Error thrown when executing command: " +
+                        command, e);
+                throw new RepositoryBuildException("Error executing command: " + command, e);
+            }
+        }
+    }
 }
