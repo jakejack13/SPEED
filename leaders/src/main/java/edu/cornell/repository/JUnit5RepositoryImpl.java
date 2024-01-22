@@ -27,7 +27,6 @@ final class JUnit5RepositoryImpl extends Repository {
 
     @Override
     public @NonNull Set<String> getTests() {
-        // TODO: Test discoverer
         List<String> configTestPaths = getConfig().getTestPaths();
         Set<String> classes = new HashSet<>();
         try {

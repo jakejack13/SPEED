@@ -27,8 +27,8 @@ public class JUnitContextClassLoader extends ClassLoader {
      * Loads the .class files from the given path and all of its subdirectories.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: Both the test .class files and its dependencies (as a transitive closure)
-     * are in the given directoryPath.
+     * @Precondition: test package+classname files are in the direct subdirectory of "/test/java/" or "/java/test" and
+     * source package+classname files are in the direct subdirectory of "/main/java" or "/java/main"
      */
     public static ClassLoader loadClassesFromDirectory(String directoryPath) throws PathIsNotValidException, MalformedURLException {
         File directory = new File(directoryPath);
@@ -57,7 +57,7 @@ public class JUnitContextClassLoader extends ClassLoader {
         return customClassLoader;
     }
 
-    // Finds all files in the subdirectories of the given directory.
+    // Finds all files in the subdirectories of the given directory. Add if it contains a matching subdirectory
     private static void getSubdirectories(File directory, List<URL> urls) throws MalformedURLException {
         File[] files = directory.listFiles();
 
@@ -75,6 +75,7 @@ public class JUnitContextClassLoader extends ClassLoader {
         }
     }
 
+    // Detects if a directory contains a substring representing a package structure for the .class files
     private static boolean doesDirectoryMatch(String directoryPath) {
         for (String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
             if(directoryPath.contains(s)) { return true; }

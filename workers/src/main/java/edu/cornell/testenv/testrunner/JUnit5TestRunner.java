@@ -32,7 +32,6 @@ public class JUnit5TestRunner implements TestRunner {
     @Override
     public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File baseDir) {
         try {
-            //Assumption is class files live in /build/classes/java/ (and the .class files in some subdirectory)
             String baseRootPath = baseDir.toString();
             LOGGER.info("Discovery .class files in location: " + baseRootPath);
 

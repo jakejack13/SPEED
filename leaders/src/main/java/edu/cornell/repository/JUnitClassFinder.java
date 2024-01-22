@@ -23,10 +23,10 @@ public class JUnitClassFinder extends ClassLoader {
     };
 
     /**
-     * Loads the .class files from the given path and all of its subdirectories.
+     * Finds all JUnit classes in the subdirectories of directory path
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: The directory contains the test .class files as well as the base test path.
+     * @Precondition: The directory has a subdirectory of /test/java or /java/test
      */
     public static Set<String> findJUnitClasses(String directoryPath) throws PathIsNotValidException, MalformedURLException, ClassNotFoundException {
         File directory = new File(directoryPath);
@@ -65,6 +65,7 @@ public class JUnitClassFinder extends ClassLoader {
         return classes;
     }
 
+    // Returns a record of both all the required classpaths and .class files and a custom class loader
     private static ClassLoadingResult loadClassResults(File directory) throws MalformedURLException {
         // Check if the directory is valid
         if (!directory.exists() || !directory.isDirectory()) {
@@ -93,7 +94,7 @@ public class JUnitClassFinder extends ClassLoader {
     private record ClassLoadingResult(URL[] urlArray, ClassLoader customClassLoader) {
     }
 
-    // Finds all files in the subdirectories of the given directory.
+    // Finds all files in the subdirectories of the given directory. Only add to urls if a matching directory is found
     private static void searchSubdirectories(File directory, List<URL> urls) throws MalformedURLException {
         File[] files = directory.listFiles();
 
@@ -111,6 +112,7 @@ public class JUnitClassFinder extends ClassLoader {
         }
     }
 
+    // Detect if the current directory contains the specific substring representing the test path
     private static boolean doesDirectoryMatch(String directoryPath) {
         for (String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
             if(directoryPath.contains(s)) { return true; }
