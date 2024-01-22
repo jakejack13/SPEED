@@ -16,7 +16,6 @@ public class ClassPartitioner {
     private List<Set<String>> classes;
     private PartitionMethod partitionMethod;
 
-    //TODO: Change when config is reconfigured
     public ClassPartitioner(PartitionMethod partitionClass, List<String> tests, int partitions) {
         this.partitionMethod = partitionClass;
         classes = partitionClasses(tests, partitions);
