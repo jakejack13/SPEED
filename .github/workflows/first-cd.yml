@@ -1,0 +1,25 @@
+name: first CD
+on:
+  workflow_run:
+    workflows: ["first CI"]
+    branches: [main]
+    types: 
+      - completed
+  workflow_dispatch:
+
+permissions:
+    contents: read
+    packages: write
+
+jobs:
+    deploy:
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        runs-on: ubuntu-latest
+        steps:
+        - name: Docker Login
+          run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jakejack13 --password-stdin
+        - uses: actions/checkout@v3
+        - name: Build
+          run: cd first && docker build -t ghcr.io/jakejack13/speed-first:latest .
+        - name: Deploy
+          run: docker push ghcr.io/jakejack13/speed-first:latest

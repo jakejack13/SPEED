@@ -51,3 +51,6 @@ def update():
     # TODO: Replace
 
     return "OK", 200
+
+if __name__ == "__main__":
+    app.run(debug=True)
