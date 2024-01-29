@@ -4,7 +4,6 @@ from flask import Flask, request
 
 import utils
 
-
 app = Flask(__name__)
 
 @app.route('/start', methods=['POST'])
