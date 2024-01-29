@@ -4,6 +4,7 @@ from flask import Flask, request
 
 import utils
 
+
 app = Flask(__name__)
 
 @app.route('/start', methods=['POST'])
@@ -16,6 +17,8 @@ def start():
     branch = request.form['branch']
 
     worker_id = "0" # TODO: Replace
+    utils.run_docker_container(url,
+                                       branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
 
     return worker_id, 200
 
