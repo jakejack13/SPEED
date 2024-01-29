@@ -27,6 +27,11 @@ public class OutputTestExecutionListener implements TestExecutionListener {
             case SUCCESSFUL -> TestOutputStream.TestResult.SUCCESS;
         };
 
-        outputStream.sendTestResult(testIdentifier.getDisplayName(), result);
+        outputStream.sendTestResult(extractClassName(testIdentifier.getUniqueId()) + "$" + testIdentifier.getDisplayName(), result);
+    }
+
+    private String extractClassName(String uniqueId) {
+        String[] parts = uniqueId.split("/");
+        return parts[1].trim().replace("[class:", "").replace("]", ""); // Assuming the class name is the second part
     }
 }
