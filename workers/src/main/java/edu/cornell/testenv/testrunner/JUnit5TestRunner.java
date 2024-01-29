@@ -42,9 +42,10 @@ public class JUnit5TestRunner implements TestRunner {
                 //Create Listeners
                 SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
                 OutputTestExecutionListener outputTestExecutionListener = new OutputTestExecutionListener(outputStream);
+                DetailedTestExecutionListener detailedTestExecutionListener = new DetailedTestExecutionListener();
 
                 // Register Listeners
-                launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener);
+                launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener, detailedTestExecutionListener);
 
                 // Load all build files and set Thread's class loader
                 ClassLoader classLoader = JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
