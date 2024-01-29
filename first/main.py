@@ -15,7 +15,8 @@ def start():
     url = request.form['url']
     branch = request.form['branch']
 
-    worker_id = "0" # TODO: Replace
+    worker_id = utils.run_docker_container(url,
+                                       branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
 
     return worker_id, 200
 
