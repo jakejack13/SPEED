@@ -52,11 +52,9 @@ public class JUnitContextClassLoader extends ClassLoader {
         // Add all .class or .jar files within subdirectories
         addFilesRecursively(directory, urls);
 
-        URL[] urlArray = urls.toArray(new URL[0]);
+        List<URL> moddedURLArray = new ArrayList<>(urls);
 
-        List<URL> moddedURLArray = new ArrayList<>();
-
-        for(URL url : urlArray) {
+        for(URL url : urls) {
             String fileName = url.getFile();
 
             if(!(new File(fileName).isFile()) && fileName.length() > 0) { continue; }
@@ -79,7 +77,6 @@ public class JUnitContextClassLoader extends ClassLoader {
                     }
                 }
             } catch (ClassNotFoundException e) {
-
             }
         }
 
