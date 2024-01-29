@@ -68,7 +68,7 @@ public abstract class Repository {
     public void build(@NonNull List<String> commands) throws RepositoryBuildException {
         for (String command : commands) {
             try {
-                ProcessBuilder builder = new ProcessBuilder();
+                ProcessBuilder builder = new ProcessBuilder().inheritIO();
                 builder.directory(rootDir);
                 if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
                     builder.command("cmd.exe", "/c", command);
