@@ -36,11 +36,49 @@ class DBManager:
                   '''CREATE TABLE IF NOT EXISTS deployments (
                   id INTEGER PRIMARY KEY, 
                   repo_name TEXT, 
-                  repo_branch TEXT, 
-                  results TEXT)'''
+                  repo_branch TEXT,
+                  status TEXT DEFAULT 'STARTED')'''
                 )
     except Error as e:
         print(e)
+
+  def create_results_table(self) -> None:
+    """Create the results table in the database."""
+    try:
+        c = self.conn.cursor()
+        c.execute(
+            '''CREATE TABLE IF NOT EXISTS results (
+                id INTEGER PRIMARY KEY,
+                deployment_id INTEGER,
+                result TEXT,
+                FOREIGN KEY(deployment_id) REFERENCES deployments(id)
+            )'''
+        )
+    except Error as e:
+        print(e)
+
+  def add_result(self, deployment_id: int, result: str) -> int:
+    """Add a new result to a specific deployment."""
+    sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
+    cur = self.conn.cursor()
+    cur.execute(sql, (deployment_id, result))
+    self.conn.commit()
+    return cur.lastrowid
+  
+  def add_results(self, deployment_id: int, results: list) -> None:
+    """Add multiple results to a specific deployment."""
+    sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
+    cur = self.conn.cursor()
+    for result in results:
+        cur.execute(sql, (deployment_id, result))
+    self.conn.commit()
+
+  def get_results(self, deployment_id: int) -> list:
+    """Retrieve all results for a specific deployment."""
+    cur = self.conn.cursor()
+    cur.execute("SELECT result FROM results WHERE deployment_id=?", (deployment_id,))
+    results = [row[0] for row in cur.fetchall()]
+    return results
 
   def add_deployment(self, repo_name: str, repo_branch: str) -> int:
     """
@@ -49,33 +87,33 @@ class DBManager:
     param repo_name: The name of the repository for the deployment.
     param repo_branch: The branch of the repository for the deployment.
     """
-    sql = '''INSERT INTO deployments(repo_name, repo_branch, results) VALUES(?,?,?)'''
+    sql = '''INSERT INTO deployments(repo_name, repo_branch) VALUES(?,?)'''
     cur = self.conn.cursor()
-    cur.execute(sql, (repo_name, repo_branch, json.dumps([])))
+    cur.execute(sql, (repo_name, repo_branch))
     self.conn.commit()
     return cur.lastrowid
 
-  def update_deployment(self, deployment_id: int, new_results: List[Any]) -> None:
+  def update_deployment_fields(self, deployment_id: int, updates: dict) -> None:
     """
-    Update the results of an existing deployment.
+    Update specified fields of an existing deployment.
+
+    :param deployment_id: The ID of the deployment to update.
+    :param updates: A dictionary where keys are column names and values are the new values for those columns.
+    """
+    parameters = [f"{key} = ?" for key in updates.keys()]
+    sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
+    values = list(updates.values()) + [deployment_id]
     
-    param deployment_id: The ID of the deployment to update.
-    param new_results: A list of new results to append to the existing results.
-    """
-    cur = self.conn.cursor()
-    cur.execute("SELECT results FROM deployments WHERE id=?", (deployment_id,))
-    row = cur.fetchone()
-    if row:
-      total_results = json.loads(row[0])
-      total_results.extend(new_results)
-      
-      sql = '''UPDATE deployments SET results = ? WHERE id = ?'''
-      cur.execute(sql, (json.dumps(total_results), deployment_id))
-      self.conn.commit()
+    try:
+        cur = self.conn.cursor()
+        cur.execute(sql, values)
+        self.conn.commit()
+    except Error as e:
+        print(f"Error updating deployment: {e}")
 
   def get_deployment(self, deployment_id: int) -> Optional[List[Any]]:
     """
-    Get a deployment by ID, including its results.
+    Get a deployment's information by ID.
 
     param deployment_id: The ID of the deployment to retrieve.
     """
@@ -83,8 +121,7 @@ class DBManager:
     cur.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,))
     row = cur.fetchone()
     if row:
-      row = list(row)
-      row[3] = json.loads(row[3])  # Convert the results back to a Python list
-      return row
+        columns = ['id', 'repo_name', 'repo_branch', 'status']
+        return dict(zip(columns, row))
     return None
 
