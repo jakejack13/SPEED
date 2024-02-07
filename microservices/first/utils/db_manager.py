@@ -1,7 +1,9 @@
 import json
 import sqlite3
 from sqlite3 import Error
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional, Union
+
+from microservices.first.utils import deployment_status
 
 class DBManager:
   def __init__(self, db_file: str) -> None:
@@ -58,7 +60,11 @@ class DBManager:
         print(e)
 
   def add_result(self, deployment_id: int, result: str) -> int:
-    """Add a new result to a specific deployment."""
+    """
+    Add a new result to a specific deployment.
+
+    Returns: Row number of result.
+    """
     sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
     cur = self.conn.cursor()
     cur.execute(sql, (deployment_id, result))
@@ -93,7 +99,7 @@ class DBManager:
     self.conn.commit()
     return cur.lastrowid
 
-  def update_deployment_fields(self, deployment_id: int, updates: dict) -> None:
+  def update_deployment_fields(self, deployment_id: int, updates: dict[str, str]) -> None:
     """
     Update specified fields of an existing deployment.
 
@@ -111,7 +117,7 @@ class DBManager:
     except Error as e:
         print(f"Error updating deployment: {e}")
 
-  def get_deployment(self, deployment_id: int) -> Optional[List[Any]]:
+  def get_deployment(self, deployment_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
     """
     Get a deployment's information by ID.
 
