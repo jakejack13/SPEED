@@ -5,6 +5,19 @@ from typing import Any, Dict, List, Optional, Union
 
 from microservices.first.utils import deployment_status
 
+"""
+Deployment Table Schema:
+id: Integer, Primary key identifying each row
+deployment_id: Integer, Indentifier of deployment
+repo_name: TEXT, Name of repo the deployment is working on
+repo_branch: TEXT, Branch of the repo being worked on
+status: TEXT, (DeploymentStatus in text form) Status of the deployment.
+
+Results Table Schema:
+id: Integer, Primary key identifying each row
+deployment_id: Integer, Foreign Key pointing to Deployment Table "deployment_id". Deployment the result is associated with.
+result: TEXT, one test result object.
+"""
 class DBManager:
   def __init__(self, db_file: str) -> None:
     """
