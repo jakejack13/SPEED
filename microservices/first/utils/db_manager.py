@@ -17,12 +17,8 @@ class DBManager:
 
   def create_connection(self) -> Optional[sqlite3.Connection]:
     """Create a database connection to the SQLite database."""
-    conn = None
-    try:
-        conn = sqlite3.connect(self.db_file)
-        return conn
-    except Error as e:
-        print(e)
+    conn = sqlite3.connect(self.db_file)
+    return conn
     return conn
 
   def close_connection(self) -> None:
@@ -32,32 +28,26 @@ class DBManager:
 
   def create_deployments_table(self) -> None:
     """Create the deployments table in the database."""
-    try:
-        c = self.conn.cursor()
-        c.execute(
-                  '''CREATE TABLE IF NOT EXISTS deployments (
-                  id INTEGER PRIMARY KEY, 
-                  repo_name TEXT, 
-                  repo_branch TEXT,
-                  status TEXT DEFAULT 'STARTED')'''
-                )
-    except Error as e:
-        print(e)
+    c = self.conn.cursor()
+    c.execute(
+              '''CREATE TABLE IF NOT EXISTS deployments (
+              id INTEGER PRIMARY KEY, 
+              repo_name TEXT, 
+              repo_branch TEXT,
+              status TEXT DEFAULT 'STARTED')'''
+            )
 
   def create_results_table(self) -> None:
     """Create the results table in the database."""
-    try:
-        c = self.conn.cursor()
-        c.execute(
-            '''CREATE TABLE IF NOT EXISTS results (
-                id INTEGER PRIMARY KEY,
-                deployment_id INTEGER,
-                result TEXT,
-                FOREIGN KEY(deployment_id) REFERENCES deployments(id)
-            )'''
-        )
-    except Error as e:
-        print(e)
+    c = self.conn.cursor()
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS results (
+            id INTEGER PRIMARY KEY,
+            deployment_id INTEGER,
+            result TEXT,
+            FOREIGN KEY(deployment_id) REFERENCES deployments(id)
+        )'''
+    )
 
   def add_result(self, deployment_id: int, result: str) -> int:
     """
@@ -110,12 +100,9 @@ class DBManager:
     sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
     values = list(updates.values()) + [deployment_id]
     
-    try:
-        cur = self.conn.cursor()
-        cur.execute(sql, values)
-        self.conn.commit()
-    except Error as e:
-        print(f"Error updating deployment: {e}")
+    cur = self.conn.cursor()
+    cur.execute(sql, values)
+    self.conn.commit()
 
   def get_deployment(self, deployment_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
     """
