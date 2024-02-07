@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from db_manager import DBManager
+from utils import DBManager
 import json
 
 from microservices.first import utils
