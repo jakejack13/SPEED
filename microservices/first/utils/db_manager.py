@@ -73,7 +73,7 @@ class DBManager:
         cur.execute(sql, (deployment_id, result))
     self.conn.commit()
 
-  def get_results(self, deployment_id: int) -> list:
+  def get_results(self, deployment_id: int) -> list[str]:
     """Retrieve all results for a specific deployment."""
     cur = self.conn.cursor()
     cur.execute("SELECT result FROM results WHERE deployment_id=?", (deployment_id,))
