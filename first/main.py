@@ -41,15 +41,19 @@ def info():
 
     return results, 200
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return "PONG", 200
+
 @app.route('/update', methods=['POST'])
 def update():
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
-    worker_id = request.form['id']
     results = json.loads(request.form['results'])
 
     # TODO: Replace
+    print(results)
 
     return "OK", 200
 
