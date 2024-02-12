@@ -1,5 +1,7 @@
 package edu.cornell;
 
+import edu.cornell.resultsmanager.TestOutputParser;
+import edu.cornell.resultsmanager.TestOutputSender;
 import edu.cornell.testconsumer.TestConsumer;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -53,17 +55,21 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
     @Override
     public void run() {
         LOGGER.info("Executing KafkaConsumerRunner");
+        TestOutputParser testOutputParser = new TestOutputParser();
         // poll for new data
         while(!testConsumer.isDone()){
             ConsumerRecords<String, String> records =
                     consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, String> record : records){
+                testOutputParser.appendTestResult(record.key(), record.value(), 0);
                 LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
                 LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
                 testConsumer.processTestOutput(record.key(), record.value());
             }
         }
+
+        TestOutputSender.sendResults(testOutputParser.toJson(), "http://host.docker.internal:5000/update");
     }
 
     @Override
