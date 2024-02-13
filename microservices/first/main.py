@@ -1,10 +1,8 @@
 # Endpoint documentation: https://github.com/jakejack13/SPEED/blob/SPEED-26-python-database-library/microservices/first_api_doc.pdf
+from utils import DBManager
+import utils
 
 from flask import Flask, request, jsonify
-from utils import DBManager
-import json
-
-import utils
 
 DATABASE_FILE: str = 'deployments.db'
 app = Flask(__name__)
