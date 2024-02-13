@@ -25,8 +25,8 @@ def start_deployment():
     data = request.json
     url = request.form['url']
     branch = request.form['branch']
-    worker_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
-    deployment_id = db.add_deployment(worker_id, data['url'], data['branch'])
+    leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
+    deployment_id = db.add_deployment(leader_id, data['url'], data['branch'])
 
     return jsonify({"id": deployment_id}), 201
 
