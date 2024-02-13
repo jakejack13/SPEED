@@ -21,11 +21,10 @@ def start_deployment():
     and execute the SPEED deployment. Returns the id of the newly created 
     worker."""
     data = request.json
-    deployment_id = db.add_deployment(data['url'], data['branch'])
-
     url = request.form['url']
     branch = request.form['branch']
     worker_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
+    deployment_id = db.add_deployment(worker_id, data['url'], data['branch'])
 
     return jsonify({"id": deployment_id}), 201
 

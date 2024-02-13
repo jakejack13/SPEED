@@ -44,6 +44,7 @@ class DBManager:
     c.execute(
               '''CREATE TABLE IF NOT EXISTS deployments (
               id INTEGER PRIMARY KEY, 
+              leader_ID INTEGER UNIQUE
               repo_name TEXT, 
               repo_branch TEXT,
               status TEXT DEFAULT 'STARTED')'''
@@ -88,16 +89,17 @@ class DBManager:
     results = [row[0] for row in cur.fetchall()]
     return results
 
-  def add_deployment(self, repo_name: str, repo_branch: str) -> int:
+  def add_deployment(self, leader_id: str, repo_name: str, repo_branch: str) -> int:
     """
     Add a new deployment to the database.
     
+    param leader_id: The leader's ID
     param repo_name: The name of the repository for the deployment.
     param repo_branch: The branch of the repository for the deployment.
     """
-    sql = '''INSERT INTO deployments(repo_name, repo_branch) VALUES(?,?)'''
+    sql = '''INSERT INTO deployments(leader_id, repo_name, repo_branch) VALUES(?,?,?)'''
     cur = self.conn.cursor()
-    cur.execute(sql, (repo_name, repo_branch))
+    cur.execute(sql, (int(leader_id), repo_name, repo_branch))
     self.conn.commit()
     return cur.lastrowid
 
@@ -126,7 +128,7 @@ class DBManager:
     cur.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,))
     row = cur.fetchone()
     if row:
-        columns = ['id', 'repo_name', 'repo_branch', 'status']
+        columns = ['id', 'leader_ID', 'repo_name', 'repo_branch', 'status']
         return dict(zip(columns, row))
     return None
 
