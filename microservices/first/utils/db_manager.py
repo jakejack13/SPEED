@@ -32,7 +32,6 @@ class DBManager:
     """Create a database connection to the SQLite database."""
     conn = sqlite3.connect(self.db_file)
     return conn
-    return conn
 
   def close_connection(self) -> None:
     """Close the database connection."""
