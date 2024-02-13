@@ -1,3 +1,5 @@
+# Endpoint documentation: 
+
 from flask import Flask, request, jsonify
 from utils import DBManager
 import json
