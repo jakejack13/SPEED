@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from utils import DBManager
 import json
 
-from microservices.first import utils
+import utils
 
 DATABASE_FILE: str = 'deployments.db'
 app = Flask(__name__)
