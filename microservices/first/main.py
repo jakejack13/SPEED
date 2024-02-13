@@ -1,4 +1,4 @@
-# Endpoint documentation: 
+# Endpoint documentation: https://github.com/jakejack13/SPEED/blob/SPEED-26-python-database-library/microservices/first_api_doc.pdf
 
 from flask import Flask, request, jsonify
 from utils import DBManager
