@@ -3,7 +3,7 @@ import sqlite3
 from sqlite3 import Error
 from typing import Any, Dict, List, Optional, Union
 
-import .deployment_status
+import deployment_status
 
 """
 Deployment Table Schema:
