@@ -32,8 +32,9 @@ public interface TestOutputStream extends Closeable {
      * Sends a test result to the client
      * @param testName the name of the test
      * @param result the result of the test
+     * @param elapsedTime the amount of time in nano-seconds taken to run the test
      */
-    void sendTestResult(String testName, TestResult result);
+    void sendTestResult(String testName, TestResult result, int elapsedTime);
 
     /**
      * Tells the listener that the tests have all finished executing

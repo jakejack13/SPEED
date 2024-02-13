@@ -15,11 +15,20 @@ public class OutputTestExecutionListener implements TestExecutionListener {
         this.outputStream = outputStream;
     }
 
+    private long timeTaken = 0;
+
+    @Override
+    public void executionStarted(TestIdentifier testIdentifier) {
+        timeTaken = System.nanoTime();
+    }
+
     @Override
     public void executionFinished(TestIdentifier testIdentifier,
                                   TestExecutionResult testExecutionResult) {
 
         if(!testIdentifier.isTest()) { return; }
+
+        int elapsedTime = (int) (System.nanoTime() - timeTaken);
 
         TestOutputStream.TestResult result = switch (testExecutionResult.getStatus()) {
             case ABORTED -> TestOutputStream.TestResult.EXCEPTION;
@@ -27,7 +36,7 @@ public class OutputTestExecutionListener implements TestExecutionListener {
             case SUCCESSFUL -> TestOutputStream.TestResult.SUCCESS;
         };
 
-        outputStream.sendTestResult(extractClassName(testIdentifier.getUniqueId()) + "$" + testIdentifier.getDisplayName(), result);
+        outputStream.sendTestResult(extractClassName(testIdentifier.getUniqueId()) + "$" + testIdentifier.getDisplayName(), result, elapsedTime);
     }
 
     private String extractClassName(String uniqueId) {

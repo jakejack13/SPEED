@@ -1,5 +1,7 @@
 package edu.cornell.testoutputstream;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -22,7 +24,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     /**
      * The Kafka producer for logging messages
      */
-    private final @NonNull Producer<String,String> producer;
+    private final @NonNull Producer<String,TestResultsRecord> producer;
     /**
      * The topic to log Kafka messages to, which is the name of the container
      */
@@ -66,23 +68,24 @@ class KafkaTestOutputStream implements TestOutputStream {
         properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                TestResultsRecordSerializer.class.getName());
+
         producer = new KafkaProducer<>(properties);
     }
 
     @Override
-    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result, int elapsedTime) {
         LOGGER.info(testName + ":" + result);
         System.out.println("Sent");
         producer.send(new ProducerRecord<>(topicName,
-                    testName, result.toString()));
+                    testName, new TestResultsRecord(result.toString(), elapsedTime)));
     }
 
     @Override
     public void done() {
         producer.send(new ProducerRecord<>(topicName,
-                topicName, "DONE"));
+                topicName, new TestResultsRecord("DONE", 0)));
     }
 
     @Override
