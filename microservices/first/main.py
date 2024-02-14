@@ -1,4 +1,4 @@
-# Endpoint documentation: https://github.com/jakejack13/SPEED/blob/SPEED-26-python-database-library/microservices/first_api_doc.pdf
+# Endpoint documentation: https://github.com/jakejack13/SPEED/blob/microservices/first_api_doc.md
 import json
 from utils import DBManager
 import utils
