@@ -2,19 +2,19 @@
 # ref: https://docs.docker.com/develop/develop-images/multistage-build/
 
 # temp container to build using gradle
-FROM gradle:8.4.0-jdk AS build
+FROM openjdk:21-jdk AS build
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 
-COPY build.gradle settings.gradle $APP_HOME
+COPY build.gradle settings.gradle gradlew $APP_HOME
 COPY gradle $APP_HOME/gradle
 
-RUN gradle build || return 0
+RUN ./gradlew build || return 0
 COPY . .
-RUN gradle clean bootJar
+RUN ./gradlew clean bootJar
 
 # actual container
-FROM openjdk:17-jdk-slim as production
+FROM openjdk:21-jdk-slim as production
 ENV ARTIFACT_NAME=leaders-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 
