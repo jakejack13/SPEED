@@ -15,7 +15,7 @@ status: TEXT, (DeploymentStatus in text form) Status of the deployment.
 
 Results Table Schema:
 id: Integer, Primary key identifying each row
-leader_ID: Integer, Foreign Key pointing to Deployment Table "deployment_id". Deployment the result is associated with.
+leader_ID: Integer, Foreign Key pointing to Deployment Table "leader_id". Deployment the result is associated with.
 result: TEXT, one test result object.
 """
 class DBManager:
@@ -58,22 +58,22 @@ class DBManager:
             id INTEGER PRIMARY KEY,
             leader_ID INTEGER,
             result TEXT,
-            FOREIGN KEY(deployment_id) REFERENCES deployments(id)
+            FOREIGN KEY(leader_id) REFERENCES deployments(id)
         )'''
     )
   
-  def add_results(self, deployment_id: int, results: list) -> None:
+  def add_results(self, leader_id: int, results: list) -> None:
     """Add multiple results to a specific deployment."""
-    sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
+    sql = '''INSERT INTO results(leader_id, result) VALUES(?, ?)'''
     cur = self.conn.cursor()
     for result in results:
-        cur.execute(sql, (deployment_id, result))
+        cur.execute(sql, (leader_id, result))
     self.conn.commit()
 
-  def get_results(self, deployment_id: int) -> list[str]:
+  def get_results(self, leader_id: int) -> list[str]:
     """Retrieve all results for a specific deployment."""
     cur = self.conn.cursor()
-    cur.execute("SELECT result FROM results WHERE deployment_id=?", (deployment_id,))
+    cur.execute("SELECT result FROM results WHERE leader_id=?", (leader_id,))
     results = [row[0] for row in cur.fetchall()]
     return results
 
@@ -91,29 +91,29 @@ class DBManager:
     self.conn.commit()
     return cur.lastrowid
 
-  def update_deployment_fields(self, deployment_id: int, updates: dict[str, str]) -> None:
+  def update_deployment_fields(self, leader_id: int, updates: dict[str, str]) -> None:
     """
     Update specified fields of an existing deployment.
 
-    :param deployment_id: The ID of the deployment to update.
+    :param leader_id: The ID of the leader to update.
     :param updates: A dictionary where keys are column names and values are the new values for those columns.
     """
     parameters = [f"{key} = ?" for key in updates.keys()]
     sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
-    values = list(updates.values()) + [deployment_id]
+    values = list(updates.values()) + [leader_id]
     
     cur = self.conn.cursor()
     cur.execute(sql, values)
     self.conn.commit()
 
-  def get_deployment(self, deployment_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
+  def get_deployment(self, leader_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
     """
     Get a deployment's information by ID.
 
-    param deployment_id: The ID of the deployment to retrieve.
+    param leader_id: The ID of the leader to retrieve.
     """
     cur = self.conn.cursor()
-    cur.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,))
+    cur.execute("SELECT * FROM deployments WHERE id=?", (leader_id,))
     row = cur.fetchone()
     if row:
         columns = ['id', 'leader_ID', 'repo_name', 'repo_branch', 'status']

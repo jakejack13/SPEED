@@ -70,7 +70,7 @@ def add_deployment(leader_ID):
 @app.route('/results/<int:leader_ID>', methods=['GET'])
 def get_results(leader_ID):
     """Endpoint to get all results for a specific deployment."""
-    results = db.get_results_deployment(leader_ID)
+    results = db.get_results(leader_ID)
     return jsonify({"results": results}), 200
 
 
