@@ -8,14 +8,14 @@ from . import deployment_status
 """
 Deployment Table Schema:
 id: Integer, Primary key identifying each row
-deployment_id: Integer, Indentifier of deployment
+leader_ID: Integer, Indentifier of deployment
 repo_name: TEXT, Name of repo the deployment is working on
 repo_branch: TEXT, Branch of the repo being worked on
 status: TEXT, (DeploymentStatus in text form) Status of the deployment.
 
 Results Table Schema:
 id: Integer, Primary key identifying each row
-deployment_id: Integer, Foreign Key pointing to Deployment Table "deployment_id". Deployment the result is associated with.
+leader_ID: Integer, Foreign Key pointing to Deployment Table "deployment_id". Deployment the result is associated with.
 result: TEXT, one test result object.
 """
 class DBManager:
@@ -44,7 +44,7 @@ class DBManager:
     c.execute(
               '''CREATE TABLE IF NOT EXISTS deployments (
               id INTEGER PRIMARY KEY, 
-              leader_ID INTEGER UNIQUE
+              leader_ID INTEGER UNIQUE,
               repo_name TEXT, 
               repo_branch TEXT,
               status TEXT DEFAULT 'STARTED')'''
@@ -56,23 +56,11 @@ class DBManager:
     c.execute(
         '''CREATE TABLE IF NOT EXISTS results (
             id INTEGER PRIMARY KEY,
-            deployment_id INTEGER,
+            leader_ID INTEGER,
             result TEXT,
             FOREIGN KEY(deployment_id) REFERENCES deployments(id)
         )'''
     )
-
-  def add_result(self, deployment_id: int, result: str) -> int:
-    """
-    Add a new result to a specific deployment.
-
-    Returns: Row number of result.
-    """
-    sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
-    cur = self.conn.cursor()
-    cur.execute(sql, (deployment_id, result))
-    self.conn.commit()
-    return cur.lastrowid
   
   def add_results(self, deployment_id: int, results: list) -> None:
     """Add multiple results to a specific deployment."""
