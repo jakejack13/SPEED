@@ -42,7 +42,7 @@ class KafkaTestOutputStream implements TestOutputStream {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(
-                        Runtime.getRuntime().exec("hostname").getInputStream()))) {
+                        new ProcessBuilder("hostname").start().getInputStream()))) {
             topicName = inputStream.readLine();
         } catch (IOException e) {
             topicName = "error";
