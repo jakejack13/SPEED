@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 @Slf4j
@@ -15,8 +16,8 @@ public class TestOutputSender {
 
     public static void sendResults(String json, String url) {
         try {
-            URL postUrl = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
+            URI postURI = new URI(url);
+            HttpURLConnection connection = (HttpURLConnection) postURI.toURL().openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
