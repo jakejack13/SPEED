@@ -1,7 +1,5 @@
-import json
 import sqlite3
-from sqlite3 import Error
-from typing import Any, Dict, List, Optional, Union
+from typing import Union
 
 from . import deployment_status
 
@@ -28,7 +26,7 @@ class DBManager:
     self.db_file = db_file
     self.conn = self.create_connection()
 
-  def create_connection(self) -> Optional[sqlite3.Connection]:
+  def create_connection(self) -> sqlite3.Connection:
     """Create a database connection to the SQLite database."""
     conn = sqlite3.connect(self.db_file)
     return conn
@@ -62,7 +60,7 @@ class DBManager:
         )'''
     )
   
-  def add_results(self, leader_id: int, results: list) -> None:
+  def add_results(self, leader_id: int, results: list[str]) -> None:
     """Add multiple results to a specific deployment."""
     sql = '''INSERT INTO results(leader_id, result) VALUES(?, ?)'''
     cur = self.conn.cursor()
@@ -89,7 +87,7 @@ class DBManager:
     cur = self.conn.cursor()
     cur.execute(sql, (int(leader_id), repo_name, repo_branch))
     self.conn.commit()
-    return cur.lastrowid
+    return cur.lastrowid or -1
 
   def update_deployment_fields(self, leader_id: int, updates: dict[str, Union[str,int]]) -> None:
     """
@@ -106,7 +104,7 @@ class DBManager:
     cur.execute(sql, values)
     self.conn.commit()
 
-  def get_deployment(self, leader_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
+  def get_deployment(self, leader_id: int) -> dict[str, Union[str, int, deployment_status.DeploymentStatus]] | None:
     """
     Get a deployment's information by ID.
 

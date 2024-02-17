@@ -2,7 +2,7 @@
 
 import subprocess
 
-def run_docker_container(repo, branch, num_workers, img_url):
+def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str) -> str:
     """
     Run a Docker Leader container with specified parameters and capture the docker leader ID.
 
