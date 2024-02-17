@@ -1,5 +1,4 @@
-﻿```markdown
-# SPEED API Documentation
+﻿# SPEED API Documentation
 
 
 This documentation outlines the API endpoints for the SPEED deployment system. The SPEED system is designed to build and execute code from repositories using Docker containers. Below are the available endpoints for interacting with the SPEED system.
@@ -184,6 +183,3 @@ Deployments are managed through Docker containers, with each deployment spawning
 
 For more information or to report issues, please visit the [GitHub repository](https://github.com/jakejack13/SPEED).
 ```
-
-
-This markdown documentation provides a comprehensive guide to the API endpoints, including request and response formats, for the SPEED deployment system.
