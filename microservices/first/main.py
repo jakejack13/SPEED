@@ -2,8 +2,7 @@
 from utils import DBManager
 import utils
 
-from flask import Flask, request, jsonify
-import flask
+from flask import Flask, request, jsonify, Response
 
 DATABASE_FILE: str = 'deployments.db'
 app = Flask(__name__)
@@ -15,7 +14,7 @@ def initialize() -> None:
     db.create_results_table()
 
 @app.route('/start', methods=['POST'])
-def start_deployment() -> tuple[flask.Response, int]:
+def start_deployment() -> tuple[Response, int]:
     """The `start` endpoint. Takes in the url and branch of the repository to 
     build and execute. Spawns a new leader in the form of a Docker container 
     and execute the SPEED deployment. Returns the id of the newly created 
@@ -31,7 +30,7 @@ def start_deployment() -> tuple[flask.Response, int]:
     return jsonify({"id": leader_id}), 201
 
 @app.route('/info/<int:leader_ID>', methods=['GET'])
-def get_deployment_info(leader_ID: int) -> tuple[flask.Response, int]:
+def get_deployment_info(leader_ID: int) -> tuple[Response, int]:
     """
     The `info` endpoint. Takes in the id of the SPEED build and returns 
     information about the deployment, including repo_name, repo_branch, and status.
@@ -51,7 +50,7 @@ def get_deployment_info(leader_ID: int) -> tuple[flask.Response, int]:
         return jsonify({"error": "Deployment not found"}), 404
 
 @app.route('/update/<int:leader_ID>', methods=['POST'])
-def update_deployment(leader_ID: int) -> tuple[flask.Response, int]:
+def update_deployment(leader_ID: int) -> tuple[Response, int]:
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
@@ -62,7 +61,7 @@ def update_deployment(leader_ID: int) -> tuple[flask.Response, int]:
     return jsonify({"message": "Deployment updated successfully"}), 200
 
 @app.route('/add_results/<int:leader_ID>', methods=['POST'])
-def add_results(leader_ID: int) -> tuple[flask.Response, int]:
+def add_results(leader_ID: int) -> tuple[Response, int]:
     """Endpoint to add results for a specific deployment."""
     data = request.json
     if not data or 'results' not in data:
@@ -72,7 +71,7 @@ def add_results(leader_ID: int) -> tuple[flask.Response, int]:
     return jsonify({"message": "Results added successfully"}), 200
 
 @app.route('/results/<int:leader_ID>', methods=['GET'])
-def get_results(leader_ID: int) -> tuple[flask.Response, int]:
+def get_results(leader_ID: int) -> tuple[Response, int]:
     """Endpoint to get all results for a specific deployment."""
     results = db.get_results(leader_ID)
     return jsonify({"results": results}), 200
