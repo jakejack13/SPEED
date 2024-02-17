@@ -20,6 +20,6 @@ jobs:
           run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jakejack13 --password-stdin
         - uses: actions/checkout@v3
         - name: Build
-          run: cd first && docker build -t ghcr.io/jakejack13/speed-first:latest .
+          run: cd microservices/first && docker build -t ghcr.io/jakejack13/speed-first:latest .
         - name: Deploy
           run: docker push ghcr.io/jakejack13/speed-first:latest
