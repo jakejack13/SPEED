@@ -194,4 +194,3 @@ Deployments are managed through Docker containers, with each deployment spawning
 
 
 For more information or to report issues, please visit the [GitHub repository](https://github.com/jakejack13/SPEED).
-```
