@@ -25,19 +25,19 @@ def start_deployment():
     url = request.form['url']
     branch = request.form['branch']
     leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
-    db.add_deployment(leader_id, data['url'], data['branch'])
+    deployment_id = db.add_deployment(leader_id, data['url'], data['branch'])
 
-    return jsonify({"id": leader_id}), 201
+    return jsonify({"id": deployment_id}), 201
 
-@app.route('/info/<int:leader_ID>', methods=['GET'])
-def get_deployment_info(leader_ID):
+@app.route('/info/<int:deployment_ID>', methods=['GET'])
+def get_deployment_info(deployment_ID):
     """
     The `info` endpoint. Takes in the id of the SPEED build and returns 
     information about the deployment, including repo_name, repo_branch, and status.
     
-    param leader_ID: The ID of the deployment to get.
+    param deployment_ID: The ID of the deployment to get.
     """
-    deployment = db.get_deployment(leader_ID)
+    deployment = db.get_deployment(deployment_ID)
     if deployment:
         return jsonify({
             "id": deployment["id"],
@@ -49,28 +49,28 @@ def get_deployment_info(leader_ID):
     else:
         return jsonify({"error": "Deployment not found"}), 404
 
-@app.route('/update/<int:leader_ID>', methods=['POST'])
-def update_deployment(leader_ID):
+@app.route('/update/<int:deployment_ID>', methods=['POST'])
+def update_deployment(deployment_ID):
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
-    db.update_deployment_fields(leader_ID, json.loads(request.json))
+    db.update_deployment_fields(deployment_ID, json.loads(request.json))
     return jsonify({"message": "Deployment updated successfully"}), 200
 
-@app.route('/add_results/<int:leader_ID>', methods=['POST'])
-def add_results(leader_ID):
+@app.route('/add_results/<int:deployment_id>', methods=['POST'])
+def add_results(deployment_id):
     """Endpoint to add results for a specific deployment."""
     data = request.json
     if not data or 'results' not in data:
         return jsonify({"error": "Missing results data"}), 400
     
-    db.add_results(leader_ID, data['results'])
+    db.add_results(deployment_id, data['results'])
     return jsonify({"message": "Results added successfully"}), 200
 
-@app.route('/results/<int:leader_ID>', methods=['GET'])
-def get_results(leader_ID):
+@app.route('/results/<int:deployment_id>', methods=['GET'])
+def get_results(deployment_id):
     """Endpoint to get all results for a specific deployment."""
-    results = db.get_results(leader_ID)
+    results = db.get_results(deployment_id)
     return jsonify({"results": results}), 200
 
 
