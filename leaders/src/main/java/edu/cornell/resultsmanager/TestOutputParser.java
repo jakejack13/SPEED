@@ -2,7 +2,9 @@ package edu.cornell.resultsmanager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.LinkedList;
 import java.util.List;
