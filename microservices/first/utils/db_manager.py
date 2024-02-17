@@ -91,7 +91,7 @@ class DBManager:
     self.conn.commit()
     return cur.lastrowid
 
-  def update_deployment_fields(self, leader_id: int, updates: dict[str, str]) -> None:
+  def update_deployment_fields(self, leader_id: int, updates: dict[str, Union[str,int]]) -> None:
     """
     Update specified fields of an existing deployment.
 

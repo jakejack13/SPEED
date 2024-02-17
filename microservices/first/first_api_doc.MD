@@ -82,6 +82,13 @@ Updates the status of a deployment. This endpoint is typically used by leaders t
 
 
 - **JSON Payload**: Contains the updated fields for the deployment.
+```
+"id":
+"leader_ID":
+"repo_name":
+"repo_branch":
+"status":
+```
 
 
 #### Response
@@ -113,7 +120,12 @@ Adds results for a specific deployment.
 
 
 - **JSON Payload**: Contains the results data to be added.
-
+```
+{
+  "test": "testname",
+  "result": "passed/failed"
+}
+```
 
 #### Response
 
