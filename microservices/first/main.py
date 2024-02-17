@@ -1,27 +1,27 @@
 # Endpoint documentation: https://github.com/jakejack13/SPEED/blob/microservices/first_api_doc.md
-import json
 from utils import DBManager
 import utils
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 
 DATABASE_FILE: str = 'deployments.db'
 app = Flask(__name__)
 db = DBManager(DATABASE_FILE)
 
-@app.before_first_request
-def initialize():
+def initialize() -> None:
     """Initialize the database and tables."""
     db.create_deployments_table()
     db.create_results_table()
 
 @app.route('/start', methods=['POST'])
-def start_deployment():
+def start_deployment() -> tuple[Response, int]:
     """The `start` endpoint. Takes in the url and branch of the repository to 
     build and execute. Spawns a new leader in the form of a Docker container 
     and execute the SPEED deployment. Returns the id of the newly created 
     worker."""
     data = request.json
+    if data is None:
+        return jsonify({'error': 'Missing request body'}), 400
     url = request.form['url']
     branch = request.form['branch']
     leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
@@ -75,4 +75,5 @@ def get_results(deployment_id):
 
 
 if __name__ == '__main__':
+    initialize()
     app.run(debug=True)

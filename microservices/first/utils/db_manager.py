@@ -1,7 +1,5 @@
-import json
 import sqlite3
-from sqlite3 import Error
-from typing import Any, Dict, List, Optional, Union
+from typing import Union
 
 from . import deployment_status
 
@@ -28,7 +26,7 @@ class DBManager:
     self.db_file = db_file
     self.conn = self.create_connection()
 
-  def create_connection(self) -> Optional[sqlite3.Connection]:
+  def create_connection(self) -> sqlite3.Connection:
     """Create a database connection to the SQLite database."""
     conn = sqlite3.connect(self.db_file)
     return conn
@@ -89,7 +87,7 @@ class DBManager:
     cur = self.conn.cursor()
     cur.execute(sql, (int(leader_id), repo_name, repo_branch))
     self.conn.commit()
-    return cur.lastrowid
+    return cur.lastrowid or -1
 
   def update_deployment_fields(self, deployment_id: int, updates: dict[str, Union[str,int]]) -> None:
     """
