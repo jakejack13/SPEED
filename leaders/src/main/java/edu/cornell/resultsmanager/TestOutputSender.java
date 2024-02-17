@@ -20,9 +20,9 @@ public class TestOutputSender {
             HttpURLConnection connection = (HttpURLConnection) postURI.toURL().openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Type", "application/json");
 
-            String postData = "results=" + java.net.URLEncoder.encode(json, "UTF-8");
+            String postData = "{\"results\":" + json + "}";
 
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(postData.getBytes());

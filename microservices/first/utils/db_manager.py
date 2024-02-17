@@ -104,7 +104,7 @@ class DBManager:
     cur.execute(sql, values)
     self.conn.commit()
 
-  def get_deployment(self, deployment_id: int) -> Dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
+  def get_deployment(self, deployment_id: int) -> dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
     """
     Get a deployment's information by ID.
 

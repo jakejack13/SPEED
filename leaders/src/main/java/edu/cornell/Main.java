@@ -51,10 +51,16 @@ public class Main {
      */
     public static final @NonNull String ENV_NUM_WORKERS = "SPEED_NUM_WORKERS";
 
+    /**
+     * The ID of hte Deployment that this leader belongs to.
+     */
+    public static final @NonNull String ENV_DEPLOYMENT_ID = "DEPLOYMENT_ID";
+
     public static void main(String[] args) {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
+        Integer deploymentID = Integer.valueOf(System.getenv(ENV_DEPLOYMENT_ID));
 
         int numWorkers = 0;
         try {
@@ -88,7 +94,7 @@ public class Main {
                 WorkerRunner workerRunner = new WorkerRunner(workers);
                 KafkaConsumerRunner kafkaRunner =
                     new KafkaConsumerRunner(kafkaAddress, getWorkerIds(workers),
-                            TestConsumer.createTestConsumer(getWorkerIds(workers)))
+                            TestConsumer.createTestConsumer(getWorkerIds(workers)), deploymentID)
                 ) {
             Thread workerThread = new Thread(workerRunner);
             Thread kafkaThread = new Thread(kafkaRunner);

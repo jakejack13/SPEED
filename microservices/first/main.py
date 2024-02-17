@@ -19,13 +19,13 @@ def start_deployment() -> tuple[Response, int]:
     build and execute. Spawns a new leader in the form of a Docker container 
     and execute the SPEED deployment. Returns the id of the newly created 
     worker."""
-    data = request.json
+    data = request.form
     if data is None:
         return jsonify({'error': 'Missing request body'}), 400
     url = request.form['url']
     branch = request.form['branch']
     leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
-    deployment_id = db.add_deployment(leader_id, data['url'], data['branch'])
+    deployment_id = db.add_deployment(leader_id, url, branch)
 
     return jsonify({"id": deployment_id}), 201
 
