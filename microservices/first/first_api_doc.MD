@@ -16,8 +16,8 @@ Starts a new deployment by building and executing code from the specified reposi
 #### Request
 
 
-- **URL**: The URL of the repository to deploy.
-- **Branch**: The branch of the repository to build and execute.
+- **url**: The URL of the repository to deploy.
+- **branch**: The branch of the repository to build and execute.
 
 
 #### Response
