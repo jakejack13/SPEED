@@ -49,16 +49,16 @@ def get_deployment_info(leader_ID):
     else:
         return jsonify({"error": "Deployment not found"}), 404
 
-@app.route('/update', methods=['POST'])
-def update_deployment():
+@app.route('/update/<int:leader_ID>', methods=['POST'])
+def update_deployment(leader_ID):
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
-    db.update_deployment_fields(json.loads(request.json))
+    db.update_deployment_fields(leader_ID, json.loads(request.json))
     return jsonify({"message": "Deployment updated successfully"}), 200
 
 @app.route('/add_results/<int:leader_ID>', methods=['POST'])
-def add_deployment(leader_ID):
+def add_results(leader_ID):
     """Endpoint to add results for a specific deployment."""
     data = request.json
     if not data or 'results' not in data:
