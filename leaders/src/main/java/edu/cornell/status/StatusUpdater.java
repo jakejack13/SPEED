@@ -4,8 +4,17 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
+/**
+ * A utility class for updating deployment status by sending HTTP POST requests to a specified URL.
+ */
 public class StatusUpdater {
 
+    /**
+     * Sends an HTTP POST request to update the deployment status.
+     *
+     * @param url    The URL to which the request will be sent.
+     * @param status The deployment status to be updated.
+     */
     public static void updateDeploymentStatus(String url, DeploymentStatus status) {
         try {
             // Construct the URL

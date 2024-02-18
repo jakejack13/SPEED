@@ -20,13 +20,13 @@ result: TEXT, one test result object.
 """
 class DBManager:
 
-  def get_db(self):
+  def get_db(self) -> sqlite3.Connection:
         db = getattr(g, '_database', None)
         if db is None:
             db = g._database = sqlite3.connect(self.db_file)
         return db
 
-  def close_connection(self, exception=None):
+  def close_connection(self, exception=None) -> sqlite3.Connection:
       db = getattr(g, '_database', None)
       if db is not None:
           db.close()
@@ -121,7 +121,7 @@ class DBManager:
     cur.execute(sql, (leader_ID, deployment_ID))
     self.get_db().commit()
 
-  def update_deployment_fields(self, deployment_id: int, updates: dict[str, Union[str,int]]) -> None:
+  def update_deployment_fields(self, deployment_id: int, updates: dict[str, str]) -> None:
     """
     Update specified fields of an existing deployment.
 
