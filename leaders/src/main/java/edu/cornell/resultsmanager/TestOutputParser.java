@@ -42,9 +42,9 @@ public class TestOutputParser {
 
         for (TestResultRecord record : results) {
             JsonObject recordJson = new JsonObject();
-            recordJson.addProperty("value", record.getValue());
-            recordJson.addProperty("secondsTaken", record.getSecondsTaken());
-            jsonOutput.add(record.getClassName(), recordJson);
+            recordJson.addProperty("value", record.value());
+            recordJson.addProperty("secondsTaken", record.secondsTaken());
+            jsonOutput.add(record.className(), recordJson);
         }
 
         return gson.toJson(jsonOutput);
@@ -53,20 +53,6 @@ public class TestOutputParser {
     /**
      * Represents a single test result record.
      */
-    @AllArgsConstructor
-    @Getter
-    private class TestResultRecord {
-        /**
-         * The name of the test class.
-         */
-        private final String className;
-        /**
-         * The result value of the test.
-         */
-        private final String value;
-        /**
-         * The time taken for the test in seconds.
-         */
-        private final int secondsTaken;
+    public record TestResultRecord(String className, String value, int secondsTaken) {
     }
 }
