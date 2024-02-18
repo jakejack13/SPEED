@@ -1,5 +1,4 @@
 import sqlite3
-from typing import Union
 from flask import g
 import json
 
@@ -26,7 +25,7 @@ class DBManager:
             db = g._database = sqlite3.connect(self.db_file)
         return db
 
-  def close_connection(self, exception=None) -> sqlite3.Connection:
+  def close_connection(self, exception=None) -> None:
       db = getattr(g, '_database', None)
       if db is not None:
           db.close()
@@ -43,11 +42,6 @@ class DBManager:
     """Create a database connection to the SQLite database."""
     conn = sqlite3.connect(self.db_file)
     return conn
-
-  def close_connection(self) -> None:
-    """Close the database connection."""
-    if self.get_db():
-        self.get_db().close()
 
   def create_deployments_table(self) -> None:
     """Create the deployments table in the database."""
@@ -75,12 +69,13 @@ class DBManager:
 
   def next_deployment_id(self) -> int:
      """Get the next Deployment ID that will be created. """
-     if self.get_db().cursor().lastrowid is None:
+     last_row_id = self.get_db().cursor().lastrowid
+     if last_row_id is None:
         return 1
      
-     return self.get_db().cursor().lastrowid + 1
+     return last_row_id + 1
   
-  def add_results(self, deployment_id: int, results: dict) -> None:
+  def add_results(self, deployment_id: int, results: dict[str, dict[str, int | str]]) -> None:
     """Add multiple results to a specific deployment."""
     sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
     cur = self.get_db().cursor()
@@ -136,7 +131,7 @@ class DBManager:
     cur.execute(sql, values)
     self.get_db().commit()
 
-  def get_deployment(self, deployment_id: int) -> dict[str, Union[str, int, deployment_status.DeploymentStatus]]:
+  def get_deployment(self, deployment_id: int) -> dict[str, str | int | deployment_status.DeploymentStatus] | None:
     """
     Get a deployment's information by ID.
 
@@ -148,4 +143,5 @@ class DBManager:
     if row:
         columns = ['id', 'leader_ID', 'repo_name', 'repo_branch', 'status']
         return dict(zip(columns, row))
+    
     return None
