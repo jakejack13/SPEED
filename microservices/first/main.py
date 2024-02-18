@@ -46,7 +46,7 @@ def start_deployment() -> tuple[Response, int]:
     return jsonify({"id": deployment_ID}), 201
 
 @app.route('/info/<int:deployment_ID>', methods=['GET'])
-def get_deployment_info(deployment_ID) -> tuple[Response, int]:
+def get_deployment_info(deployment_ID : int) -> tuple[Response, int]:
     """
     The `info` endpoint. Takes in the id of the SPEED build and returns 
     information about the deployment, including repo_name, repo_branch, and status.
@@ -66,15 +66,19 @@ def get_deployment_info(deployment_ID) -> tuple[Response, int]:
         return jsonify({"error": "Deployment not found"}), 404
 
 @app.route('/update/<int:deployment_id>', methods=['POST'])
-def update_deployment(deployment_id) -> tuple[Response, int]:
+def update_deployment(deployment_id : int) -> tuple[Response, int]:
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
-    db.update_deployment_fields(deployment_id, request.json)
+    data = request.json
+    if not data:
+        return jsonify({"error": "Missing update data"}), 400
+
+    db.update_deployment_fields(deployment_id, data)
     return jsonify({"message": "Deployment updated successfully"}), 200
 
 @app.route('/add_results/<int:deployment_id>', methods=['POST'])
-def add_results(deployment_id) -> tuple[Response, int]:
+def add_results(deployment_id : int) -> tuple[Response, int]:
     """Endpoint to add results for a specific deployment."""
     data = request.json
     if not data or 'results' not in data:
@@ -84,7 +88,7 @@ def add_results(deployment_id) -> tuple[Response, int]:
     return jsonify({"message": "Results added successfully"}), 200
 
 @app.route('/results/<int:deployment_id>', methods=['GET'])
-def get_results(deployment_id) -> tuple[Response, int]:
+def get_results(deployment_id : int) -> tuple[Response, int]:
     """Endpoint to get all results for a specific deployment."""
     results = db.get_results(deployment_id)
     return jsonify({"results": results}), 200
