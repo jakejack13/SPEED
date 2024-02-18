@@ -2,7 +2,7 @@
 
 import subprocess
 
-def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str) -> str:
+def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str, deployment_ID: int) -> str:
     """
     Run a Docker Leader container with specified parameters and capture the docker leader ID.
 
@@ -45,6 +45,7 @@ def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str)
         "-e", f"SPEED_REPO_BRANCH={branch}",
         "-e", "SPEED_KAFKA_ADDRESS=localhost:9092",
         "-e", f"SPEED_NUM_WORKERS={str(num_workers)}",
+        "-e", f"DEPLOYMENT_ID={str(deployment_ID)}",
         img_url
     ]
 

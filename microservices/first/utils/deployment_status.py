@@ -10,6 +10,7 @@ FAILED - Leader ran into an error
 '''
 class DeploymentStatus(Enum):
     STARTED = auto()
+    BUILDING = auto()
     IN_PROGRESS = auto()
     DONE = auto()
     FAILED = auto()

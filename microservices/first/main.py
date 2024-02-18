@@ -2,16 +2,31 @@
 from utils import DBManager
 import utils
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, g
+import json
 
-DATABASE_FILE: str = 'deployments.db'
 app = Flask(__name__)
+
+# Set up database manager
+DATABASE_FILE: str = 'deployments.db'
 db = DBManager(DATABASE_FILE)
 
 def initialize() -> None:
     """Initialize the database and tables."""
-    db.create_deployments_table()
-    db.create_results_table()
+    with app.app_context():
+        db.create_deployments_table()
+        db.create_results_table()
+
+@app.before_request
+def before_request():
+    g.db_manager = DBManager(DATABASE_FILE)
+    g.db = g.db_manager.get_db()
+
+@app.teardown_request
+def teardown_request(exception=None):
+    db_manager = getattr(g, 'db_manager', None)
+    if db_manager is not None:
+        db_manager.close_connection()
 
 @app.route('/start', methods=['POST'])
 def start_deployment() -> tuple[Response, int]:
@@ -24,10 +39,11 @@ def start_deployment() -> tuple[Response, int]:
         return jsonify({'error': 'Missing request body'}), 400
     url = request.form['url']
     branch = request.form['branch']
-    leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest")
-    deployment_id = db.add_deployment(leader_id, url, branch)
+    deployment_ID = db.add_deployment(url, branch)
+    leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_ID)
+    db.add_leader_ID(leader_id, deployment_ID)
 
-    return jsonify({"id": deployment_id}), 201
+    return jsonify({"id": deployment_ID}), 201
 
 @app.route('/info/<int:deployment_ID>', methods=['GET'])
 def get_deployment_info(deployment_ID):
@@ -49,12 +65,12 @@ def get_deployment_info(deployment_ID):
     else:
         return jsonify({"error": "Deployment not found"}), 404
 
-@app.route('/update/<int:deployment_ID>', methods=['POST'])
-def update_deployment(deployment_ID):
+@app.route('/update/<int:deployment_id>', methods=['POST'])
+def update_deployment(deployment_id):
     """The `update` endpoint. Takes in the id of the SPEED build and the new 
     results of the build. Used by leaders to update the web server on the 
     build's progress in order to inform users via the `info` endpoint."""
-    db.update_deployment_fields(deployment_ID, json.loads(request.json))
+    db.update_deployment_fields(deployment_id, request.json)
     return jsonify({"message": "Deployment updated successfully"}), 200
 
 @app.route('/add_results/<int:deployment_id>', methods=['POST'])
