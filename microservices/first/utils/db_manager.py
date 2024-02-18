@@ -1,6 +1,7 @@
 import sqlite3
 from flask import g
 import json
+from typing import Optional
 
 from . import deployment_status
 
@@ -25,7 +26,7 @@ class DBManager:
             db = g._database = sqlite3.connect(self.db_file)
         return db
 
-  def close_connection(self, exception : Exception = None) -> None:
+  def close_connection(self, exception : Optional[Exception] | None = None) -> None:
       db = getattr(g, '_database', None)
       if db is not None:
           db.close()
