@@ -23,7 +23,7 @@ def before_request() -> None:
     g.db = g.db_manager.get_db()
 
 @app.teardown_request
-def teardown_request(exception : Optional[Exception] | None = None) -> None:
+def teardown_request() -> None:
     db_manager = getattr(g, 'db_manager', None)
     if db_manager is not None:
         db_manager.close_connection()
