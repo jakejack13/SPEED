@@ -107,7 +107,7 @@ class DBManager:
     """
     Update specified fields of an existing deployment.
 
-    :param leader_ID: The ID of the leader to update.
+    :param deployment_id: The ID of the deployment to update.
     :param updates: A dictionary where keys are column names and values are the new values for those columns.
     """
     parameters = [f"{key} = ?" for key in updates.keys()]
