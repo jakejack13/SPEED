@@ -1,7 +1,6 @@
 # Endpoint documentation: https://github.com/jakejack13/SPEED/blob/microservices/first_api_doc.md
 from utils import DBManager
 import utils
-from typing import Optional, Callable
 
 from flask import Flask, request, jsonify, Response, g
 
@@ -9,21 +8,21 @@ app = Flask(__name__)
 
 # Set up database manager
 DATABASE_FILE: str = 'deployments.db'
-db = DBManager(DATABASE_FILE)
 
 def initialize() -> None:
     """Initialize the database and tables."""
     with app.app_context():
+        db = DBManager(DATABASE_FILE)
         db.create_deployments_table()
         db.create_results_table()
+        db.close_connection()
 
 @app.before_request
 def before_request() -> None:
     g.db_manager = DBManager(DATABASE_FILE)
-    g.db = g.db_manager.get_db()
 
 @app.teardown_request
-def teardown_request(exception=None):
+def teardown_request(exception: BaseException | None = None) -> None:
     db_manager = getattr(g, 'db_manager', None)
     if db_manager is not None:
         db_manager.close_connection()
@@ -34,14 +33,14 @@ def start_deployment() -> tuple[Response, int]:
     build and execute. Spawns a new leader in the form of a Docker container 
     and execute the SPEED deployment. Returns the id of the newly created 
     worker."""
-    data = request.form
-    if data is None:
-        return jsonify({'error': 'Missing request body'}), 400
     url = request.form['url']
     branch = request.form['branch']
-    deployment_ID = db.add_deployment(url, branch)
+    db_manager: DBManager | None = getattr(g, 'db_manager', None)
+    if db_manager is None:
+        return jsonify({'error': 'no database manager'}), 500
+    deployment_ID = db_manager.add_deployment(url, branch)
     leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_ID)
-    db.add_leader_ID(leader_id, deployment_ID)
+    db_manager.add_leader_ID(leader_id, deployment_ID)
 
     return jsonify({"id": deployment_ID}), 201
 
@@ -53,7 +52,10 @@ def get_deployment_info(deployment_ID : int) -> tuple[Response, int]:
     
     param deployment_ID: The ID of the deployment to get.
     """
-    deployment = db.get_deployment(deployment_ID)
+    db_manager: DBManager | None = getattr(g, 'db_manager', None)
+    if db_manager is None:
+        return jsonify({'error': 'no database manager'}), 500
+    deployment = db_manager.get_deployment(deployment_ID)
     if deployment:
         return jsonify({
             "id": deployment["id"],
@@ -73,8 +75,10 @@ def update_deployment(deployment_id : int) -> tuple[Response, int]:
     data = request.json
     if not data:
         return jsonify({"error": "Missing update data"}), 400
-
-    db.update_deployment_fields(deployment_id, data)
+    db_manager: DBManager | None = getattr(g, 'db_manager', None)
+    if db_manager is None:
+        return jsonify({'error': 'no database manager'}), 500
+    db_manager.update_deployment_fields(deployment_id, data)
     return jsonify({"message": "Deployment updated successfully"}), 200
 
 @app.route('/add_results/<int:deployment_id>', methods=['POST'])
@@ -83,14 +87,19 @@ def add_results(deployment_id : int) -> tuple[Response, int]:
     data = request.json
     if not data or 'results' not in data:
         return jsonify({"error": "Missing results data"}), 400
-    
-    db.add_results(deployment_id, data['results'])
+    db_manager: DBManager | None = getattr(g, 'db_manager', None)
+    if db_manager is None:
+        return jsonify({'error': 'no database manager'}), 500
+    db_manager.add_results(deployment_id, data['results'])
     return jsonify({"message": "Results added successfully"}), 200
 
 @app.route('/results/<int:deployment_id>', methods=['GET'])
 def get_results(deployment_id : int) -> tuple[Response, int]:
     """Endpoint to get all results for a specific deployment."""
-    results = db.get_results(deployment_id)
+    db_manager: DBManager | None = getattr(g, 'db_manager', None)
+    if db_manager is None:
+        return jsonify({'error': 'no database manager'}), 500
+    results = db_manager.get_results(deployment_id)
     return jsonify({"results": results}), 200
 
 

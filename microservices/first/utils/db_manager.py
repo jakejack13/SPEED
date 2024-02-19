@@ -1,7 +1,6 @@
 import sqlite3
 from flask import g
 import json
-from typing import Optional
 
 from . import deployment_status
 
@@ -20,7 +19,7 @@ result: TEXT, one test result object.
 """
 class DBManager:
 
-  def get_db(self) -> sqlite3.Connection:
+  def _get_db(self) -> sqlite3.Connection:
         db = getattr(g, '_database', None)
         if db is None:
             db = g._database = sqlite3.connect(self.db_file)
@@ -39,14 +38,9 @@ class DBManager:
     """
     self.db_file = db_file
 
-  def create_connection(self) -> sqlite3.Connection:
-    """Create a database connection to the SQLite database."""
-    conn = sqlite3.connect(self.db_file)
-    return conn
-
   def create_deployments_table(self) -> None:
     """Create the deployments table in the database."""
-    c = self.get_db().cursor()
+    c = self._get_db().cursor()
     c.execute(
               '''CREATE TABLE IF NOT EXISTS deployments (
               id INTEGER PRIMARY KEY, 
@@ -58,7 +52,7 @@ class DBManager:
 
   def create_results_table(self) -> None:
     """Create the results table in the database."""
-    c = self.get_db().cursor()
+    c = self._get_db().cursor()
     c.execute(
         '''CREATE TABLE IF NOT EXISTS results (
             id INTEGER PRIMARY KEY,
@@ -70,7 +64,7 @@ class DBManager:
 
   def next_deployment_id(self) -> int:
      """Get the next Deployment ID that will be created. """
-     last_row_id = self.get_db().cursor().lastrowid
+     last_row_id = self._get_db().cursor().lastrowid
      if last_row_id is None:
         return 1
      
@@ -79,15 +73,15 @@ class DBManager:
   def add_results(self, deployment_id: int, results: dict[str, dict[str, int | str]]) -> None:
     """Add multiple results to a specific deployment."""
     sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     for k, v in results.items():
         result = json.dumps({k: v})
         cur.execute(sql, (deployment_id, result))
-    self.get_db().commit()
+    self._get_db().commit()
 
   def get_results(self, deployment_id: int) -> list[str]:
     """Retrieve all results for a specific deployment."""
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     cur.execute("SELECT result FROM results WHERE deployment_ID=?", (deployment_id,))
     results = [row[0] for row in cur.fetchall()]
     return results
@@ -100,9 +94,9 @@ class DBManager:
     param repo_branch: The branch of the repository for the deployment.
     """
     sql = '''INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(?,?,?)'''
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     cur.execute(sql, ("Unassigned", repo_name, repo_branch))
-    self.get_db().commit()
+    self._get_db().commit()
     return cur.lastrowid or -1
 
   def add_leader_ID(self, leader_ID: str, deployment_ID: int) -> None:
@@ -113,9 +107,9 @@ class DBManager:
     param deployment_ID: The ID of the deployment to update
     """
     sql = '''UPDATE deployments SET leader_ID = ? WHERE id = ?'''
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     cur.execute(sql, (leader_ID, deployment_ID))
-    self.get_db().commit()
+    self._get_db().commit()
 
   def update_deployment_fields(self, deployment_id: int, updates: dict[str, str]) -> None:
     """
@@ -128,9 +122,9 @@ class DBManager:
     sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
     values = list(updates.values()) + [deployment_id]
     
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     cur.execute(sql, values)
-    self.get_db().commit()
+    self._get_db().commit()
 
   def get_deployment(self, deployment_id: int) -> dict[str, str | int | deployment_status.DeploymentStatus] | None:
     """
@@ -138,7 +132,7 @@ class DBManager:
 
     param deployment_id: The ID of the deployment to retrieve.
     """
-    cur = self.get_db().cursor()
+    cur = self._get_db().cursor()
     cur.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,))
     row = cur.fetchone()
     if row:
