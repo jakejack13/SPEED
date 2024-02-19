@@ -62,14 +62,6 @@ class DBManager:
         )'''
     )
 
-  def next_deployment_id(self) -> int:
-     """Get the next Deployment ID that will be created. """
-     last_row_id = self._get_db().cursor().lastrowid
-     if last_row_id is None:
-        return 1
-     
-     return last_row_id + 1
-  
   def add_results(self, deployment_id: int, results: dict[str, dict[str, int | str]]) -> None:
     """Add multiple results to a specific deployment."""
     sql = '''INSERT INTO results(deployment_id, result) VALUES(?, ?)'''
