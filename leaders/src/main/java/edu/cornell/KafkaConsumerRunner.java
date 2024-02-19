@@ -1,5 +1,7 @@
 package edu.cornell;
 
+import edu.cornell.resultsmanager.TestOutputParser;
+import edu.cornell.resultsmanager.TestOutputSender;
 import edu.cornell.testconsumer.TestConsumer;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +30,21 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
     private final @NonNull TestConsumer testConsumer;
 
     /**
+     * The deployment ID that this leader belongs to
+     */
+    private final @NonNull Integer deploymentID;
+
+    /**
      * Creates a new test consumer runner
      * @param kafkaAddress the address of the Kafka message bus
      * @param workerIds the list of workers to subscribe to on the message bus
      * @param testConsumer the test consumer to send test results to
      */
     KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull Set<String> workerIds,
-            @NonNull TestConsumer testConsumer) {
+            @NonNull TestConsumer testConsumer, @NonNull Integer deploymentID) {
 
         this.testConsumer = testConsumer;
+        this.deploymentID = deploymentID;
 
         // create consumer configs
         Properties properties = new Properties();
@@ -53,17 +61,21 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
     @Override
     public void run() {
         LOGGER.info("Executing KafkaConsumerRunner");
+        TestOutputParser testOutputParser = new TestOutputParser();
         // poll for new data
         while(!testConsumer.isDone()){
             ConsumerRecords<String, String> records =
                     consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, String> record : records){
+                testOutputParser.appendTestResult(record.key(), record.value(), 0);
                 LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
                 LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
                 testConsumer.processTestOutput(record.key(), record.value());
             }
         }
+
+        TestOutputSender.sendResults(testOutputParser.toJson(), "http://host.docker.internal:5000/add_results/" + deploymentID);
     }
 
     @Override
