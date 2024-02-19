@@ -21,7 +21,7 @@ public class TestJUnit5TestRunner {
         }
 
         @Override
-        public void sendTestResult(String testName, TestResult result) {
+        public void sendTestResult(String testName, TestResult result, int elapsedTime) {
 
         }
 

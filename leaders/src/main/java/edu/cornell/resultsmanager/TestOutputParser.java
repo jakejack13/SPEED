@@ -16,17 +16,17 @@ public class TestOutputParser {
     /**
      * List to store test result records.
      */
-    private List<TestResultRecord> results = new LinkedList<>();
+    private List<ParsedResultRecord> results = new LinkedList<>();
 
     /**
      * Appends a test result to the list of results.
      *
      * @param className   The name of the test class.
      * @param value       The result value of the test.
-     * @param secondsTaken The time taken for the test in seconds.
+     * @param nanoSecondsTaken The time taken for the test in nano seconds.
      */
-    public void appendTestResult(String className, String value, int secondsTaken) {
-        results.add(new TestResultRecord(className, value, secondsTaken));
+    public void appendTestResult(String className, String value, int nanoSecondsTaken) {
+        results.add(new ParsedResultRecord(className, value, nanoSecondsTaken));
     }
 
     /**
@@ -38,10 +38,10 @@ public class TestOutputParser {
         Gson gson = new Gson();
         JsonObject jsonOutput = new JsonObject();
 
-        for (TestResultRecord record : results) {
+        for (ParsedResultRecord record : results) {
             JsonObject recordJson = new JsonObject();
             recordJson.addProperty("value", record.value());
-            recordJson.addProperty("secondsTaken", record.secondsTaken());
+            recordJson.addProperty("nanoSecondsTaken", record.nanoSecondsTaken());
             jsonOutput.add(record.className(), recordJson);
         }
 
@@ -49,8 +49,8 @@ public class TestOutputParser {
     }
 
     /**
-     * Represents a single test result record.
+     * Represents a single test result record for parsing into JSON.
      */
-    public record TestResultRecord(String className, String value, int secondsTaken) {
+    public record ParsedResultRecord(String className, String value, int nanoSecondsTaken) {
     }
 }

@@ -22,7 +22,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     /**
      * The Kafka producer for logging messages
      */
-    private final @NonNull Producer<String,String> producer;
+    private final @NonNull Producer<String,TestResultsRecord> producer;
     /**
      * The topic to log Kafka messages to, which is the name of the container
      */
@@ -66,23 +66,31 @@ class KafkaTestOutputStream implements TestOutputStream {
         properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                TestResultsRecordSerializer.class.getName());
+
         producer = new KafkaProducer<>(properties);
     }
 
+    /**
+     * Sends a test result to a Kafka topic.
+     *
+     * @param testName     The name of the test.
+     * @param result       The test result.
+     * @param elapsedTime  The elapsed time of the test.
+     */
     @Override
-    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result, int elapsedTime) {
         LOGGER.info(testName + ":" + result);
         System.out.println("Sent");
         producer.send(new ProducerRecord<>(topicName,
-                    testName, result.toString()));
+                    testName, new TestResultsRecord(result.toString(), elapsedTime)));
     }
 
     @Override
     public void done() {
         producer.send(new ProducerRecord<>(topicName,
-                topicName, "DONE"));
+                topicName, new TestResultsRecord("DONE", 0)));
     }
 
     @Override

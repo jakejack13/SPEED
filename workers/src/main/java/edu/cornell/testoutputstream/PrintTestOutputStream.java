@@ -8,8 +8,8 @@ import lombok.NonNull;
 class PrintTestOutputStream implements TestOutputStream {
 
     @Override
-    public void sendTestResult(@NonNull String testName, @NonNull TestResult result) {
-        System.out.println(testName + ":" + result);
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result, int elapsedTime) {
+        System.out.println(testName + " : " + result + " : " + elapsedTime);
     }
 
     @Override

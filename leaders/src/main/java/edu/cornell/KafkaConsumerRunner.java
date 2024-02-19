@@ -22,7 +22,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
     /**
      * The Kafka consumer to receive test results from
      */
-    private final @NonNull KafkaConsumer<String, String> consumer;
+    private final @NonNull KafkaConsumer<String, TestResultsRecord> consumer;
 
     /**
      * The test consumer to send test results to
@@ -39,6 +39,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
      * @param kafkaAddress the address of the Kafka message bus
      * @param workerIds the list of workers to subscribe to on the message bus
      * @param testConsumer the test consumer to send test results to
+     * @param deploymentID the deployment ID that this leader belongs to
      */
     KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull Set<String> workerIds,
             @NonNull TestConsumer testConsumer, @NonNull Integer deploymentID) {
@@ -50,7 +51,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TestResultsRecordDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "leaders");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -58,20 +59,25 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
         consumer.subscribe(workerIds);
     }
 
+    /**
+     * Runs the KafkaConsumerRunner, continuously polling for new data from the Kafka topic.
+     * Upon receiving new records, processes them using a TestOutputParser, logs the key-value pairs, and sends the results.
+     */
     @Override
     public void run() {
         LOGGER.info("Executing KafkaConsumerRunner");
         TestOutputParser testOutputParser = new TestOutputParser();
         // poll for new data
         while(!testConsumer.isDone()){
-            ConsumerRecords<String, String> records =
+            ConsumerRecords<String, TestResultsRecord> records =
                     consumer.poll(Duration.ofMillis(100));
 
-            for (ConsumerRecord<String, String> record : records){
-                testOutputParser.appendTestResult(record.key(), record.value(), 0);
-                LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
+            for (ConsumerRecord<String, TestResultsRecord> record : records){
+                testOutputParser.appendTestResult(record.key(), record.value().result(), record.value().elapsedTime());
+                LOGGER.info("Key: " + record.key() + ", Value: " + record.value().toString());
+              
                 LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
-                testConsumer.processTestOutput(record.key(), record.value());
+                testConsumer.processTestOutput(record.key(), record.value().result());
             }
         }
 
@@ -82,4 +88,6 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
     public void close() {
         consumer.close();
     }
+
+
 }
