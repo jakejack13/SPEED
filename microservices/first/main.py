@@ -1,7 +1,7 @@
 # Endpoint documentation: https://github.com/jakejack13/SPEED/blob/microservices/first_api_doc.md
 from utils import DBManager
 import utils
-from typing import Optional
+from typing import Optional, Callable
 
 from flask import Flask, request, jsonify, Response, g
 
@@ -22,12 +22,11 @@ def before_request() -> None:
     g.db_manager = DBManager(DATABASE_FILE)
     g.db = g.db_manager.get_db()
 
-def teardown_request(exception: Optional[Exception] = None):
+@app.teardown_request
+def teardown_request(exception=None):
     db_manager = getattr(g, 'db_manager', None)
     if db_manager is not None:
         db_manager.close_connection()
-
-app.teardown_request(teardown_request)
 
 @app.route('/start', methods=['POST'])
 def start_deployment() -> tuple[Response, int]:
