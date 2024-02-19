@@ -24,4 +24,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cd first && docker build -t ghcr.io/jakejack13/speed-first:latest .
+      run: cd microservices/first && docker build -t ghcr.io/jakejack13/speed-first:latest .

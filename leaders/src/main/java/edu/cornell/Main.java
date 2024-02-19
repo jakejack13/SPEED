@@ -6,6 +6,8 @@ import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryBuildException;
 import edu.cornell.repository.RepositoryCloneException;
 import edu.cornell.repository.RepositoryFactory;
+import edu.cornell.status.DeploymentStatus;
+import edu.cornell.status.StatusUpdater;
 import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
 import lombok.NonNull;
@@ -51,20 +53,36 @@ public class Main {
      */
     public static final @NonNull String ENV_NUM_WORKERS = "SPEED_NUM_WORKERS";
 
+    /**
+     * The ID of hte Deployment that this leader belongs to
+     */
+    public static final @NonNull String ENV_DEPLOYMENT_ID = "DEPLOYMENT_ID";
+
+    /**
+     * Endpoint Leader Uses to Update its status
+     */
+    public static @NonNull String UPDATE_ENDPOINT = "http://host.docker.internal:5000/update/";
+
     public static void main(String[] args) {
+        Integer deploymentID = Integer.valueOf(System.getenv(ENV_DEPLOYMENT_ID).strip());
+        UPDATE_ENDPOINT = UPDATE_ENDPOINT + deploymentID;
+        StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.STARTED);
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
+        LOGGER.info("DEPLOYMENT ID: " + deploymentID);
 
         int numWorkers = 0;
         try {
             numWorkers = Integer.parseInt(System.getenv(ENV_NUM_WORKERS));
         } catch (NumberFormatException e) {
+            StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.FAILED);
             LOGGER.info("Incorrect integer format", e);
             System.exit(1);
         }
 
         if (url == null || branch == null || kafkaAddress == null) {
+            StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.FAILED);
             LOGGER.error("Environment variables missing");
             System.exit(1);
         }
@@ -72,6 +90,7 @@ public class Main {
         Set<String> tests = Set.of();
         try {
             Repository repository = RepositoryFactory.fromGitRepo(url, branch);
+            StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.BUILDING);
             LOGGER.info("Building");
             repository.build(repository.getConfig().getBuildCommands());
             tests = repository.getTests();
@@ -83,12 +102,13 @@ public class Main {
             System.exit(1);
         }
 
+        StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.IN_PROGRESS);
         try (CloseableSet<Worker> workers = createWorkerSet(url, branch, tests, numWorkers,
                 kafkaAddress);
                 WorkerRunner workerRunner = new WorkerRunner(workers);
                 KafkaConsumerRunner kafkaRunner =
                     new KafkaConsumerRunner(kafkaAddress, getWorkerIds(workers),
-                            TestConsumer.createTestConsumer(getWorkerIds(workers)))
+                            TestConsumer.createTestConsumer(getWorkerIds(workers)), deploymentID)
                 ) {
             Thread workerThread = new Thread(workerRunner);
             Thread kafkaThread = new Thread(kafkaRunner);
@@ -97,9 +117,12 @@ public class Main {
             workerThread.join();
             kafkaThread.join();
         } catch (Exception e) {
+            StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.FAILED);
             LOGGER.error("Leader failed", e);
             System.exit(1);
         }
+
+        StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.DONE);
     }
 
     /**
