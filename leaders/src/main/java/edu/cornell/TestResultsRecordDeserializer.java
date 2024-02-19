@@ -6,13 +6,30 @@ import org.apache.kafka.common.serialization.Deserializer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * Deserializes byte arrays into TestResultsRecord objects.
+ */
 @NoArgsConstructor
 public class TestResultsRecordDeserializer implements Deserializer<TestResultsRecord> {
+
+    /**
+     * Nothing to configure.
+     *
+     * @param configs The configuration settings map.
+     * @param isKey   Whether this is the key deserializer or not.
+     */
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
         // No additional configuration needed
     }
 
+    /**
+     * Deserializes a byte array into a TestResultsRecord object.
+     *
+     * @param topic The topic name.
+     * @param data  The byte array representing the serialized TestResultsRecord object.
+     * @return The deserialized TestResultsRecord object, or null if the data is null.
+     */
     @Override
     public TestResultsRecord deserialize(String topic, byte[] data) {
         if (data == null) {
@@ -26,6 +43,9 @@ public class TestResultsRecordDeserializer implements Deserializer<TestResultsRe
         return new TestResultsRecord(result, elapsedTime);
     }
 
+    /**
+     * No resources to release.
+     */
     @Override
     public void close() {
         // No resources to release

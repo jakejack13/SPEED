@@ -1,7 +1,5 @@
 package edu.cornell.testoutputstream;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -74,6 +72,13 @@ class KafkaTestOutputStream implements TestOutputStream {
         producer = new KafkaProducer<>(properties);
     }
 
+    /**
+     * Sends a test result to a Kafka topic.
+     *
+     * @param testName     The name of the test.
+     * @param result       The test result.
+     * @param elapsedTime  The elapsed time of the test.
+     */
     @Override
     public void sendTestResult(@NonNull String testName, @NonNull TestResult result, int elapsedTime) {
         LOGGER.info(testName + ":" + result);

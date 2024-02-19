@@ -15,6 +15,9 @@ public class OutputTestExecutionListener implements TestExecutionListener {
         this.outputStream = outputStream;
     }
 
+    /**
+     * Store the time taken in nanoseconds for this test to run.
+     */
     private long timeTaken = 0;
 
     @Override

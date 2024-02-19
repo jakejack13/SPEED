@@ -3,7 +3,7 @@ package edu.cornell;
 import edu.cornell.resultsmanager.TestOutputParser;
 import edu.cornell.resultsmanager.TestOutputSender;
 import edu.cornell.testconsumer.TestConsumer;
-import lombok.*;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -39,6 +39,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
      * @param kafkaAddress the address of the Kafka message bus
      * @param workerIds the list of workers to subscribe to on the message bus
      * @param testConsumer the test consumer to send test results to
+     * @param deploymentID the deployment ID that this leader belongs to
      */
     KafkaConsumerRunner(@NonNull String kafkaAddress, @NonNull Set<String> workerIds,
             @NonNull TestConsumer testConsumer, @NonNull Integer deploymentID) {
@@ -58,6 +59,10 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
         consumer.subscribe(workerIds);
     }
 
+    /**
+     * Runs the KafkaConsumerRunner, continuously polling for new data from the Kafka topic.
+     * Upon receiving new records, processes them using a TestOutputParser, logs the key-value pairs, and sends the results.
+     */
     @Override
     public void run() {
         LOGGER.info("Executing KafkaConsumerRunner");
@@ -68,11 +73,11 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
                     consumer.poll(Duration.ofMillis(100));
 
             for (ConsumerRecord<String, TestResultsRecord> record : records){
-                testOutputParser.appendTestResult(record.key(), record.value().getResult(), record.value().getElapsedTime());
+                testOutputParser.appendTestResult(record.key(), record.value().result(), record.value().elapsedTime());
                 LOGGER.info("Key: " + record.key() + ", Value: " + record.value().toString());
               
                 LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
-                testConsumer.processTestOutput(record.key(), record.value().getResult());
+                testConsumer.processTestOutput(record.key(), record.value().result());
             }
         }
 
