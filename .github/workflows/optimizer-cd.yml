@@ -1,4 +1,4 @@
-name: first CD
+name: optimizer CD
 on:
   workflow_run:
     workflows: ["optimizer CI"]
