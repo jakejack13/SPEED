@@ -11,6 +11,7 @@ COPY gradle $APP_HOME/gradle
 
 RUN ./gradlew build || return 0
 COPY . .
+RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
