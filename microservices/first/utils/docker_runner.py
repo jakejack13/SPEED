@@ -2,7 +2,8 @@
 
 import subprocess
 
-def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str, deployment_ID: int) -> str:
+def run_docker_container(repo: str, branch: str, num_workers: int,
+                         img_url: str, deployment_id: int) -> str:
     """
     Run a Docker Leader container with specified parameters and capture the docker leader ID.
 
@@ -11,6 +12,7 @@ def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str,
         branch (str): The branch of the repository to use.
         num_workers (int): The number of worker instances to run.
         img_url (str): The URL of the Docker image to use.
+        deployment_id (str): The id of the deployment
 
     Returns:
         str: The output of the Docker command.
@@ -45,17 +47,18 @@ def run_docker_container(repo: str, branch: str, num_workers: int, img_url: str,
         "-e", f"SPEED_REPO_BRANCH={branch}",
         "-e", "SPEED_KAFKA_ADDRESS=localhost:9092",
         "-e", f"SPEED_NUM_WORKERS={str(num_workers)}",
-        "-e", f"DEPLOYMENT_ID={str(deployment_ID)}",
+        "-e", f"DEPLOYMENT_ID={str(deployment_id)}",
         img_url
     ]
 
+    stdout = None
     # Open subprocess with PIPE to capture output
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        stdout, stderr = process.communicate()
 
-    # Check if the command was successful
-    if process.returncode != 0:
-        raise subprocess.CalledProcessError(process.returncode, command, stderr.decode('utf-8'))
+        # Check if the command was successful
+        if process.returncode != 0:
+            raise subprocess.CalledProcessError(process.returncode, command, stderr.decode('utf-8'))
 
     # Return captured output
     return stdout.decode('utf-8')[0:12]

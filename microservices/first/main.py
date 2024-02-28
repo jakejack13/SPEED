@@ -1,8 +1,9 @@
-# Endpoint documentation: https://github.com/jakejack13/SPEED/blob/microservices/first_api_doc.md
+"""First: the first-tier microservice to SPEED. More information can be found
+in the documentation at `first_api_doc.md`"""
+from flask import Flask, request, jsonify, Response, g
+
 from utils import DBManager
 import utils
-
-from flask import Flask, request, jsonify, Response, g
 
 app = Flask(__name__)
 
@@ -19,10 +20,12 @@ def initialize() -> None:
 
 @app.before_request
 def before_request() -> None:
+    """Adds the database manager to request context"""
     g.db_manager = DBManager(DATABASE_FILE)
 
 @app.teardown_request
-def teardown_request(exception: BaseException | None = None) -> None:
+def teardown_request(_: BaseException | None = None) -> None:
+    """Closes the connection to the database at the end of the request"""
     db_manager = getattr(g, 'db_manager', None)
     if db_manager is not None:
         db_manager.close_connection()
@@ -38,14 +41,16 @@ def start_deployment() -> tuple[Response, int]:
     db_manager: DBManager | None = getattr(g, 'db_manager', None)
     if db_manager is None:
         return jsonify({'error': 'no database manager'}), 500
-    deployment_ID = db_manager.add_deployment(url, branch)
-    leader_id = utils.run_docker_container(url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_ID)
-    db_manager.add_leader_ID(leader_id, deployment_ID)
+    deployment_id = db_manager.add_deployment(url, branch)
+    leader_id = utils.run_docker_container(url, branch, 2,
+                                           "ghcr.io/jakejack13/speed-leaders:latest", 
+                                           deployment_id)
+    db_manager.add_leader_id(leader_id, deployment_id)
 
-    return jsonify({"id": deployment_ID}), 201
+    return jsonify({"id": deployment_id}), 201
 
-@app.route('/info/<int:deployment_ID>', methods=['GET'])
-def get_deployment_info(deployment_ID : int) -> tuple[Response, int]:
+@app.route('/info/<int:deployment_id>', methods=['GET'])
+def get_deployment_info(deployment_id : int) -> tuple[Response, int]:
     """
     The `info` endpoint. Takes in the id of the SPEED build and returns 
     information about the deployment, including repo_name, repo_branch, and status.
@@ -55,7 +60,7 @@ def get_deployment_info(deployment_ID : int) -> tuple[Response, int]:
     db_manager: DBManager | None = getattr(g, 'db_manager', None)
     if db_manager is None:
         return jsonify({'error': 'no database manager'}), 500
-    deployment = db_manager.get_deployment(deployment_ID)
+    deployment = db_manager.get_deployment(deployment_id)
     if deployment:
         return jsonify({
             "id": deployment["id"],
@@ -64,8 +69,7 @@ def get_deployment_info(deployment_ID : int) -> tuple[Response, int]:
             "repo_branch": deployment["repo_branch"],
             "status": deployment["status"]
         }), 200
-    else:
-        return jsonify({"error": "Deployment not found"}), 404
+    return jsonify({"error": "Deployment not found"}), 404
 
 @app.route('/update/<int:deployment_id>', methods=['POST'])
 def update_deployment(deployment_id : int) -> tuple[Response, int]:

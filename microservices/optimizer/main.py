@@ -1,6 +1,8 @@
-from utils import optimize
-
+"""Optimizer: the optimization microservice. More information can be found
+in the documentation at `optimizer_api_doc.md`"""
 from flask import Flask, jsonify, Response, request
+
+from utils import optimize
 
 app = Flask(__name__)
 
