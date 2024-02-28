@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * SPEED_REPO_URL: the url of the repository to clone
  * SPEED_REPO_BRANCH: the branch of the repository to clone
  * SPEED_KAFKA_ADDRESS: the address of the message bus to send test results to
+ * SPEED_NUM_WORKERS: the number of workers to execute for this deployment
+ * DEPLOYMENT_ID: the id of the deployment that this leader belongs to
  */
 @Slf4j
 public class Main {
@@ -54,12 +56,12 @@ public class Main {
     public static final @NonNull String ENV_NUM_WORKERS = "SPEED_NUM_WORKERS";
 
     /**
-     * The ID of hte Deployment that this leader belongs to
+     * The name of the DEPLOYMENT_ID environment variable
      */
     public static final @NonNull String ENV_DEPLOYMENT_ID = "DEPLOYMENT_ID";
 
     /**
-     * Endpoint Leader Uses to Update its status
+     * Endpoint leader uses to update its status
      */
     public static @NonNull String UPDATE_ENDPOINT = "http://host.docker.internal:5000/update/";
 
