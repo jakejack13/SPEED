@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '2.5.3'
     id 'application'
     id 'com.github.spotbugs' version '6.0.7'
+    id 'checkstyle'
 }
 
 group = 'edu.cornell'
@@ -57,4 +58,15 @@ test {
 spotbugs {
     toolVersion = '4.8.3'
     excludeFilter = file('spotbugs-filter.xml')
+}
+
+checkstyle {
+    toolVersion = '10.13.0'
+    configFile = file("checkstyle.xml")
+}
+
+configurations.checkstyle {
+  resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
+    select("com.google.guava:guava:0")
+  }
 }
