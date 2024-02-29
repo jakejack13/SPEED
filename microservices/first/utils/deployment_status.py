@@ -1,5 +1,7 @@
 """Utility module for interacting with the statuses of current first deployments"""
+
 from enum import Enum, auto
+
 
 class DeploymentStatus(Enum):
     """Represents the status of a deployment.
@@ -9,6 +11,7 @@ class DeploymentStatus(Enum):
     DONE - Leader has ended its process.
     FAILED - Leader ran into an error
     """
+
     STARTED = auto()
     """The deployment has started but not yet built"""
     BUILDING = auto()
