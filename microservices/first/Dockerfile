@@ -6,7 +6,7 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 COPY . .
-RUN python3 -m mypy --strict . && python3 -m pylint main.py utils/
+RUN python3 -m mypy --strict . && python3 -m pylint main.py utils/ && python3 -m black --check main.py utils 
 
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="first image"
