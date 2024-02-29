@@ -25,7 +25,7 @@ public abstract class Repository {
 
     private final @NonNull Config config;
 
-    Repository(@NonNull File rootDir) throws ConfigSyntaxException {
+    Repository(@NonNull File rootDir) throws ConfigSyntaxException, IOException {
         this.rootDir = rootDir;
         this.config = new Config(rootDir.getAbsolutePath() + "/.speed");
     }

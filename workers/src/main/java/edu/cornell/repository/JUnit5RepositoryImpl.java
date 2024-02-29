@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.ToString;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
 @ToString
 final class JUnit5RepositoryImpl extends Repository {
 
-    JUnit5RepositoryImpl(@NonNull File rootDir) throws ConfigSyntaxException {
+    JUnit5RepositoryImpl(File rootDir) throws ConfigSyntaxException, IOException {
         super(rootDir);
     }
 

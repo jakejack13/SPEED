@@ -23,11 +23,11 @@ import java.util.List;
  * this is still inputOne because there was no dash
  * ::
  */
-public class ConfigParser {
+public final class ConfigParser {
     /**
      * Maps the category to the category's respective information from the config file.
      */
-    private EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
+    private final @NonNull EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
 
     /**
      * Path of the config file

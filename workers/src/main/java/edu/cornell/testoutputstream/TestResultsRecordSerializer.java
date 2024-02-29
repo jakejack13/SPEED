@@ -3,6 +3,7 @@ package edu.cornell.testoutputstream;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class TestResultsRecordSerializer implements Serializer<TestResultsRecord
             return null;
         }
 
-        return data.toString().getBytes();
+        return data.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**

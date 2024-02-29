@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Set;
 @ToString
 final class JUnit5RepositoryImpl extends Repository {
 
-    JUnit5RepositoryImpl(@NonNull File rootDir) throws ConfigSyntaxException {
+    JUnit5RepositoryImpl(File rootDir) throws ConfigSyntaxException, IOException {
         super(rootDir);
     }
 

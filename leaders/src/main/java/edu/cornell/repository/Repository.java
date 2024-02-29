@@ -48,8 +48,9 @@ public abstract class Repository {
      * Creates a new Repository with the given root directory
      * @param rootDir the root directory of the project on disk
      * @throws ConfigSyntaxException if there is a syntax error with the config file
+     * @throws IOException if there is an error reading the repository on disk
      */
-    Repository(@NonNull File rootDir) throws ConfigSyntaxException {
+    Repository(@NonNull File rootDir) throws ConfigSyntaxException, IOException {
         this.rootDir = rootDir;
         this.config = new Config(rootDir.getAbsolutePath() + "/.speed");
     }

@@ -2,15 +2,14 @@ package edu.cornell.partitioner;
 
 import edu.cornell.partitioner.methods.PartitionMethod;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Class that handles and stores the partitioned classes based on desired method.
  */
-@Slf4j
 public class ClassPartitioner {
 
     private List<Set<String>> classes;
@@ -22,7 +21,7 @@ public class ClassPartitioner {
     }
 
     public @NonNull List<Set<String>> getClasses() {
-        return classes;
+        return new ArrayList<>(classes);
     }
 
     private List<Set<String>> partitionClasses(List<String> tests, int partitions) {

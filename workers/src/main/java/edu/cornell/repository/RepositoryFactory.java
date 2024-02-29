@@ -41,10 +41,11 @@ public final class RepositoryFactory {
      * @param url the url to clone the repo from
      * @param branch the branch to clone
      * @return a Project object representing the clone project
-     * @throws GitAPIException when a problem arises with cloning the repository
+     * @throws RepositoryCloneException when a problem arises with cloning the repository
+     * @throws IOException when a problem arises with reading the repository on disk
      */
     public static @NonNull Repository fromGitRepo(@NonNull String url, @NonNull String branch)
-            throws RepositoryCloneException {
+            throws RepositoryCloneException, IOException {
         try {
             String[] split = url.split("/");
             String name = split[split.length - 1].replaceAll(".git", "");

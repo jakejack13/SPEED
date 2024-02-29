@@ -19,7 +19,7 @@ public abstract class TestConsumer {
         return new PrintTestConsumer(workerIds);
     }
 
-    private final @NonNull String DONE = "DONE";
+    private static final @NonNull String DONE = "DONE";
 
     /**
      * An enum representing the possible results of a test

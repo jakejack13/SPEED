@@ -11,6 +11,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -31,7 +32,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     /**
      * Current address to the kafka service <b>within the kafka network</b>
      */
-    private final String KAFKA_ADDRESS = "kafka:29092";
+    private static final @NonNull String KAFKA_ADDRESS = "kafka:29092";
 
     /**
      * Creates a new TestOutputStream
@@ -40,12 +41,12 @@ class KafkaTestOutputStream implements TestOutputStream {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(
-                        new ProcessBuilder("hostname").start().getInputStream()))) {
+                        new ProcessBuilder("hostname").start().getInputStream(), StandardCharsets.UTF_8))) {
             topicName = inputStream.readLine();
         } catch (IOException e) {
             topicName = "error";
             LOGGER.error("Error getting hostname from container", e);
-            System.exit(1);
+            throw new RuntimeException(e);
         }
 
         LOGGER.info("topicName = " + topicName + " kafkaAddress = " + KAFKA_ADDRESS);

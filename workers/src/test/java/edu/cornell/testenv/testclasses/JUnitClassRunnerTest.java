@@ -12,7 +12,8 @@ public class JUnitClassRunnerTest {
     @Test
     public void testSuccess() {
         new JUnitTestContext(List.of(""));
-        assertTrue(1 + 1 == 2);
+        int i = 1;
+        assertTrue(i + 1 == 2);
     }
 
     @Test

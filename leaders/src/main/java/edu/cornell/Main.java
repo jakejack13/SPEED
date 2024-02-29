@@ -13,6 +13,7 @@ import edu.cornell.worker.Worker;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -61,13 +62,21 @@ public class Main {
     public static final @NonNull String ENV_DEPLOYMENT_ID = "DEPLOYMENT_ID";
 
     /**
+     * The deployment id of this leader
+     */
+    private static final int deploymentID = Integer.parseInt(System.getenv(ENV_DEPLOYMENT_ID).strip());
+
+    /**
+     * Base of endpoint leader uses to update its status
+     */
+    private static final @NonNull String UPDATE_ENDPOINT_BASE = "http://host.docker.internal:5000/update/";
+
+    /**
      * Endpoint leader uses to update its status
      */
-    public static @NonNull String UPDATE_ENDPOINT = "http://host.docker.internal:5000/update/";
+    public static final @NonNull String UPDATE_ENDPOINT = UPDATE_ENDPOINT_BASE + deploymentID;
 
     public static void main(String[] args) {
-        Integer deploymentID = Integer.valueOf(System.getenv(ENV_DEPLOYMENT_ID).strip());
-        UPDATE_ENDPOINT = UPDATE_ENDPOINT + deploymentID;
         StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.STARTED);
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
@@ -96,7 +105,7 @@ public class Main {
             LOGGER.info("Building");
             repository.build(repository.getConfig().getBuildCommands());
             tests = repository.getTests();
-        } catch (RepositoryCloneException e) {
+        } catch (RepositoryCloneException | IOException e) {
             LOGGER.error("Unable to clone the repository", e);
             System.exit(1);
         } catch (RepositoryBuildException e) {
