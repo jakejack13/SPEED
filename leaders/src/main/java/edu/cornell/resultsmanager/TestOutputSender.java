@@ -1,7 +1,6 @@
 package edu.cornell.resultsmanager;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

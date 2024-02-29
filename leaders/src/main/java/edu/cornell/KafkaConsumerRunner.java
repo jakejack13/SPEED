@@ -10,32 +10,33 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-
 import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
-/** The runner that listens for test result updates from the workers via the Kafka cluster */
+/** 
+ * The runner that listens for test result updates from the workers via the Kafka cluster.
+ */
 @Slf4j
 public class KafkaConsumerRunner implements Runnable, AutoCloseable {
 
     /**
-     * The Kafka consumer to receive test results from
+     * The Kafka consumer to receive test results from.
      */
     private final @NonNull KafkaConsumer<String, TestResultsRecord> consumer;
 
     /**
-     * The test consumer to send test results to
+     * The test consumer to send test results to.
      */
     private final @NonNull TestConsumer testConsumer;
 
     /**
-     * The deployment ID that this leader belongs to
+     * The deployment ID that this leader belongs to.
      */
     private final @NonNull Integer deploymentID;
 
     /**
-     * Creates a new test consumer runner
+     * Creates a new test consumer runner.
      * @param kafkaAddress the address of the Kafka message bus
      * @param workerIds the list of workers to subscribe to on the message bus
      * @param testConsumer the test consumer to send test results to
@@ -50,8 +51,10 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
         // create consumer configs
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaAddress);
-        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, TestResultsRecordDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, 
+            StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, 
+            TestResultsRecordDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "leaders");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -61,19 +64,21 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
 
     /**
      * Runs the KafkaConsumerRunner, continuously polling for new data from the Kafka topic.
-     * Upon receiving new records, processes them using a TestOutputParser, logs the key-value pairs, and sends the results.
+     * Upon receiving new records, processes them using a TestOutputParser, 
+     * logs the key-value pairs, and sends the results.
      */
     @Override
     public void run() {
         LOGGER.info("Executing KafkaConsumerRunner");
         TestOutputParser testOutputParser = new TestOutputParser();
         // poll for new data
-        while(!testConsumer.isDone()){
+        while (!testConsumer.isDone()) {
             ConsumerRecords<String, TestResultsRecord> records =
                     consumer.poll(Duration.ofMillis(100));
 
-            for (ConsumerRecord<String, TestResultsRecord> record : records){
-                testOutputParser.appendTestResult(record.key(), record.value().result(), record.value().elapsedTime());
+            for (ConsumerRecord<String, TestResultsRecord> record : records) {
+                testOutputParser.appendTestResult(record.key(), record.value().result(), 
+                    record.value().elapsedTime());
                 LOGGER.info("Key: " + record.key() + ", Value: " + record.value().toString());
               
                 LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
@@ -81,13 +86,12 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
             }
         }
 
-        TestOutputSender.sendResults(testOutputParser.toJson(), "http://host.docker.internal:5000/add_results/" + deploymentID);
+        TestOutputSender.sendResults(testOutputParser.toJson(), 
+            "http://host.docker.internal:5000/add_results/" + deploymentID);
     }
 
     @Override
     public void close() {
         consumer.close();
     }
-
-
 }

@@ -53,6 +53,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
     <module name="LineLength">
         <!-- Checks if a line is too long. -->
+        <property name="max" value="100" default="100" />
         <property name="severity" value="error" />
         <!--
             The default ignore pattern exempts the following elements:
@@ -125,12 +126,20 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+
         <module name="JavadocMethod">
             <property name="severity" value="error" />
         </module>
 
+        <module name="MissingJavadocMethod">
+            <property name="severity" value="error" />
+        </module>
+
         <module name="JavadocType">
-            <property name="scope" value="protected" />
+            <property name="severity" value="error" />
+        </module>
+
+        <module name="MissingJavadocType">
             <property name="severity" value="error" />
         </module>
 
@@ -375,11 +384,10 @@ page at http://checkstyle.sourceforge.net/config.html -->
             <property name="illegalPattern" value="true" />
         </module>
 
-         <module name="SuppressionCommentFilter">
-            <property name="offCommentFormat" value="CHECKSTYLE OFF: (.+)" />
-            <property name="onCommentFormat" value="CHECKSTYLE ON" />
-            <property name="checkFormat" value="Javadoc.*" />
-            <property name="messageFormat" value="$1" />
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
         </module>
     </module>
 

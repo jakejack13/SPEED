@@ -2,7 +2,6 @@ package edu.cornell.testoutputstream;
 
 import lombok.NoArgsConstructor;
 import org.apache.kafka.common.serialization.Serializer;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 

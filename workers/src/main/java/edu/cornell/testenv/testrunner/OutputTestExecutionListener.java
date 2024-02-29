@@ -6,6 +6,9 @@ import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 
+/**
+ * A test execution listener that outputs test results to external listeners.
+ */
 @ToString
 public class OutputTestExecutionListener implements TestExecutionListener {
 
@@ -29,7 +32,9 @@ public class OutputTestExecutionListener implements TestExecutionListener {
     public void executionFinished(TestIdentifier testIdentifier,
                                   TestExecutionResult testExecutionResult) {
 
-        if(!testIdentifier.isTest()) { return; }
+        if (!testIdentifier.isTest()) { 
+            return; 
+        }
 
         int elapsedTime = (int) (System.nanoTime() - timeTaken);
 
@@ -39,11 +44,13 @@ public class OutputTestExecutionListener implements TestExecutionListener {
             case SUCCESSFUL -> TestOutputStream.TestResult.SUCCESS;
         };
 
-        outputStream.sendTestResult(extractClassName(testIdentifier.getUniqueId()) + "$" + testIdentifier.getDisplayName(), result, elapsedTime);
+        outputStream.sendTestResult(extractClassName(testIdentifier.getUniqueId()) + "$" + 
+            testIdentifier.getDisplayName(), result, elapsedTime);
     }
 
     private String extractClassName(String uniqueId) {
         String[] parts = uniqueId.split("/");
-        return parts[1].trim().replace("[class:", "").replace("]", ""); // Assuming the class name is the second part
+        return parts[1].trim().replace("[class:", "")
+            .replace("]", ""); // Assuming the class name is the second part
     }
 }

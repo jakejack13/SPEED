@@ -1,12 +1,16 @@
 package edu.cornell.status;
 
+import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A utility class for updating deployment status by sending HTTP POST requests to a specified URL.
  */
+@Slf4j
 public class StatusUpdater {
 
     /**
@@ -39,13 +43,12 @@ public class StatusUpdater {
 
             // Get response code (optional)
             int responseCode = connection.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
+            LOGGER.debug("Response Code: " + responseCode);
 
             // Disconnect
             connection.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (URISyntaxException | IOException e) {
+            LOGGER.error("Error with updating deployment status", e);
         }
     }
-
 }

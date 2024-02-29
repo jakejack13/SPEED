@@ -1,16 +1,21 @@
 package edu.cornell.testconsumer;
 
 import lombok.NonNull;
-
+import java.io.PrintStream;
 import java.util.Set;
 
 /**
- * A test consumer that simply prints the results of the tests
+ * A test consumer that simply prints the results of the tests.
  */
 class PrintTestConsumer extends TestConsumer {
 
     /**
-     * Creates a new PrintTestConsumer for the specified workers
+     * The output stream.
+     */
+    private final PrintStream out = System.out;
+
+    /**
+     * Creates a new PrintTestConsumer for the specified workers.
      *
      * @param workerIds the set of all worker ids
      */
@@ -20,6 +25,6 @@ class PrintTestConsumer extends TestConsumer {
 
     @Override
     protected void displayTestResult(String testName, TestResult testResult) {
-        System.out.println(testName + ":" + testResult);
+        out.println(testName + ":" + testResult);
     }
 }

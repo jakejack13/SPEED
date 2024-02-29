@@ -12,7 +12,6 @@ import edu.cornell.testconsumer.TestConsumer;
 import edu.cornell.worker.Worker;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * The main leader application
+ * The main leader application.
  * Environment variables:
  * SPEED_REPO_URL: the url of the repository to clone
  * SPEED_REPO_BRANCH: the branch of the repository to clone
@@ -31,12 +30,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Main {
     /**
-     * The name of the REPO_URL environment variable
+     * The name of the REPO_URL environment variable.
      */
     public static final @NonNull String ENV_REPO_URL = "SPEED_REPO_URL";
 
     /**
-     * The name of the REPO_BRANCH environment variable
+     * The name of the REPO_BRANCH environment variable.
      */
     public static final @NonNull String ENV_REPO_BRANCH = "SPEED_REPO_BRANCH";
 
@@ -47,35 +46,41 @@ public class Main {
     public static final @NonNull String ENV_REPO_TESTS = "SPEED_REPO_TESTS";
 
     /**
-     * The name of the KAFKA_ADDRESS environment variable
+     * The name of the KAFKA_ADDRESS environment variable.
      */
     public static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     /**
-     * The name of the NUM_WORKERS environment variable
+     * The name of the NUM_WORKERS environment variable.
      */
     public static final @NonNull String ENV_NUM_WORKERS = "SPEED_NUM_WORKERS";
 
     /**
-     * The name of the DEPLOYMENT_ID environment variable
+     * The name of the DEPLOYMENT_ID environment variable.
      */
     public static final @NonNull String ENV_DEPLOYMENT_ID = "DEPLOYMENT_ID";
 
     /**
-     * The deployment id of this leader
+     * The deployment id of this leader.
      */
-    private static final int deploymentID = Integer.parseInt(System.getenv(ENV_DEPLOYMENT_ID).strip());
+    private static final int deploymentID = Integer.parseInt(
+        System.getenv(ENV_DEPLOYMENT_ID).strip());
 
     /**
-     * Base of endpoint leader uses to update its status
+     * Base of endpoint leader uses to update its status.
      */
-    private static final @NonNull String UPDATE_ENDPOINT_BASE = "http://host.docker.internal:5000/update/";
+    private static final @NonNull String UPDATE_ENDPOINT_BASE = 
+        "http://host.docker.internal:5000/update/";
 
     /**
-     * Endpoint leader uses to update its status
+     * Endpoint leader uses to update its status.
      */
     public static final @NonNull String UPDATE_ENDPOINT = UPDATE_ENDPOINT_BASE + deploymentID;
 
+    /**
+     * The main method of the leader.
+     * @param args not used
+     */
     public static void main(String[] args) {
         StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.STARTED);
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
@@ -137,7 +142,7 @@ public class Main {
     }
 
     /**
-     * Creates the set of workers partitioned across the different tests
+     * Creates the set of workers partitioned across the different tests.
      * @param url the url of the repository to test
      * @param branch the branch of the repository to test
      * @param tests the set of tests to execute
@@ -148,7 +153,8 @@ public class Main {
     private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
             Set<String> tests, int numWorkers, String kafkaAddress) {
         List<String> testsList = new ArrayList<>(tests);
-        ClassPartitioner classPartitioner = new ClassPartitioner(new NumSplitPartitionMethod(), testsList, Math.min(numWorkers, testsList.size()));
+        ClassPartitioner classPartitioner = new ClassPartitioner(new NumSplitPartitionMethod(), 
+            testsList, Math.min(numWorkers, testsList.size()));
         List<Set<String>> partitionedTestsList = classPartitioner.getClasses();
         CloseableSet<Worker> workers = new CloseableSet<>();
         for (Set<String> testSet : partitionedTestsList) {
@@ -161,7 +167,7 @@ public class Main {
     }
 
     /**
-     * Returns the set of worker ids from the given set of workers
+     * Returns the set of worker ids from the given set of workers.
      * @param workers the set of workers
      * @return the set of worker ids
      */

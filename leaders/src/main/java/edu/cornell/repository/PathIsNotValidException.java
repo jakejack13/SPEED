@@ -3,7 +3,7 @@ package edu.cornell.repository;
 import java.io.Serial;
 
 /**
- * Exception is thrown when the given path is not a directory or does not exist
+ * Exception is thrown when the given path is not a directory or does not exist.
  */
 public class PathIsNotValidException extends RuntimeException {
 
@@ -11,7 +11,7 @@ public class PathIsNotValidException extends RuntimeException {
     private static final long serialVersionUID = 1234L;
 
     /**
-     * Creates a new PathIsNotValidException with the given message and backtrace
+     * Creates a new PathIsNotValidException with the given message and backtrace.
      * @param message the message of the exception
      * @param backtrace the backtrace of the exception
      */

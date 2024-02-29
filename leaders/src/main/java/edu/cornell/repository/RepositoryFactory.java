@@ -6,25 +6,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ProgressMonitor;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * A factory class to create Projects from repositories and artifact storage
- * @author Jacob Kerr
+ * A factory class to create Projects from repositories and artifact storage.
  */
 @Slf4j
 public final class RepositoryFactory {
 
-    /** The directory to clone the workplace to */
+    /** 
+     * The directory to clone the workplace to.
+     */
     private static final @NonNull File WORKSPACE = generateWorkplace();
 
     private RepositoryFactory() {
     }
 
+    /**
+     * Generates the temporary directory to clone the repository into.
+     * @return the location of the temporary directory
+     */
     private static @NonNull File generateWorkplace() {
         try {
             return Files.createTempDirectory("speed_").toFile();
@@ -37,7 +41,7 @@ public final class RepositoryFactory {
 
     /**
      * Clones a project from a git repository. Assumes you have already set up your git
-     * credentials if cloning from a private or otherwise protected repository
+     * credentials if cloning from a private or otherwise protected repository.
      * @param url the url to clone the repo from
      * @param branch the branch to clone
      * @return a Project object representing the clone project
@@ -67,15 +71,25 @@ public final class RepositoryFactory {
     @Slf4j
     private static final class GitProgressLog implements ProgressMonitor {
 
-        /** The total number of tasks to run */
+        /** 
+         * The total number of tasks to run.
+         */
         private int totalTasks;
-        /** The number of completed tasks */
+        /** 
+         * The number of completed tasks.
+         */
         private int currentTasks;
-        /** The name of the current task */
+        /** 
+         * The name of the current task.
+         */
         private @NonNull String currentTaskName;
-        /** The total number of work units to be done on the current task */
+        /** 
+         * The total number of work units to be done on the current task.
+         */
         private int totalWork;
-        /** The number of completed work units */
+        /** 
+         * The number of completed work units.
+         */
         private int currentWork;
 
         private GitProgressLog() {
@@ -114,9 +128,13 @@ public final class RepositoryFactory {
         }
 
         @Override
-        public boolean isCancelled() {return false;} // Should never be cancelled by user
+        public boolean isCancelled() {
+            return false; // Should never be cancelled by user
+        }
 
         @Override
-        public void showDuration(boolean enabled) { } // Do nothing
+        public void showDuration(boolean enabled) {
+            // Do nothing
+        }
     }
 }

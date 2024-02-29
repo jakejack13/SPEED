@@ -1,7 +1,6 @@
 package edu.cornell.repository;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -25,12 +24,14 @@ public class JUnitClassFinder extends ClassLoader {
     };
 
     /**
-     * Finds all JUnit classes in the subdirectories of directory path
+     * Finds all JUnit classes in the subdirectories of directory path.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
      * @Precondition: The directory has a subdirectory of /test/java or /java/test
+     * @return set of JUnit classes in the subdirectories of the given directory
      */
-    public static Set<String> findJUnitClasses(String directoryPath) throws PathIsNotValidException, MalformedURLException, ClassNotFoundException {
+    public static Set<String> findJUnitClasses(String directoryPath) 
+        throws PathIsNotValidException, MalformedURLException, ClassNotFoundException {
         File directory = new File(directoryPath);
 
         ClassLoadingResult result = loadClassResults(directory);
@@ -38,20 +39,24 @@ public class JUnitClassFinder extends ClassLoader {
 
         Set<String> classes = new HashSet<>();
 
-        for(URL url : result.urlArray()) {
+        for (URL url : result.urlArray()) {
             String fileName = url.getFile();
 
-            if(!(new File(fileName).isFile()) && fileName.length() > 0) { continue; }
+            if (!(new File(fileName).isFile()) && fileName.length() > 0) { 
+                continue; 
+            }
 
             String className = "";
-            for(String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
-                if(fileName.contains(s)) {
-                    className = fileName.substring(fileName.indexOf(s) + s.length() + 1, fileName.lastIndexOf(".")).replace(File.separator, ".");
+            for (String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
+                if (fileName.contains(s)) {
+                    className = fileName.substring(fileName.indexOf(s) + s.length() + 1, 
+                        fileName.lastIndexOf(".")).replace(File.separator, ".");
                 }
             }
 
             try {
-                Class<?> loadedClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+                Class<?> loadedClass = Thread.currentThread().getContextClassLoader()
+                    .loadClass(className);
                 Method[] methods = loadedClass.getDeclaredMethods();
 
                 for (Method method : methods) {
@@ -67,11 +72,14 @@ public class JUnitClassFinder extends ClassLoader {
         return classes;
     }
 
-    // Returns a record of both all the required classpaths and .class files and a custom class loader
-    private static ClassLoadingResult loadClassResults(File directory) throws MalformedURLException {
+    // Returns a record of both all the required classpaths and .class files and a 
+    // custom class loader
+    private static ClassLoadingResult loadClassResults(File directory) 
+        throws MalformedURLException {
         // Check if the directory is valid
         if (!directory.exists() || !directory.isDirectory()) {
-            throw new PathIsNotValidException("The given path " + directory.toPath() + " is invalid (missing or not a directory).", null);
+            throw new PathIsNotValidException("The given path " + directory.toPath() + 
+                " is invalid (missing or not a directory).", null);
         }
 
         List<URL> urls = new ArrayList<>();
@@ -79,7 +87,8 @@ public class JUnitClassFinder extends ClassLoader {
         searchSubdirectories(directory, urls);
 
         if (urls.size() == 0) {
-            throw new PathIsNotValidException("Cannot find test class path in " + directory.toPath() + "", null);
+            throw new PathIsNotValidException("Cannot find test class path in " + 
+                directory.toPath() + "", null);
         }
 
         // Add all .class or .jar files within subdirectories
@@ -88,16 +97,24 @@ public class JUnitClassFinder extends ClassLoader {
         URL[] urlArray = urls.toArray(new URL[0]);
 
         // Create a new class loader with the specified URLs
-        ClassLoader customClassLoader = new URLClassLoader(urlArray, Thread.currentThread().getContextClassLoader());
+        ClassLoader customClassLoader = new URLClassLoader(urlArray, Thread.currentThread()
+            .getContextClassLoader());
         ClassLoadingResult result = new ClassLoadingResult(urlArray, customClassLoader);
         return result;
     }
 
+    /**
+     * The representation of a result of loading a class.
+     * @param urlArray the url of the class
+     * @param customClassLoader the class loader used
+     */
     private record ClassLoadingResult(URL[] urlArray, ClassLoader customClassLoader) {
     }
 
-    // Finds all files in the subdirectories of the given directory. Only add to urls if a matching directory is found
-    private static void searchSubdirectories(File directory, List<URL> urls) throws MalformedURLException {
+    // Finds all files in the subdirectories of the given directory. 
+    // Only add to urls if a matching directory is found
+    private static void searchSubdirectories(File directory, List<URL> urls) 
+        throws MalformedURLException {
         File[] files = directory.listFiles();
 
         if (files != null) {
@@ -117,7 +134,9 @@ public class JUnitClassFinder extends ClassLoader {
     // Detect if the current directory contains the specific substring representing the test path
     private static boolean doesDirectoryMatch(String directoryPath) {
         for (String s : LIKELY_PACKAGE_STRUCTURE_LIST) {
-            if(directoryPath.contains(s)) { return true; }
+            if (directoryPath.contains(s)) { 
+                return true;
+            }
         }
 
         return false;
@@ -131,7 +150,8 @@ public class JUnitClassFinder extends ClassLoader {
             for (File file : files) {
                 if (file.isDirectory()) {
                     addFilesRecursively(file, urls);
-                } else if (file.isFile() && (file.getName().endsWith(".class") || file.getName().endsWith(".jar"))) {
+                } else if (file.isFile() && (file.getName().endsWith(".class") || 
+                    file.getName().endsWith(".jar"))) {
                     try {
                         URL url = file.toURI().toURL();
                         urls.add(url);
