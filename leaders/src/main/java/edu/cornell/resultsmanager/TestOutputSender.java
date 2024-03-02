@@ -1,11 +1,11 @@
 package edu.cornell.resultsmanager;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A utility class for sending test results JSON to a specified URL via HTTP POST.
@@ -30,7 +30,7 @@ public class TestOutputSender {
             String postData = "{\"results\":" + json + "}";
 
             try (OutputStream os = connection.getOutputStream()) {
-                os.write(postData.getBytes());
+                os.write(postData.getBytes(StandardCharsets.UTF_8));
                 os.flush();
             }
 

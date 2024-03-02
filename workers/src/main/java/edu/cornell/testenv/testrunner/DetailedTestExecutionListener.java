@@ -8,26 +8,33 @@ import org.junit.platform.launcher.TestIdentifier;
 
 /**
  * Test Execution Listener to Provide Lots of information during JUnit Test Class Execution.
- * Mainly for debugging, purpose is to determine what is going on throughout JUnit Launcher lifecycle.
+ * Mainly for debugging, purpose is to determine what is going on throughout JUnit Launcher 
+ * lifecycle.
  */
 @Slf4j
 public class DetailedTestExecutionListener implements TestExecutionListener {
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
-        LOGGER.info("Execution started for: " + (testIdentifier.isTest() ? "Test: " : "Container: ") + testIdentifier.getDisplayName());
+        LOGGER.info("Execution started for: " + 
+            (testIdentifier.isTest() ? "Test: " : "Container: ") + 
+            testIdentifier.getDisplayName());
     }
 
     @Override
-    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        LOGGER.info("Execution finished for: " + (testIdentifier.isTest() ? "Test: " : "Container: ") + testIdentifier.getDisplayName() +
-                ", Result: " + testExecutionResult.getStatus());
+    public void executionFinished(TestIdentifier testIdentifier, 
+            TestExecutionResult testExecutionResult) {
+        LOGGER.info("Execution finished for: " + 
+            (testIdentifier.isTest() ? "Test: " : "Container: ") + 
+            testIdentifier.getDisplayName() +
+            ", Result: " + testExecutionResult.getStatus());
         testExecutionResult.getThrowable().ifPresent(t -> LOGGER.info("Test Exception: ", t));
     }
 
     @Override
     public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-        LOGGER.info("Execution skipped for: " + testIdentifier.getDisplayName() + ", Reason: " + reason);
+        LOGGER.info("Execution skipped for: " + testIdentifier.getDisplayName() + 
+            ", Reason: " + reason);
     }
 
     @Override
@@ -37,8 +44,7 @@ public class DetailedTestExecutionListener implements TestExecutionListener {
 
     @Override
     public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
-        LOGGER.info("Reporting entry published for: " + testIdentifier.getDisplayName() + ", Entry: " + entry);
+        LOGGER.info("Reporting entry published for: " + testIdentifier.getDisplayName() + 
+            ", Entry: " + entry);
     }
-
-    // Implement other methods if needed
 }

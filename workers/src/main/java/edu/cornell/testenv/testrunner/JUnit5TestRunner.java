@@ -13,19 +13,18 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Runs the given Environment Context and Tracks JUnit Test Results
+ * Runs the given Environment Context and Tracks JUnit Test Results.
  */
 @Slf4j
 public class JUnit5TestRunner implements TestRunner {
 
     /**
-     * Main runner that takes in the context and returns the result of JUnit Tests
+     * Main runner that takes in the context and returns the result of JUnit Tests.
      * @param context - The environment needed to run the tests
      * @return boolean of whether all JUnit tests passed
      */
@@ -41,14 +40,18 @@ public class JUnit5TestRunner implements TestRunner {
 
                 //Create Listeners
                 SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
-                OutputTestExecutionListener outputTestExecutionListener = new OutputTestExecutionListener(outputStream);
-                DetailedTestExecutionListener detailedTestExecutionListener = new DetailedTestExecutionListener();
+                OutputTestExecutionListener outputTestExecutionListener = 
+                    new OutputTestExecutionListener(outputStream);
+                DetailedTestExecutionListener detailedTestExecutionListener = 
+                    new DetailedTestExecutionListener();
 
                 // Register Listeners
-                launcher.registerTestExecutionListeners(summaryListener, outputTestExecutionListener, detailedTestExecutionListener);
+                launcher.registerTestExecutionListeners(summaryListener, 
+                    outputTestExecutionListener, detailedTestExecutionListener);
 
                 // Load all build files and set Thread's class loader
-                ClassLoader classLoader = JUnitContextClassLoader.loadClassesFromDirectory(baseRootPath);
+                ClassLoader classLoader = JUnitContextClassLoader
+                    .loadClassesFromDirectory(baseRootPath);
                 Thread.currentThread().setContextClassLoader(classLoader);
 
                 List<DiscoverySelector> selectors = new ArrayList<>();

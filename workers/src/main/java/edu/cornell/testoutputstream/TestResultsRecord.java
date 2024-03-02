@@ -4,8 +4,10 @@ import lombok.NonNull;
 
 /**
  * Represents a test results record containing the result and elapsed time.
+ * @param result the test result
+ * @param elapsedTime the execution time of the method
  */
-public record TestResultsRecord(@NonNull String result, @NonNull Integer elapsedTime) {
+public record TestResultsRecord(@NonNull String result, int elapsedTime) {
 
     /**
      * Returns a string representation of the test results record.

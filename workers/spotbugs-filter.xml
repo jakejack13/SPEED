@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Bug pattern="DP_DO_INSIDE_DO_PRIVILEGED"/>
+    </Match>
+    <Match>
+        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+    </Match>
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+</FindBugsFilter>

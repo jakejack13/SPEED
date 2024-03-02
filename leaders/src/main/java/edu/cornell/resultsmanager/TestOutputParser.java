@@ -3,7 +3,6 @@ package edu.cornell.resultsmanager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.NoArgsConstructor;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class TestOutputParser {
 
     /**
      * Appends a test result to the list of results.
-     *
      * @param className   The name of the test class.
      * @param value       The result value of the test.
      * @param nanoSecondsTaken The time taken for the test in nano seconds.
@@ -31,7 +29,6 @@ public class TestOutputParser {
 
     /**
      * Converts the list of test results to JSON format.
-     *
      * @return A JSON representation of the test results.
      */
     public String toJson() {
@@ -50,6 +47,9 @@ public class TestOutputParser {
 
     /**
      * Represents a single test result record for parsing into JSON.
+     * @param className the name of the test class ran
+     * @param value the result of the test class
+     * @param nanoSecondsTaken the execution time of the test class
      */
     public record ParsedResultRecord(String className, String value, int nanoSecondsTaken) {
     }

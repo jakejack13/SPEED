@@ -7,45 +7,46 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
- * A class allowing the test runner to log its results with clients through a Kafka message bus
+ * A class allowing the test runner to log its results with clients through a Kafka message bus.
  */
 @Slf4j
 class KafkaTestOutputStream implements TestOutputStream {
 
     /**
-     * The Kafka producer for logging messages
+     * The Kafka producer for logging messages.
      */
-    private final @NonNull Producer<String,TestResultsRecord> producer;
+    private final @NonNull Producer<String, TestResultsRecord> producer;
     /**
-     * The topic to log Kafka messages to, which is the name of the container
+     * The topic to log Kafka messages to, which is the name of the container.
      */
     private @NonNull String topicName;
 
     /**
-     * Current address to the kafka service <b>within the kafka network</b>
+     * Current address to the kafka service <b>within the kafka network</b>.
      */
-    private final String KAFKA_ADDRESS = "kafka:29092";
+    private static final @NonNull String KAFKA_ADDRESS = "kafka:29092";
 
     /**
-     * Creates a new TestOutputStream
+     * Creates a new TestOutputStream.
      */
     KafkaTestOutputStream() {
         //Assign topicName to hostname
         try (BufferedReader inputStream = new BufferedReader(
                 new InputStreamReader(
-                        new ProcessBuilder("hostname").start().getInputStream()))) {
+                        new ProcessBuilder("hostname").start().getInputStream(), 
+                            StandardCharsets.UTF_8))) {
             topicName = inputStream.readLine();
         } catch (IOException e) {
             topicName = "error";
             LOGGER.error("Error getting hostname from container", e);
-            System.exit(1);
+            throw new RuntimeException(e);
         }
 
         LOGGER.info("topicName = " + topicName + " kafkaAddress = " + KAFKA_ADDRESS);
@@ -62,7 +63,8 @@ class KafkaTestOutputStream implements TestOutputStream {
         properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "16384");
         //Reduce the no of requests less than 0
         properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "1");
-        //The buffer.memory controls the total amount of memory available to the producer for buffering.
+        //The buffer.memory controls the total amount of memory available to the producer 
+        //for buffering.
         properties.setProperty(ProducerConfig.BUFFER_MEMORY_CONFIG, "33554432");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class.getName());
@@ -80,9 +82,10 @@ class KafkaTestOutputStream implements TestOutputStream {
      * @param elapsedTime  The elapsed time of the test.
      */
     @Override
-    public void sendTestResult(@NonNull String testName, @NonNull TestResult result, int elapsedTime) {
+    public void sendTestResult(@NonNull String testName, @NonNull TestResult result, 
+            int elapsedTime) {
         LOGGER.info(testName + ":" + result);
-        System.out.println("Sent");
+        LOGGER.debug("Sent");
         producer.send(new ProducerRecord<>(topicName,
                     testName, new TestResultsRecord(result.toString(), elapsedTime)));
     }

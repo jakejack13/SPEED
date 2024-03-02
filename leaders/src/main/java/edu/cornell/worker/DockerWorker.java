@@ -12,46 +12,49 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Set;
+import static edu.cornell.Main.ENV_KAFKA_ADDRESS;
+import static edu.cornell.Main.ENV_REPO_BRANCH;
+import static edu.cornell.Main.ENV_REPO_TESTS;
+import static edu.cornell.Main.ENV_REPO_URL;
 
-import static edu.cornell.Main.*;
-
-/** A worker that runs inside a Docker container */
+/** 
+ * A worker that runs inside a Docker container.
+ */
 @Slf4j
 @EqualsAndHashCode
 @ToString
 public class DockerWorker implements Worker {
 
     /**
-     * The link to the workers Docker image
+     * The link to the workers Docker image.
      */
     private static final String IMAGE_URL = "ghcr.io/jakejack13/speed-workers:latest";
 
     /**
-     * The Docker http client
+     * The Docker http client.
      */
     private final DockerHttpClient httpClient;
 
     /**
-     * The Docker client
+     * The Docker client.
      */
     private final DockerClient dockerClient;
     /**
-     * The id of the container running the worker
+     * The id of the container running the worker.
      */
     private final String id;
 
     /**
-     * true if the worker has finished running, false otherwise
+     * true if the worker has finished running, false otherwise.
      */
     private boolean done = false;
 
     /**
-     * Creates a new DockerWorker
+     * Creates a new DockerWorker.
      * @param repoUrl the url of the repository
      * @param repoBranch the branch of the repository to test
      * @param tests the set of tests to run
@@ -117,7 +120,7 @@ public class DockerWorker implements Worker {
     }
 
     /**
-     * Sets done to true
+     * Sets done to true.
      */
     private synchronized void done() {
         done = true;
@@ -125,7 +128,8 @@ public class DockerWorker implements Worker {
     }
 
     /**
-     * A callback to the Docker wait command
+     * A callback to the Docker wait command.
+     * @param <T> the type of objects returned by this callback
      */
     private class WaitCallback<T> implements ResultCallback<T> {
 

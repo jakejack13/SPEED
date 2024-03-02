@@ -1,7 +1,6 @@
 package edu.cornell.repository;
 
 import lombok.NonNull;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,19 +22,20 @@ import java.util.List;
  * this is still inputOne because there was no dash
  * ::
  */
-public class ConfigParser {
+public final class ConfigParser {
     /**
      * Maps the category to the category's respective information from the config file.
      */
-    private EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
+    private final @NonNull EnumMap<Category, List<String>> configMap = 
+        new EnumMap<>(Category.class);
 
     /**
-     * Path of the config file
+     * Path of the config file.
      */
     private final @NonNull Path configFilePath;
 
     /**
-     * Parses config files
+     * Parses config files.
      * @param configFilePath Path of the config file.
      */
     public ConfigParser(Path configFilePath) throws IOException, ConfigSyntaxException {
@@ -58,32 +58,40 @@ public class ConfigParser {
             if (line.endsWith("::") && !line.startsWith("::")) {
                 String categoryName = line.substring(0, line.length() - 2);
                 try {
-                    currentCategory = Category.valueOf(categoryName.trim().toUpperCase().replace(" ", "_"));
+                    currentCategory = Category.valueOf(categoryName.trim().toUpperCase()
+                        .replace(" ", "_"));
                     currentItems = new ArrayList<>();
                     categoryOpen = true;
                 } catch (IllegalArgumentException e) {
-                    throw new ConfigSyntaxException("Invalid category name: " + categoryName.trim());
+                    throw new ConfigSyntaxException("Invalid category name: " + 
+                        categoryName.trim());
                 }
             } else if (line.trim().equals("::")) {
-                if (!categoryOpen)
-                    throw new ConfigSyntaxException("Category end marker :: found without a matching start marker.");
+                if (!categoryOpen) {
+                    throw new ConfigSyntaxException("Category end marker :: found without a " +
+                        "matching start marker.");
+                }
                 configMap.put(currentCategory, currentItems);
                 categoryOpen = false;
             } else if (line.startsWith("-")) {
-                if (!categoryOpen)
+                if (!categoryOpen) {
                     throw new ConfigSyntaxException("Item outside of a category: " + line);
+                }
                 currentItems.add(line.substring(1).trim());
             } else if (!line.trim().isEmpty()) {
-                if (!categoryOpen || currentItems.isEmpty())
-                    throw new ConfigSyntaxException("Continuation line outside of an item: " + line);
+                if (!categoryOpen || currentItems.isEmpty()) {
+                    throw new ConfigSyntaxException("Continuation line outside of an item: " + 
+                        line);
+                }
                 int lastIndex = currentItems.size() - 1;
                 String lastItem = currentItems.get(lastIndex);
                 currentItems.set(lastIndex, lastItem + line);
             }
         }
 
-        if (categoryOpen)
+        if (categoryOpen) {
             throw new ConfigSyntaxException("File ended without closing category with ::");
+        }
     }
 
 
