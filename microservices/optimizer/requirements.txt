@@ -1,2 +1,4 @@
 mypy
 Flask
+pylint
+black
