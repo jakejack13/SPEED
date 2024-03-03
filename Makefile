@@ -28,13 +28,14 @@ docker:
 
 define HELP_BODY
 	docker: build all Docker images for SPEED
-	check: runs check-java and check-python
+	check: runs all check commands
+	format: runs all format commands
 	check-leaders: runs all style and lint checks for leaders project
 	check-workers: runs all style and lint checks for workers project
 	check-first: runs all style and lint checks for first project
 	check-optimizer: runs all style and lint checks for optimizer project
-	check-first: formats first project
-	check-optimizer: formats optimizer project
+	format-first: formats first project
+	format-optimizer: formats optimizer project
 endef
 export HELP_BODY
 
