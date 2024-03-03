@@ -18,7 +18,7 @@ format-first:
 	cd microservices/first && python3 -m black main.py utils 
 
 format-optimizer:
-	cd microservices/first && python3 -m black main.py utils 
+	cd microservices/optimizer && python3 -m black main.py utils 
 
 docker:
 	docker build -t ghcr.io/jakejack13/speed-workers workers/
