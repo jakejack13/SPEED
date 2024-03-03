@@ -1,3 +1,5 @@
+.PHONY: check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help
+
 check: check-leaders check-workers check-first check-optimizer
 
 format: format-first format-optimizer
