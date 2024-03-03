@@ -1,26 +1,37 @@
-.PHONY: check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help
+.PHONY: check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help gradle python black
 
+# Phony targets
+gradle:
+	./gradlew check
+
+python:
+	python3 -m mypy --strict . && python3 -m pylint main.py utils/ && python3 -m black --check main.py utils 
+
+black:
+	python3 -m black main.py utils 
+
+# Start of real targets
 check: check-leaders check-workers check-first check-optimizer
 
 format: format-first format-optimizer
 
 check-leaders:
-	cd leaders && ./gradlew check
+	@cd leaders && $(MAKE) -f ../Makefile -s gradle
 
 check-workers:
-	cd workers && ./gradlew check
+	@cd workers && $(MAKE) -f ../Makefile -s gradle
 
 check-first:
-	cd microservices/first && python3 -m mypy --strict . && python3 -m pylint main.py utils/ && python3 -m black --check main.py utils 
+	@cd microservices/first && $(MAKE) -f ../../Makefile -s python
 
 check-optimizer:
-	cd microservices/optimizer && python3 -m mypy --strict . && python3 -m pylint main.py utils/ && python3 -m black --check main.py utils 
+	@cd microservices/optimizer && $(MAKE) -f ../../Makefile -s python
 
 format-first:
-	cd microservices/first && python3 -m black main.py utils 
+	@cd microservices/first && $(MAKE) -f ../../Makefile -s black
 
 format-optimizer:
-	cd microservices/optimizer && python3 -m black main.py utils 
+	@cd microservices/optimizer && $(MAKE) -f ../../Makefile -s black
 
 docker:
 	docker build -t ghcr.io/jakejack13/speed-workers workers/
