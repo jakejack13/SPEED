@@ -21,6 +21,9 @@ from flask import g
 
 from . import deployment_status
 
+DEPLOYMENT_FIELDS = ["leader_ID", "repo_name", "repo_branch", "status"]
+RESULTS_FIELDS = ["deployment_ID", "result"]
+
 
 class DBManager:
     """A class that allows manipulation of FirstDB"""
@@ -75,7 +78,8 @@ class DBManager:
         """Add multiple results to a specific deployment."""
         sql = """INSERT INTO results(deployment_id, result) VALUES(?, ?)"""
         cur = self._get_db().cursor()
-        for k, v in results.items():
+        for k in RESULTS_FIELDS:
+            v = results[k]
             result = json.dumps({k: v})
             cur.execute(sql, (deployment_id, result))
         self._get_db().commit()
@@ -123,10 +127,11 @@ class DBManager:
         :param deployment_id: The ID of the deployment to update.
         :param updates: A dictionary where keys are column names and values are
             the new values for those columns.
+        :throws KeyError if `updates` is missing necessary field
         """
-        parameters = [f"{key} = ?" for key in updates.keys()]
+        parameters = [f"{key} = ?" for key in DEPLOYMENT_FIELDS]
         sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
-        values = list(updates.values()) + [deployment_id]
+        values = list(updates[key] for key in DEPLOYMENT_FIELDS) + [deployment_id]
 
         cur = self._get_db().cursor()
         cur.execute(sql, values)
