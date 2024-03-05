@@ -44,12 +44,12 @@ def start_deployment() -> tuple[Response, int]:
     app.logger.info("start endpoint invoked")
     data = request.json
     if data is None:
-        return jsonify({"error": "missing necessary body data"}), 400
+        return jsonify({"error": "missing necessary json body data"}), 400
     try:
         url: str = data["url"]
         branch: str = data["branch"]
     except KeyError:
-        return jsonify({"error": "missing necessary body data"}), 400
+        return jsonify({"error": "missing necessary json body data"}), 400
     db_manager: DBManager | None = getattr(g, "db_manager", None)
     if db_manager is None:
         app.logger.error("unable to get DBManager")
@@ -112,7 +112,7 @@ def update_deployment(deployment_id: int) -> tuple[Response, int]:
         return jsonify({"message": "Deployment updated successfully"}), 200
     except KeyError:
         app.logger.warning("internal endpoint `update` made bad request")
-        return jsonify({"error": "missing necessary body data"}), 400
+        return jsonify({"error": "missing necessary json body data"}), 400
 
 
 @app.route("/add_results/<int:deployment_id>", methods=["POST"])
@@ -132,7 +132,7 @@ def add_results(deployment_id: int) -> tuple[Response, int]:
         return jsonify({"message": "Results added successfully"}), 200
     except KeyError:
         app.logger.warning("internal endpoint `add_results` made bad request")
-        return jsonify({"error": "missing necessary body data"}), 400
+        return jsonify({"error": "missing necessary json body data"}), 400
 
 
 @app.route("/results/<int:deployment_id>", methods=["GET"])
