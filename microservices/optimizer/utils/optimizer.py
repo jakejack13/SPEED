@@ -3,7 +3,7 @@
 from .partition import *
 
 def optimize(
-    url: str, branch: str, num_workers: int, testclasses: list[str], method: PARTITION_METHOD
+    url: str, branch: str, num_workers: int, testclasses: list[str], method: ParitionMethod
 ) -> list[dict[str, list[dict[str, str]]]]:
     """
     Partitions the given test classes into different clusters of tests to
@@ -33,10 +33,10 @@ def optimize(
     partitions = None
 
     match method:
-        case PARTITION_METHOD.TIME_OPTIMIZED:
+        case ParitionMethod.TIME_OPTIMIZED:
             # TODO: Implement after Database implementation
             raise NotImplementedError
-        case PARTITION_METHOD.EVEN_SPLIT:
+        case ParitionMethod.EVEN_SPLIT:
             partitions = even_split(num_workers, testclasses)
 
     if not partitions:

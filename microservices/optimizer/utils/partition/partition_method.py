@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 
-class PARTITION_METHOD(Enum):
+class ParitionMethod(Enum):
     """
     Enum representing different partition methods.
     """
