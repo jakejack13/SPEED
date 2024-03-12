@@ -4,6 +4,7 @@ in the documentation at `optimizer_api_doc.md`"""
 from flask import Flask, jsonify, Response, request
 
 from utils import optimize
+from utils.partition import PARTITION_METHOD
 
 app = Flask(__name__)
 
@@ -22,7 +23,9 @@ def partition_tests() -> tuple[Response, int]:
     num_workers: int = data["num_workers"]
     testclasses_dict: list[dict[str, str]] = data["testclasses"]
     testclasses = list(map(lambda d: d["name"], testclasses_dict))
-    partitions = optimize(url, branch, num_workers, testclasses)
+    partitions = optimize(url, branch, num_workers,
+                          testclasses, PARTITION_METHOD.EVEN_SPLIT)
+    print(partitions)
     return jsonify({"partitions": partitions}), 200
 
 
