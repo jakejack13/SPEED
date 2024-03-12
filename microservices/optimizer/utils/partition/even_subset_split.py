@@ -27,10 +27,7 @@ def even_split(
             partition_size += 1
             overflow -= 1
 
-        end_index += partition_size
-
-        if end_index > list_size:
-            end_index = list_size
+        end_index = min(end_index + partition_size, list_size)
 
         classes.append(set(testclasses[start_index:end_index]))
 

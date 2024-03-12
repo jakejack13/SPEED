@@ -1,5 +1,8 @@
-from enum import Enum, auto
+"""
+    Enum representing different partition methods.
+"""
 
+from enum import Enum, auto
 
 class ParitionMethod(Enum):
     """
