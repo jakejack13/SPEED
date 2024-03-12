@@ -1,6 +1,6 @@
 """Utility module for optimizing job partitions"""
 
-from .partition import *
+from .partition import ParitionMethod, even_split
 
 def optimize(
     url: str, branch: str, num_workers: int, testclasses: list[str], method: ParitionMethod
@@ -28,21 +28,15 @@ def optimize(
         A list of partitions, each containing a list of test classes in each partition.
     """
 
-    # TODO: Update Optimizer to include URL and Branch after Database implementation
+    # TODO: Update Optimizer Partition Methods to include URL and Branch after Database implementation
 
-    partitions = None
-
-    match method:
-        case ParitionMethod.TIME_OPTIMIZED:
-            # TODO: Implement after Database implementation
-            raise NotImplementedError
-        case ParitionMethod.EVEN_SPLIT:
-            partitions = even_split(num_workers, testclasses)
+    partitions = method(num_workers, testclasses)
 
     if not partitions:
-        raise Exception("Partitioning Returned None")
+        raise NotImplementedError
 
     formatted_partitions = [{"testclasses": [{"name": test_class}
-                                             for test_class in partition]} for partition in partitions]
+                                             for test_class in partition]}
+                            for partition in partitions]
 
     return formatted_partitions
