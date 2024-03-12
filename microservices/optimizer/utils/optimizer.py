@@ -28,10 +28,13 @@ def optimize(
         A list of partitions, each containing a list of test classes in each partition.
     """
 
+    # TODO: Update Optimizer to include URL and Branch after Database implementation
+
     partitions = None
 
     match method:
         case PARTITION_METHOD.TIME_OPTIMIZED:
+            # TODO: Implement after Database implementation
             raise NotImplementedError
         case PARTITION_METHOD.EVEN_SPLIT:
             partitions = even_split(num_workers, testclasses)
