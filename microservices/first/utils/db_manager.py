@@ -78,8 +78,7 @@ class DBManager:
         """Add multiple results to a specific deployment."""
         sql = """INSERT INTO results(deployment_id, result) VALUES(?, ?)"""
         cur = self._get_db().cursor()
-        for k in RESULTS_FIELDS:
-            v = results[k]
+        for k, v in results.items():
             result = json.dumps({k: v})
             cur.execute(sql, (deployment_id, result))
         self._get_db().commit()
@@ -127,12 +126,14 @@ class DBManager:
         :param deployment_id: The ID of the deployment to update.
         :param updates: A dictionary where keys are column names and values are
             the new values for those columns.
-        :throws KeyError if `updates` is missing necessary field
         """
         parameters = [f"{key} = ?" for key in DEPLOYMENT_FIELDS]
         sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
-        values = list(updates[key] for key in DEPLOYMENT_FIELDS) + [deployment_id]
-
+        values = list(updates[key] for key in DEPLOYMENT_FIELDS if key in updates) + [
+            deployment_id
+        ]
+        if len(values) == 0:
+            return
         cur = self._get_db().cursor()
         cur.execute(sql, values)
         self._get_db().commit()

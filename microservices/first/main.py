@@ -59,7 +59,6 @@ def start_deployment() -> tuple[Response, int]:
         url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
     )
     db_manager.add_leader_id(leader_id, deployment_id)
-
     return jsonify({"id": deployment_id}), 201
 
 
@@ -107,12 +106,8 @@ def update_deployment(deployment_id: int) -> tuple[Response, int]:
     if db_manager is None:
         app.logger.error("unable to get DBManager")
         return jsonify({"error": "no database manager"}), 500
-    try:
-        db_manager.update_deployment_fields(deployment_id, data)
-        return jsonify({"message": "Deployment updated successfully"}), 200
-    except KeyError:
-        app.logger.warning("internal endpoint `update` made bad request")
-        return jsonify({"error": "missing necessary json body data"}), 400
+    db_manager.update_deployment_fields(deployment_id, data)
+    return jsonify({"message": "Deployment updated successfully"}), 200
 
 
 @app.route("/add_results/<int:deployment_id>", methods=["POST"])
@@ -127,12 +122,8 @@ def add_results(deployment_id: int) -> tuple[Response, int]:
     if db_manager is None:
         app.logger.error("unable to get DBManager")
         return jsonify({"error": "no database manager"}), 500
-    try:
-        db_manager.add_results(deployment_id, data["results"])
-        return jsonify({"message": "Results added successfully"}), 200
-    except KeyError:
-        app.logger.warning("internal endpoint `add_results` made bad request")
-        return jsonify({"error": "missing necessary json body data"}), 400
+    db_manager.add_results(deployment_id, data["results"])
+    return jsonify({"message": "Results added successfully"}), 200
 
 
 @app.route("/results/<int:deployment_id>", methods=["GET"])
