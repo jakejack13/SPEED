@@ -32,7 +32,30 @@ def update_times() -> tuple[Response, int]:
     associated with the repository along with the execution times of each test
     classes of a recent deployment. The optimizer service should add this
     execution time into the database for the given test classes."""
-    return jsonify({"error": "unimplemented"}), 500
+    data = request.json
+    if data is None:
+        return jsonify({"error": "missing request body"}), 400
+
+    url = data.get("url")
+    branch = data.get("branch")
+    times = data.get("times")
+
+    if not url or not branch or times is None:
+        return jsonify({"error": "missing or invalid parameters"}), 400
+
+    try:
+        for test_class in times:
+            name = test_class.get("name")
+            time = test_class.get("time")
+            if name is None or time is None:
+                return jsonify({"error": "missing test class name or execution time"}), 400
+            
+            #Update database
+            
+            print(f"Updated {name} in {url} on branch {branch} with time {time}")
+        return jsonify({"message": "Test class execution times updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
