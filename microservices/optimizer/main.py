@@ -3,6 +3,7 @@ in the documentation at `optimizer_api_doc.md`"""
 
 from flask import Flask, jsonify, Response, request
 
+from microservices.optimizer.utils import db_manager
 from utils import optimize
 
 app = Flask(__name__)
@@ -50,9 +51,7 @@ def update_times() -> tuple[Response, int]:
             if name is None or time is None:
                 return jsonify({"error": "missing test class name or execution time"}), 400
             
-            #Update database
-            
-            print(f"Updated {name} in {url} on branch {branch} with time {time}")
+            db_manager.update_execution_time(url, branch, name, time)
         return jsonify({"message": "Test class execution times updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
