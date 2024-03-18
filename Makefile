@@ -5,10 +5,10 @@ gradle:
 	./gradlew check
 
 python:
-	python3 -m mypy --strict . && python3 -m pylint main.py utils/ && python3 -m black --check main.py utils 
+	python3 -m mypy --strict app.py utils/ && python3 -m pylint app.py utils/ && python3 -m black --check app.py utils/
 
 black:
-	python3 -m black main.py utils 
+	python3 -m black main.py utils/
 
 # Start of real targets
 check: check-leaders check-workers check-first check-optimizer

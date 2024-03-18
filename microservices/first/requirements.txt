@@ -2,3 +2,4 @@ mypy
 Flask
 pylint
 black
+psycopg

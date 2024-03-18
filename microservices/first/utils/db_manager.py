@@ -14,10 +14,12 @@ deployment_ID: Integer, Foreign Key pointing to Deployment Table "id".
 result: TEXT, one test result object.
 """
 
-import sqlite3
 import json
+import os
 
 from flask import g
+import psycopg
+from psycopg.rows import TupleRow
 
 from . import deployment_status
 
@@ -28,11 +30,17 @@ RESULTS_FIELDS = ["deployment_ID", "result"]
 class DBManager:
     """A class that allows manipulation of FirstDB"""
 
-    def _get_db(self) -> sqlite3.Connection:
+    def _get_db(self) -> psycopg.Connection[TupleRow]:
         """Returns the current database connection"""
         db = getattr(g, "_database", None)
         if db is None:
-            db = g._database = sqlite3.connect(self.db_file)
+            db = g._database = psycopg.connect(
+                database=os.environ["POSTGRES_DB"],
+                host="localhost",
+                user=os.environ["POSTGRES_USER"],
+                password=os.environ["POSTGRES_PASSWORD"],
+                port="5432",
+            )
         return db
 
     def close_connection(self) -> None:
@@ -76,7 +84,7 @@ class DBManager:
         self, deployment_id: int, results: dict[str, dict[str, int | str]]
     ) -> None:
         """Add multiple results to a specific deployment."""
-        sql = """INSERT INTO results(deployment_id, result) VALUES(?, ?)"""
+        sql = """INSERT INTO results(deployment_id, result) VALUES(%s, %s)"""
         cur = self._get_db().cursor()
         for k, v in results.items():
             result = json.dumps({k: v})
@@ -87,7 +95,7 @@ class DBManager:
         """Retrieve all results for a specific deployment."""
         cur = self._get_db().cursor()
         cur.execute(
-            "SELECT result FROM results WHERE deployment_ID=?", (deployment_id,)
+            "SELECT result FROM results WHERE deployment_ID=%s", (deployment_id,)
         )
         results = [row[0] for row in cur.fetchall()]
         return results
@@ -99,11 +107,11 @@ class DBManager:
         param repo_name: The name of the repository for the deployment.
         param repo_branch: The branch of the repository for the deployment.
         """
-        sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(?,?,?)"""
+        sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(%s,%s,%s)"""
         cur = self._get_db().cursor()
         cur.execute(sql, ("Unassigned", repo_name, repo_branch))
         self._get_db().commit()
-        return cur.lastrowid or -1
+        return (cur.rownumber or 0) - 1
 
     def add_leader_id(self, leader_id: str, deployment_id: int) -> None:
         """
@@ -112,7 +120,7 @@ class DBManager:
         param leader_id: The leader's ID
         param deployment_id: The ID of the deployment to update
         """
-        sql = """UPDATE deployments SET leader_ID = ? WHERE id = ?"""
+        sql = """UPDATE deployments SET leader_ID = %s WHERE id = %s"""
         cur = self._get_db().cursor()
         cur.execute(sql, (leader_id, deployment_id))
         self._get_db().commit()
@@ -127,15 +135,16 @@ class DBManager:
         :param updates: A dictionary where keys are column names and values are
             the new values for those columns.
         """
-        parameters = [f"{key} = ?" for key in DEPLOYMENT_FIELDS]
-        sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
+        parameters = [f"{key} = %s" for key in DEPLOYMENT_FIELDS]
+        sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = %s"
         values = list(updates[key] for key in DEPLOYMENT_FIELDS if key in updates) + [
-            deployment_id
+            str(deployment_id)
         ]
         if len(values) == 0:
             return
         cur = self._get_db().cursor()
-        cur.execute(sql, values)
+        for value in values:
+            cur.execute(sql.encode(), value)
         self._get_db().commit()
 
     def get_deployment(
@@ -147,7 +156,7 @@ class DBManager:
         param deployment_id: The ID of the deployment to retrieve.
         """
         cur = self._get_db().cursor()
-        cur.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,))
+        cur.execute("SELECT * FROM deployments WHERE id=%s", (deployment_id,))
         row = cur.fetchone()
         if row:
             columns = ["id", "leader_ID", "repo_name", "repo_branch", "status"]
