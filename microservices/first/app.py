@@ -3,6 +3,8 @@ in the documentation at `first_api_doc.md`"""
 
 from flask import Flask, request, jsonify, Response, g
 
+from psycopg import OperationalError
+
 from utils import DBManager
 import utils
 
@@ -14,11 +16,15 @@ DATABASE_FILE: str = "deployments.db"
 
 def initialize() -> None:
     """Initialize the database and tables."""
-    with app.app_context():
-        db = DBManager(DATABASE_FILE)
-        db.create_deployments_table()
-        db.create_results_table()
-        db.close_connection()
+    try:
+        with app.app_context():
+            db = DBManager(DATABASE_FILE)
+            db.create_deployments_table()
+            db.create_results_table()
+            db.close_connection()
+            app.logger.info("Database initialized")
+    except OperationalError:
+        initialize()
 
 
 @app.before_request
@@ -138,6 +144,6 @@ def get_results(deployment_id: int) -> tuple[Response, int]:
     return jsonify({"results": results}), 200
 
 
+initialize()
 if __name__ == "__main__":
-    initialize()
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

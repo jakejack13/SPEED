@@ -41,7 +41,7 @@ services:
     container_name: speed-first
     build: microservices/first
     ports:
-      - 8000:5000
+      - 5001:5001
     depends_on:
       - firstdb
       - kafka
@@ -57,7 +57,7 @@ services:
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     ports:
-      - "5332:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
@@ -68,4 +68,4 @@ services:
     container_name: speed-optimizer
     build: microservices/optimizer
     ports:
-      - 8001:5000
+      - 5002:5002

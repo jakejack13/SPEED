@@ -35,8 +35,8 @@ class DBManager:
         db = getattr(g, "_database", None)
         if db is None:
             db = g._database = psycopg.connect(
-                database=os.environ["POSTGRES_DB"],
-                host="localhost",
+                dbname=os.environ["POSTGRES_DB"],
+                host="firstdb",
                 user=os.environ["POSTGRES_USER"],
                 password=os.environ["POSTGRES_PASSWORD"],
                 port="5432",
@@ -58,47 +58,49 @@ class DBManager:
 
     def create_deployments_table(self) -> None:
         """Create the deployments table in the database."""
-        c = self._get_db().cursor()
-        c.execute(
-            """CREATE TABLE IF NOT EXISTS deployments (
-                id INTEGER PRIMARY KEY, 
-                leader_ID TEXT,
-                repo_name TEXT, 
-                repo_branch TEXT,
-                status TEXT DEFAULT 'STARTED')"""
-        )
+        with self._get_db().cursor() as c:
+            c.execute(
+                """CREATE TABLE IF NOT EXISTS deployments (
+                    id SERIAL PRIMARY KEY, 
+                    leader_ID TEXT,
+                    repo_name TEXT, 
+                    repo_branch TEXT,
+                    status TEXT DEFAULT 'STARTED')"""
+            )
+            self._get_db().commit()
 
     def create_results_table(self) -> None:
         """Create the results table in the database."""
-        c = self._get_db().cursor()
-        c.execute(
-            """CREATE TABLE IF NOT EXISTS results (
-                id INTEGER PRIMARY KEY,
-                deployment_ID INTEGER,
-                result TEXT,
-                FOREIGN KEY(deployment_ID) REFERENCES deployments(id)
-            )"""
-        )
+        with self._get_db().cursor() as c:
+            c.execute(
+                """CREATE TABLE IF NOT EXISTS results (
+                    id SERIAL PRIMARY KEY,
+                    deployment_ID INTEGER,
+                    result TEXT,
+                    FOREIGN KEY(deployment_ID) REFERENCES deployments(id)
+                )"""
+            )
+            self._get_db().commit()
 
     def add_results(
         self, deployment_id: int, results: dict[str, dict[str, int | str]]
     ) -> None:
         """Add multiple results to a specific deployment."""
         sql = """INSERT INTO results(deployment_id, result) VALUES(%s, %s)"""
-        cur = self._get_db().cursor()
-        for k, v in results.items():
-            result = json.dumps({k: v})
-            cur.execute(sql, (deployment_id, result))
-        self._get_db().commit()
+        with self._get_db().cursor() as c:
+            for k, v in results.items():
+                result = json.dumps({k: v})
+                c.execute(sql, (deployment_id, result))
+            self._get_db().commit()
 
     def get_results(self, deployment_id: int) -> list[str]:
         """Retrieve all results for a specific deployment."""
-        cur = self._get_db().cursor()
-        cur.execute(
-            "SELECT result FROM results WHERE deployment_ID=%s", (deployment_id,)
-        )
-        results = [row[0] for row in cur.fetchall()]
-        return results
+        with self._get_db().cursor() as c:
+            c.execute(
+                "SELECT result FROM results WHERE deployment_ID=%s", (deployment_id,)
+            )
+            results = [row[0] for row in c.fetchall()]
+            return results
 
     def add_deployment(self, repo_name: str, repo_branch: str) -> int:
         """
@@ -108,10 +110,10 @@ class DBManager:
         param repo_branch: The branch of the repository for the deployment.
         """
         sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(%s,%s,%s)"""
-        cur = self._get_db().cursor()
-        cur.execute(sql, ("Unassigned", repo_name, repo_branch))
-        self._get_db().commit()
-        return (cur.rownumber or 0) - 1
+        with self._get_db().cursor() as c:
+            c.execute(sql, ("Unassigned", repo_name, repo_branch))
+            self._get_db().commit()
+            return (c.rownumber or 0) - 1
 
     def add_leader_id(self, leader_id: str, deployment_id: int) -> None:
         """
@@ -121,9 +123,9 @@ class DBManager:
         param deployment_id: The ID of the deployment to update
         """
         sql = """UPDATE deployments SET leader_ID = %s WHERE id = %s"""
-        cur = self._get_db().cursor()
-        cur.execute(sql, (leader_id, deployment_id))
-        self._get_db().commit()
+        with self._get_db().cursor() as c:
+            c.execute(sql, (leader_id, deployment_id))
+            self._get_db().commit()
 
     def update_deployment_fields(
         self, deployment_id: int, updates: dict[str, str]
@@ -142,10 +144,10 @@ class DBManager:
         ]
         if len(values) == 0:
             return
-        cur = self._get_db().cursor()
-        for value in values:
-            cur.execute(sql.encode(), value)
-        self._get_db().commit()
+        with self._get_db().cursor() as c:
+            for value in values:
+                c.execute(sql.encode(), value)
+            self._get_db().commit()
 
     def get_deployment(
         self, deployment_id: int
@@ -155,10 +157,10 @@ class DBManager:
 
         param deployment_id: The ID of the deployment to retrieve.
         """
-        cur = self._get_db().cursor()
-        cur.execute("SELECT * FROM deployments WHERE id=%s", (deployment_id,))
-        row = cur.fetchone()
-        if row:
-            columns = ["id", "leader_ID", "repo_name", "repo_branch", "status"]
-            return dict(zip(columns, row))
+        with self._get_db().cursor() as c:
+            c.execute("SELECT * FROM deployments WHERE id=%s", (deployment_id,))
+            row = c.fetchone()
+            if row:
+                columns = ["id", "leader_ID", "repo_name", "repo_branch", "status"]
+                return dict(zip(columns, row))
         return None

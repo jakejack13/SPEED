@@ -1,4 +1,13 @@
-.PHONY: check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help gradle python black
+.PHONY: build up down check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help gradle python black
+
+build: down
+	docker compose build --pull
+
+up: build
+	docker compose up -d --build
+
+down:
+	docker compose down -v
 
 # Phony targets
 gradle:
@@ -8,7 +17,7 @@ python:
 	python3 -m mypy --strict app.py utils/ && python3 -m pylint app.py utils/ && python3 -m black --check app.py utils/
 
 black:
-	python3 -m black main.py utils/
+	python3 -m black app.py utils/
 
 # Start of real targets
 check: check-leaders check-workers check-first check-optimizer
@@ -33,14 +42,16 @@ format-first:
 format-optimizer:
 	@cd microservices/optimizer && $(MAKE) -f ../../Makefile -s black
 
-docker:
-	docker build -t ghcr.io/jakejack13/speed-workers workers/
-	docker build -t ghcr.io/jakejack13/speed-leaders leaders/
-	docker build -t ghcr.io/jakejack13/speed-first microservices/first/
-	docker build -t ghcr.io/jakejack13/speed-optimizer microservices/optimizer
-
 define HELP_BODY
-	docker: build all Docker images for SPEED
+	# DOCKER
+	build: build all Docker images for SPEED
+	up: runs SPEED with docker compose
+	down: stops and removes containers 
+
+
+	# HOST
+	The below commands are all run on the host machine, not inside Docker. We recommend using the above commands for a more standard experience.
+
 	check: runs all check commands
 	format: runs all format commands
 	check-leaders: runs all style and lint checks for leaders project
