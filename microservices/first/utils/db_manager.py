@@ -21,6 +21,9 @@ from flask import g
 
 from . import deployment_status
 
+DEPLOYMENT_FIELDS = ["leader_ID", "repo_name", "repo_branch", "status"]
+RESULTS_FIELDS = ["deployment_ID", "result"]
+
 
 class DBManager:
     """A class that allows manipulation of FirstDB"""
@@ -124,10 +127,13 @@ class DBManager:
         :param updates: A dictionary where keys are column names and values are
             the new values for those columns.
         """
-        parameters = [f"{key} = ?" for key in updates.keys()]
+        parameters = [f"{key} = ?" for key in DEPLOYMENT_FIELDS]
         sql = f"UPDATE deployments SET {', '.join(parameters)} WHERE id = ?"
-        values = list(updates.values()) + [deployment_id]
-
+        values = list(updates[key] for key in DEPLOYMENT_FIELDS if key in updates) + [
+            deployment_id
+        ]
+        if len(values) == 0:
+            return
         cur = self._get_db().cursor()
         cur.execute(sql, values)
         self._get_db().commit()
