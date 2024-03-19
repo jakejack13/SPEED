@@ -15,7 +15,12 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM openjdk:21-jdk-slim as production
+FROM openjdk:21-jdk-slim-bookworm as production
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive \
+    apt-get install --assume-yes --no-install-recommends \
+      docker-compose \
+      docker.io
 ENV ARTIFACT_NAME=leaders-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 

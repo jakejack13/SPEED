@@ -3,11 +3,13 @@ services:
   leaders:
     container_name: speed-leaders
     build: leaders
+    image: ghcr.io/jakejack13/speed-leaders
     command: echo Do not start leaders during docker compose up
 
   workers:
     container_name: speed-workers
     build: workers
+    image: ghcr.io/jakejack13/speed-workers
     command: echo Do not start workers during docker compose up
 
 
@@ -40,11 +42,14 @@ services:
   first:
     container_name: speed-first
     build: microservices/first
+    image: ghcr.io/jakejack13/speed-first
     ports:
       - 5001:5001
     depends_on:
       - firstdb
       - kafka
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
@@ -67,5 +72,6 @@ services:
   optimizer:
     container_name: speed-optimizer
     build: microservices/optimizer
+    image: ghcr.io/jakejack13/speed-optimizer
     ports:
       - 5002:5002

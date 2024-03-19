@@ -1,4 +1,10 @@
-FROM python:3.12
+FROM python:3.12-bookworm
+
+RUN apt update \
+ && DEBIAN_FRONTEND=noninteractive \
+    apt install --assume-yes --no-install-recommends \
+      docker-compose \
+      docker.io
 
 WORKDIR /app
 

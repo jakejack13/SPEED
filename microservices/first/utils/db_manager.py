@@ -111,9 +111,9 @@ class DBManager:
         """
         sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(%s,%s,%s)"""
         with self._get_db().cursor() as c:
-            c.execute(sql, ("Unassigned", repo_name, repo_branch))
+            row = c.execute(sql, ("Unassigned", repo_name, repo_branch))
             self._get_db().commit()
-            return (c.rownumber or 0) - 1
+            return (row.rownumber or 0) - 1
 
     def add_leader_id(self, leader_id: str, deployment_id: int) -> None:
         """
