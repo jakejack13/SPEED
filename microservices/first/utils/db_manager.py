@@ -109,11 +109,16 @@ class DBManager:
         param repo_name: The name of the repository for the deployment.
         param repo_branch: The branch of the repository for the deployment.
         """
-        sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(%s,%s,%s)"""
+        sql = """INSERT INTO deployments(leader_ID, repo_name, repo_branch) VALUES(%s,%s,%s)
+        RETURNING id"""
         with self._get_db().cursor() as c:
-            row = c.execute(sql, ("Unassigned", repo_name, repo_branch))
+            c.execute(sql, ("Unassigned", repo_name, repo_branch))
+            id_tuple = c.fetchone()
+            if id_tuple is None:
+                raise ValueError()
             self._get_db().commit()
-            return (row.rownumber or 0) - 1
+            deployment_id = id_tuple[0]
+            return int(deployment_id)
 
     def add_leader_id(self, leader_id: str, deployment_id: int) -> None:
         """

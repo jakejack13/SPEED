@@ -8,6 +8,7 @@ up: build
 
 down:
 	docker compose down -v
+	docker rm -vf $(docker ps -aq)
 
 # Phony targets
 gradle:
