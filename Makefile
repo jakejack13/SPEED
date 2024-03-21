@@ -1,5 +1,6 @@
 .PHONY: build up down check format check-leaders check-workers check-first check-optimizer format-first format-optimizer docker help gradle python black
 
+### Docker commands
 build: down
 	docker compose build --pull
 
@@ -8,9 +9,10 @@ up: build
 
 down:
 	docker compose down -v
-	docker rm -vf $(docker ps -aq)
+	docker rm -vf $(docker ps -aq) || echo No containers to remove
 
-# Phony targets
+
+### Host commands
 gradle:
 	./gradlew check
 
