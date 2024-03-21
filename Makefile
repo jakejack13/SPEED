@@ -9,7 +9,7 @@ up: build
 
 down:
 	docker compose down -v
-	docker rm -vf $(docker ps -aq) || echo No containers to remove
+	docker rm -vf $(docker ps -aq) 2> /dev/null || echo No containers to remove
 
 
 ### Host commands
