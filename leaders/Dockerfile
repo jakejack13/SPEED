@@ -15,7 +15,12 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM openjdk:21-jdk-slim as production
+FROM openjdk:21-jdk-slim-bookworm as production
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive \
+    apt-get install --assume-yes --no-install-recommends \
+      docker-compose \
+      docker.io
 ENV ARTIFACT_NAME=leaders-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 
@@ -25,4 +30,4 @@ COPY --from=build $APP_HOME/build/libs/$ARTIFACT_NAME .
 EXPOSE 9092
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="leaders image"
-ENTRYPOINT exec java -jar ${ARTIFACT_NAME}
+CMD exec java -jar ${ARTIFACT_NAME}
