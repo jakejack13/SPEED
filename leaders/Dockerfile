@@ -2,7 +2,7 @@
 # ref: https://docs.docker.com/develop/develop-images/multistage-build/
 
 # temp container to build using gradle
-FROM openjdk:21-jdk AS build
+FROM eclipse-temurin:21.0.2_13-jdk AS build
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 
@@ -15,7 +15,7 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM openjdk:21-jdk-slim-bookworm as production
+FROM eclipse-temurin:21.0.2_13-jre-jammy as production
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \
     apt-get install --assume-yes --no-install-recommends \

@@ -1,4 +1,4 @@
-mypy
-Flask
-pylint
-black
+mypy==1.9.0
+Flask==3.0.2
+pylint==3.1.0
+black==24.3.0
