@@ -18,7 +18,7 @@ jobs:
         steps:
         - name: Docker Login
           run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jakejack13 --password-stdin
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - name: Build
           run: cd workers && docker build -t ghcr.io/jakejack13/speed-leaders:latest .
         - name: Deploy
