@@ -1,0 +1,41 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/workers"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/leaders"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip"
+    directory: "/microservices/first"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    directory: "/microservices/optimizer"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/workers"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/leaders"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/microservices/first"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/microservices/optimizer"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
