@@ -15,7 +15,7 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM eclipse-temurin:21.0.2_13-jre-jammy as production
+FROM eclipse-temurin:21.0.2_13-jdk-jammy as production
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive \
     apt-get install --assume-yes --no-install-recommends \
