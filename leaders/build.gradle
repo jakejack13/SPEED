@@ -28,7 +28,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
     implementation 'com.github.docker-java:docker-java-core:3.3.6'
-    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.4'
+    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.6'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     implementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 
