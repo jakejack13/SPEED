@@ -1,9 +1,9 @@
 """Utility module for optimizing job partitions"""
 
-from .partition import ParitionMethod, even_split
+from .partition import PartitionMethod
 
 def optimize(
-    url: str, branch: str, num_workers: int, testclasses: list[str], method: ParitionMethod
+    url: str, branch: str, num_workers: int, testclasses: list[str], method: PartitionMethod
 ) -> list[dict[str, list[dict[str, str]]]]:
     """
     Partitions the given test classes into different clusters of tests to
@@ -28,10 +28,12 @@ def optimize(
         A list of partitions, each containing a list of test classes in each partition.
     """
 
-    # TODO: Update Optimizer Partition Methods to include URL and Branch after Database implementation
+    partition_func = method.value
+    if not partition_func:
+        raise NotImplementedError(
+            "Selected partition method is not implemented.")
 
-    partitions = method(num_workers, testclasses)
-
+    partitions = partition_func(num_workers, testclasses)
     if not partitions:
         raise NotImplementedError
 

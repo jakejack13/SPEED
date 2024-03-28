@@ -5,7 +5,8 @@
 from enum import Enum
 from .even_subset_split import even_split
 
-class ParitionMethod(Enum):
+
+class PartitionMethod(Enum):
     """
     Enum representing different partition methods.
     """
