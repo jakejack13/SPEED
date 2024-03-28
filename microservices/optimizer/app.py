@@ -29,8 +29,9 @@ def partition_tests() -> tuple[Response, int]:
         app.logger.warning("internal endpoint `partition` made bad request")
         return jsonify({"error": "missing necessary json body data"}), 400
     testclasses = list(map(lambda d: d["name"], testclasses_dict))
-    partitions = optimize(url, branch, num_workers,
-                          testclasses, PartitionMethod.EVEN_SPLIT)
+    partitions = optimize(
+        url, branch, num_workers, testclasses, PartitionMethod.EVEN_SPLIT
+    )
     print(partitions)
     return jsonify({"partitions": partitions}), 200
 

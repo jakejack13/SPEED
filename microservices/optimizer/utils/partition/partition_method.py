@@ -3,6 +3,7 @@
 """
 
 from enum import Enum
+from functools import partial
 from .even_subset_split import even_split
 
 
@@ -11,7 +12,7 @@ class PartitionMethod(Enum):
     Enum representing different partition methods.
     """
 
-    EVEN_SPLIT = even_split
+    EVEN_SPLIT = partial(even_split)
     """
     Represents the even split partition method.
     """

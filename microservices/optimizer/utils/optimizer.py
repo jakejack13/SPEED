@@ -2,8 +2,14 @@
 
 from .partition import PartitionMethod
 
+
+# pylint: disable=unused-argument
 def optimize(
-    url: str, branch: str, num_workers: int, testclasses: list[str], method: PartitionMethod
+    url: str,
+    branch: str,
+    num_workers: int,
+    testclasses: list[str],
+    method: PartitionMethod,
 ) -> list[dict[str, list[dict[str, str]]]]:
     """
     Partitions the given test classes into different clusters of tests to
@@ -30,15 +36,15 @@ def optimize(
 
     partition_func = method.value
     if not partition_func:
-        raise NotImplementedError(
-            "Selected partition method is not implemented.")
+        raise NotImplementedError("Selected partition method is not implemented.")
 
     partitions = partition_func(num_workers, testclasses)
     if not partitions:
         raise NotImplementedError
 
-    formatted_partitions = [{"testclasses": [{"name": test_class}
-                                             for test_class in partition]}
-                            for partition in partitions]
+    formatted_partitions = [
+        {"testclasses": [{"name": test_class} for test_class in partition]}
+        for partition in partitions
+    ]
 
     return formatted_partitions

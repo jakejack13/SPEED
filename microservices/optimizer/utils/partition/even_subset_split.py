@@ -1,16 +1,14 @@
 """Provides method that divides classes equally among a set number of partitions."""
 
 
-def even_split(
-        num_workers: int, testclasses: list[str]
-) -> list[set[str]]:
+def even_split(num_workers: int, testclasses: list[str]) -> list[set[str]]:
     """
-        Split the list of classes into an equal number of input partitions. If lists cannot
-        be divided evenly among partitions, include one extra test in each test set up until the
-        modulus of className size and partitions.
-        :param class_names: List of the classes by package+name
-        :param partitions: Number of partitions to create
-        :return: A list of approximately evenly split test class name partitions stored as sets
+    Split the list of classes into an equal number of input partitions. If lists cannot
+    be divided evenly among partitions, include one extra test in each test set up until the
+    modulus of className size and partitions.
+    :param class_names: List of the classes by package+name
+    :param partitions: Number of partitions to create
+    :return: A list of approximately evenly split test class name partitions stored as sets
     """
 
     classes = []
