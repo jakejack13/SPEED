@@ -2,7 +2,7 @@
 
 from .partition import PartitionMethod
 
-
+# TODO: Remove pylint statement
 # pylint: disable=unused-argument
 def optimize(
     url: str,
