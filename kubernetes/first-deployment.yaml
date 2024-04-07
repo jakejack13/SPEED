@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (HEAD)
+  labels:
+    io.kompose.service: first
+  name: first
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: first
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (HEAD)
+      labels:
+        io.kompose.network/speed-default: "true"
+        io.kompose.service: first
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: firstdb
+            - name: POSTGRES_PASSWORD
+              value: test
+            - name: POSTGRES_USER
+              value: test
+          image: ghcr.io/jakejack13/speed-first
+          name: speed-first
+          ports:
+            - containerPort: 5001
+              hostPort: 5001
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: first-claim0
+      restartPolicy: Always
+      volumes:
+        - name: first-claim0
+          persistentVolumeClaim:
+            claimName: first-claim0

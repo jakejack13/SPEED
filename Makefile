@@ -12,6 +12,14 @@ down:
 	docker rm -vf $(docker ps -aq) 2> /dev/null || echo No containers to remove
 
 
+### Kubernetes commands
+apply:
+	cd kubernetes && kubectl apply -f first-claim0-persistentvolumeclaim.yaml,first-deployment.yaml,first-service.yaml,firstdb-deployment.yaml,first-service.yaml,kafka-deployment.yaml,kafka-service.yaml,leaders-deployment.yaml,optimizer-deployment.yaml,optimizer-service.yaml,workers-deployment.yaml,zookeeper-deployment.yaml,zookeeper-service.yaml
+
+delete:
+	cd kubernetes && kubectl delete -f first-claim0-persistentvolumeclaim.yaml,first-deployment.yaml,first-service.yaml,firstdb-deployment.yaml,first-service.yaml,kafka-deployment.yaml,kafka-service.yaml,leaders-deployment.yaml,optimizer-deployment.yaml,optimizer-service.yaml,workers-deployment.yaml,zookeeper-deployment.yaml,zookeeper-service.yaml
+
+
 ### Host commands
 gradle:
 	./gradlew check
@@ -51,6 +59,9 @@ define HELP_BODY
 	up: runs SPEED with docker compose
 	down: stops and removes containers 
 
+	# KUBERNETES
+	apply: runs SPEED with Kubernetes
+	delete: stops and removes services
 
 	# HOST
 	The below commands are all run on the host machine, not inside Docker. We recommend using the above commands for a more standard experience.

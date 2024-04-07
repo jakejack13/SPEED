@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (HEAD)
+  labels:
+    io.kompose.service: firstdb
+  name: firstdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: firstdb
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (HEAD)
+      labels:
+        io.kompose.network/speed-default: "true"
+        io.kompose.service: firstdb
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: firstdb
+            - name: POSTGRES_PASSWORD
+              value: test
+            - name: POSTGRES_USER
+              value: test
+          image: postgres
+          name: speed-firstdb
+          ports:
+            - containerPort: 5432
+              hostPort: 5432
+              protocol: TCP
+      restartPolicy: Always
