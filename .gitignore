@@ -4,6 +4,7 @@
 #IntelliJ
 .idea
 *.iml
+.run
 
 #VSCode
 .vscode/

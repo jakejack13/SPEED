@@ -72,7 +72,7 @@ Retrieves information about a specific deployment using its ID.
 ```
 
 
-### POST /update
+### POST /update/{deployment_id}
 
 
 Updates the status of a deployment. This endpoint is typically used by leaders to inform the web server of the build's progress.

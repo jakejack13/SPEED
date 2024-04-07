@@ -2,7 +2,7 @@
 # ref: https://docs.docker.com/develop/develop-images/multistage-build/
 
 # temp container to build using gradle
-FROM openjdk:21-jdk AS build
+FROM eclipse-temurin:21.0.2_13-jdk AS build
 ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 
@@ -15,7 +15,7 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM openjdk:21-jdk-slim as production
+FROM eclipse-temurin:21.0.2_13-jdk-jammy as production
 ENV ARTIFACT_NAME=workers-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 
@@ -25,4 +25,4 @@ COPY --from=build $APP_HOME/build/libs/$ARTIFACT_NAME .
 EXPOSE 29092
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="workers image"
-ENTRYPOINT exec java -jar ${ARTIFACT_NAME}
+CMD exec java -jar ${ARTIFACT_NAME}
