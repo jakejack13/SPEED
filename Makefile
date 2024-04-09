@@ -14,10 +14,10 @@ down:
 
 ### Kubernetes commands
 apply:
-	cd kubernetes && microk8s kubectl apply -f first-claim0-persistentvolumeclaim.yaml,first-deployment.yaml,first-service.yaml,firstdb-deployment.yaml,first-service.yaml,kafka-deployment.yaml,kafka-service.yaml,leaders-deployment.yaml,optimizer-deployment.yaml,optimizer-service.yaml,workers-deployment.yaml,zookeeper-deployment.yaml,zookeeper-service.yaml
+	cd kubernetes && ./apply.sh
 
 delete:
-	cd kubernetes && microk8s kubectl delete -f first-claim0-persistentvolumeclaim.yaml,first-deployment.yaml,first-service.yaml,firstdb-deployment.yaml,first-service.yaml,kafka-deployment.yaml,kafka-service.yaml,leaders-deployment.yaml,optimizer-deployment.yaml,optimizer-service.yaml,workers-deployment.yaml,zookeeper-deployment.yaml,zookeeper-service.yaml
+	cd kubernetes && ./delete.sh
 
 
 ### Host commands

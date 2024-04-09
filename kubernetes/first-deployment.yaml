@@ -1,27 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.32.0 (HEAD)
-  labels:
-    io.kompose.service: first
   name: first
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: first
-  strategy:
-    type: Recreate
+      app: first
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.32.0 (HEAD)
       labels:
-        io.kompose.network/speed-default: "true"
-        io.kompose.service: first
+        app: first
     spec:
       containers:
         - env:
@@ -37,11 +26,4 @@ spec:
             - containerPort: 5001
               hostPort: 5001
               protocol: TCP
-          volumeMounts:
-            - mountPath: /var/run/docker.sock
-              name: first-claim0
       restartPolicy: Always
-      volumes:
-        - name: first-claim0
-          persistentVolumeClaim:
-            claimName: first-claim0

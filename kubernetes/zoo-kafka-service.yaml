@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zoo-kafka
+  labels:
+    app: zoo-kafka
+spec:
+  ports:
+  - port: 29092
+    protocol: TCP
+    name: kafka-1
+  - port: 9092
+    protocol: TCP
+    name: kafka-2
+  - port: 2181
+    protocol: TCP
+    name: zoo-1
+  selector:
+    app: zoo-kafka
+  type: LoadBalancer
