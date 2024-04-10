@@ -12,8 +12,6 @@ from kubernetes import client
 from utils import DBManager
 import utils
 
-print("before loading")
-
 app = Flask(__name__)
 hostname: str | None = None
 
@@ -27,7 +25,7 @@ with app.app_context():
     if hostname is None:
         app.logger.error("firstdb not found")
         raise ConnectionError()
-    print(f"hostname={hostname}")
+    app.logger.info("hostname=%s", hostname)
 
 
 def initialize() -> None:
@@ -40,7 +38,6 @@ def initialize() -> None:
             db.close_connection()
             app.logger.info("Database initialized")
     except OperationalError:
-        print("Retrying database connection")
         initialize()
 
 
@@ -165,6 +162,6 @@ def get_results(deployment_id: int) -> tuple[Response, int]:
     return jsonify({"results": results}), 200
 
 
-initialize()
+# initialize()
 if __name__ == "__main__":
-    app.run(port=5001)
+    app.run(host="0.0.0.0", port=5001)

@@ -16,4 +16,4 @@ EXPOSE 5002
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="optimizer image"
 
-CMD . /venv/bin/activate && python3 -m flask run --host=0.0.0.0 --port=5002
+CMD . /venv/bin/activate && python3 app.py
