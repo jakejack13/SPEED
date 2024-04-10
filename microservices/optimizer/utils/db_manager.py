@@ -1,13 +1,16 @@
 """Utility module for managing optDB"""
+
 from datetime import datetime
 from pymongo import MongoClient
 
 # Number of execution times to keep track of for each test class
 NUM_ENTRIES: int = 20
 
+
 # pylint: disable=too-few-public-methods
 class DBManager:
     """Class for managing optDB"""
+
     def __init__(
         self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
     ) -> None:

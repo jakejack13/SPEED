@@ -2,6 +2,7 @@
 in the documentation at `optimizer_api_doc.md`"""
 
 from flask import Flask, jsonify, Response, request
+
 # pylint: disable=import-error
 from microservices.optimizer.utils import db_manager
 from utils import optimize
