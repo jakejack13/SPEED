@@ -3,7 +3,7 @@ in the documentation at `optimizer_api_doc.md`"""
 
 from flask import Flask, jsonify, Response, request
 
-import db_manager
+from microservices.optimizer.utils import db_manager
 from utils import optimize
 
 app = Flask(__name__)

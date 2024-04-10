@@ -1,3 +1,4 @@
+"""Utility module for managing optDB"""
 from datetime import datetime
 from pymongo import MongoClient
 
@@ -5,7 +6,7 @@ from pymongo import MongoClient
 NUM_ENTRIES: int = 20
 
 # pylint: disable=too-few-public-methods
-"""Utility module for managing optDB"""
+"""Class for managing optDB"""
 class DBManager:
     def __init__(
         self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
