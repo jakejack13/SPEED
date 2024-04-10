@@ -85,7 +85,7 @@ def update_times() -> tuple[Response, int]:
                 )
 
             db_manager: DBManager | None = getattr(g, "db_manager", None)
-            if db_manager is None:
+            if db_manager is not None:
                 db_manager.update_execution_time(url, branch, name, time)
         return (
             jsonify({"message": "Test class execution times updated successfully"}),
