@@ -54,12 +54,18 @@ def update_times() -> tuple[Response, int]:
             name = test_class.get("name")
             time = test_class.get("time")
             if name is None or time is None:
-                return jsonify({"error": "missing test class name or execution time"}), 400
-            
-            #Update database
-            
+                return (
+                    jsonify({"error": "missing test class name or execution time"}),
+                    400,
+                )
+
+            # Update database
+
             print(f"Updated {name} in {url} on branch {branch} with time {time}")
-        return jsonify({"message": "Test class execution times updated successfully"}), 200
+        return (
+            jsonify({"message": "Test class execution times updated successfully"}),
+            200,
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
