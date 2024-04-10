@@ -7,8 +7,8 @@ from pymongo import MongoClient
 NUM_ENTRIES: int = 20
 
 
-'''Allows management of the MongoDB database'''
 # pylint: disable=too-few-public-methods
+'''Allows management of the MongoDB database'''
 class DBManager:
     def __init__(
         self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
