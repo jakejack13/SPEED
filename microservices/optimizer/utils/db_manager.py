@@ -1,6 +1,7 @@
 """Utility module for managing optDB"""
 
 from datetime import datetime
+from typing import Any
 from pymongo import MongoClient
 
 # Number of execution times to keep track of for each test class
@@ -14,7 +15,7 @@ class DBManager:
     def __init__(
         self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
     ) -> None:
-        self.client = MongoClient(uri)
+        self.client:MongoClient[dict[str, Any]] = MongoClient(uri)
         self.db = self.client[db_name]
         self.collection = self.db["execution_times"]
 
