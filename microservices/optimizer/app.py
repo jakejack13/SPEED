@@ -1,11 +1,36 @@
 """Optimizer: the optimization microservice. More information can be found
 in the documentation at `optimizer_api_doc.md`"""
 
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, g
 
-from .utils import optimize, DBManager
+from .utils import DBManager, optimize
 
 app = Flask(__name__)
+
+DATABASE_FILE: str = "opt.db"
+
+
+def initialize() -> None:
+    """Initialize the database and tables."""
+    try:
+        with app.app_context():
+            db = DBManager(DATABASE_FILE)
+    except Exception:
+        initialize()
+
+
+@app.before_request
+def before_request() -> None:
+    """Adds the database manager to request context"""
+    g.db_manager = DBManager(DATABASE_FILE)
+
+
+@app.teardown_request
+def teardown_request(_: BaseException | None = None) -> None:
+    """Closes the connection to the database at the end of the request"""
+    db_manager = getattr(g, "db_manager", None)
+    if db_manager is not None:
+        db_manager.close_connection()
 
 
 @app.route("/partition", methods=["POST"])
@@ -59,6 +84,7 @@ def update_times() -> tuple[Response, int]:
                     400,
                 )
 
+            db_manager: DBManager | None = getattr(g, "db_manager", None)
             db_manager.update_execution_time(url, branch, name, time)
         return (
             jsonify({"message": "Test class execution times updated successfully"}),
@@ -69,6 +95,8 @@ def update_times() -> tuple[Response, int]:
     except ValueError as e:
         return jsonify({"error": f"Value error: {str(e)} - invalid data type"}), 400
 
+
+initialize()
 
 if __name__ == "__main__":
     app.run(port=5002)
