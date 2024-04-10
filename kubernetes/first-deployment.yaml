@@ -20,6 +20,8 @@ spec:
               value: test
             - name: POSTGRES_USER
               value: test
+            - name: POSTGRES_PORT
+              value: "5432"
           image: ghcr.io/jakejack13/speed-first
           name: speed-first
           ports:

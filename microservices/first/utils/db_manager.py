@@ -30,16 +30,19 @@ RESULTS_FIELDS = ["deployment_ID", "result"]
 class DBManager:
     """A class that allows manipulation of FirstDB"""
 
+    hostname: str
+    """The hostname of the database"""
+
     def _get_db(self) -> psycopg.Connection[TupleRow]:
         """Returns the current database connection"""
         db = getattr(g, "_database", None)
         if db is None:
             db = g._database = psycopg.connect(
                 dbname=os.environ["POSTGRES_DB"],
-                host="firstdb",
+                host=self.hostname,
                 user=os.environ["POSTGRES_USER"],
                 password=os.environ["POSTGRES_PASSWORD"],
-                port="5432",
+                port=os.environ["POSTGRES_PORT"],
             )
         return db
 
@@ -49,12 +52,9 @@ class DBManager:
         if db is not None:
             db.close()
 
-    def __init__(self, db_file: str) -> None:
-        """Initialize the database manager with the path to the database file.
-
-        param db_file: The file path of the SQLite database.
-        """
-        self.db_file = db_file
+    def __init__(self, hostname: str) -> None:
+        """Initialize the database manager with the specified hostname"""
+        self.hostname = hostname
 
     def create_deployments_table(self) -> None:
         """Create the deployments table in the database."""

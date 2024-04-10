@@ -7,32 +7,47 @@ from flask import Flask, request, jsonify, Response, g
 
 from psycopg import OperationalError
 
+from kubernetes import client
+
 from utils import DBManager
 import utils
 
-app = Flask(__name__)
+print("before loading")
 
-# Set up database manager
-DATABASE_FILE: str = "deployments.db"
+app = Flask(__name__)
+hostname: str | None = None
+
+with app.app_context():
+    kube_client = client.CoreV1Api()
+    services = kube_client.list_service_for_all_namespaces()
+    for service in services.items:
+        if service.metadata is not None and service.metadata.name == "firstdb":
+            if service.spec is not None:
+                hostname = service.spec.load_balancer_ip
+    if hostname is None:
+        app.logger.error("firstdb not found")
+        raise ConnectionError()
+    print(f"hostname={hostname}")
 
 
 def initialize() -> None:
     """Initialize the database and tables."""
     try:
         with app.app_context():
-            db = DBManager(DATABASE_FILE)
+            db = DBManager(hostname or "")
             db.create_deployments_table()
             db.create_results_table()
             db.close_connection()
             app.logger.info("Database initialized")
     except OperationalError:
+        print("Retrying database connection")
         initialize()
 
 
 @app.before_request
 def before_request() -> None:
     """Adds the database manager to request context"""
-    g.db_manager = DBManager(DATABASE_FILE)
+    g.db_manager = DBManager(hostname or "")
 
 
 @app.teardown_request

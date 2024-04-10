@@ -18,7 +18,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 22181:2181
+      - 2181:2181
     networks:
       - kafka-network
 
@@ -55,6 +55,7 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: firstdb
+      POSTGRES_PORT: 5432
 
   firstdb:
     container_name: speed-firstdb

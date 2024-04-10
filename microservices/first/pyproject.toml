@@ -11,11 +11,13 @@ python = ">=3.12"
 Flask = "*"
 psycopg = "*"
 psycopg-binary = "*"
+kubernetes = "*"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"
 pylint = "*"
 black = "*"
+kubernetes-stubs = "*"
 
 [build-system]
 requires = ["poetry-core"]
