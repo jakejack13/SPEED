@@ -92,9 +92,9 @@ def update_times() -> tuple[Response, int]:
             200,
         )
     except KeyError as e:
-        return jsonify({"error": f"Key error: {str(e)} - missing data in request"}), 400
+        return jsonify({"error": f"Key error - missing data in request"}), 400
     except ValueError as e:
-        return jsonify({"error": f"Value error: {str(e)} - invalid data type"}), 400
+        return jsonify({"error": f"Value error - invalid data type"}), 400
 
 
 initialize()

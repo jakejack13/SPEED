@@ -15,7 +15,7 @@ class DBManager:
     def __init__(
         self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
     ) -> None:
-        self.client:MongoClient[dict[str, Any]] = MongoClient(uri)
+        self.client: MongoClient[dict[str, Any]] = MongoClient(uri)
         self.db = self.client[db_name]
         self.collection = self.db["execution_times"]
 
