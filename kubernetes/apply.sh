@@ -2,10 +2,10 @@
 
 cd ..
 docker compose build
-docker push localhost:32000/speed-workers:registry
-docker push localhost:32000/speed-leaders:registry
-docker push localhost:32000/speed-first:registry
-docker push localhost:32000/speed-optimizer:registry
+docker push ghcr.io/jakejack13/speed-workers:test
+docker push ghcr.io/jakejack13/speed-leaders:test
+docker push ghcr.io/jakejack13/speed-first:test
+docker push ghcr.io/jakejack13/speed-optimizer:test
 
 cd kubernetes
 microk8s kubectl apply -f zoo-kafka-deployment.yaml,zoo-kafka-service.yaml

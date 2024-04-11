@@ -22,7 +22,7 @@ spec:
               value: test
             - name: POSTGRES_PORT
               value: "5432"
-          image: localhost:32000/speed-first:local
+          image: ghcr.io/jakejack13/speed-first:test
           name: speed-first
           ports:
             - containerPort: 5001

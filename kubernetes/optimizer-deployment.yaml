@@ -13,7 +13,7 @@ spec:
         app: optimizer
     spec:
       containers:
-        - image: localhost:32000/speed-optimizer:local
+        - image: ghcr.io/jakejack13/speed-optimizer:test
           name: speed-optimizer
           ports:
             - containerPort: 5002

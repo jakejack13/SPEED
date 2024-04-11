@@ -2,13 +2,13 @@ services:
   leaders:
     container_name: speed-leaders
     build: leaders
-    image: localhost:32000/speed-leaders:local
+    image: ghcr.io/jakejack13/speed-leaders:test
     command: echo Do not start leaders during docker compose up
 
   workers:
     container_name: speed-workers
     build: workers
-    image: localhost:32000/speed-workers:local
+    image: ghcr.io/jakejack13/speed-workers:test
     command: echo Do not start workers during docker compose up
 
   zookeeper:
@@ -43,7 +43,7 @@ services:
   first:
     container_name: speed-first
     build: microservices/first
-    image: localhost:32000/speed-first:local
+    image: ghcr.io/jakejack13/speed-first:test
     ports:
       - 5001:5001
     depends_on:
@@ -74,7 +74,7 @@ services:
     depends_on:
       - optdb
     build: microservices/optimizer
-    image: localhost:32000/speed-optimizer:local
+    image: ghcr.io/jakejack13/speed-optimizer:test
     ports:
       - 5002:5002
 
