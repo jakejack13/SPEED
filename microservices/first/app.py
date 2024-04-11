@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, Response, g
 
 from psycopg import OperationalError
 
-from kubernetes import client
+from kubernetes import client, config
 
 from utils import DBManager
 import utils
@@ -15,17 +15,28 @@ import utils
 app = Flask(__name__)
 hostname: str | None = None
 
+# Must be place top level to prevent global variable modification
 with app.app_context():
-    kube_client = client.CoreV1Api()
-    services = kube_client.list_service_for_all_namespaces()
-    for service in services.items:
-        if service.metadata is not None and service.metadata.name == "firstdb":
-            if service.spec is not None:
-                hostname = service.spec.load_balancer_ip
-    if hostname is None:
-        app.logger.error("firstdb not found")
-        raise ConnectionError()
-    app.logger.info("hostname=%s", hostname)
+
+    config.load_incluster_config()  # type: ignore
+    v1 = client.CoreV1Api()
+    print("Listing pods with their IPs:")
+    ret = v1.list_pod_for_all_namespaces(watch=False)
+    for i in ret.items:
+        print(f"{i.status.pod_ip}\t{i.metadata.namespace}\t{i.metadata.name}")  # type: ignore
+
+    # config.load_incluster_config()  # type: ignore
+    # kube_client = client.CoreV1Api()
+    # services = kube_client.list_service_for_all_namespaces(watch=False)
+    # services = kube_client.list_pod_for_all_namespaces(watch=False)
+    # for service in services.items:
+    #     if service.metadata is not None and service.metadata.name == "firstdb":
+    #         if service.spec is not None:
+    #             hostname = service.spec.load_balancer_ip
+    # if hostname is None:
+    #     app.logger.error("firstdb not found")
+    #     raise ConnectionError()
+    # app.logger.info("hostname=%s", hostname)
 
 
 def initialize() -> None:

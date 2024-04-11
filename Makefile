@@ -14,10 +14,10 @@ down:
 
 ### Kubernetes commands
 apply:
-	cd kubernetes && ./apply.sh -t
+	cd kubernetes && ./apply.sh
 
 delete:
-	cd kubernetes && ./delete.sh -t
+	cd kubernetes && ./delete.sh
 
 
 ### Host commands
