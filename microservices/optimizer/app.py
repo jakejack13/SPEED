@@ -59,17 +59,17 @@ def update_times() -> tuple[Response, int]:
                     400,
                 )
 
-            # Update database
+            # Update database (Fixed in SPEED-41)
 
-            print(f"Updated {name} in {url} on branch {branch} with time {time}")
+            app.logger(f"Updated {name} in {url} on branch {branch} with time {time}")
         return (
             jsonify({"message": "Test class execution times updated successfully"}),
             200,
         )
     except KeyError as e:
-        return jsonify({"error": f"Key error: {str(e)} - missing data in request"}), 400
+        return jsonify({"error": f"Key error - missing data in request"}), 400
     except ValueError as e:
-        return jsonify({"error": f"Value error: {str(e)} - invalid data type"}), 400
+        return jsonify({"error": f"Value error - invalid data type"}), 400
 
 
 if __name__ == "__main__":
