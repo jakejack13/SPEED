@@ -7,7 +7,6 @@ from utils import DBManager, optimize
 
 app = Flask(__name__)
 
-DATABASE_FILE: str = "opt.db"
 
 
 @app.before_request
