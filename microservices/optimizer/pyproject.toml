@@ -7,14 +7,14 @@ readme = "../README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "3.12.2"
-Flask = "3.0.3"
+python = ">=3.12"
+Flask = "*"
 pymongo = "*"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "1.9.0"
-pylint = "3.1.0"
-black = "24.3.0"
+mypy = "*"
+pylint = "*"
+black = "*"
 
 [build-system]
 requires = ["poetry-core"]
