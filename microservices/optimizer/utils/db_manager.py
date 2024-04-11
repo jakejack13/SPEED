@@ -13,7 +13,7 @@ class DBManager:
     """Class for managing optDB"""
 
     def __init__(
-        self, uri: str = "mongodb://localhost:27017/", db_name: str = "optDB"
+        self, uri: str = "mongodb://optdb:27017/", db_name: str = "optDB"
     ) -> None:
         self.client: MongoClient[dict[str, Any]] = MongoClient(uri)
         self.db = self.client[db_name]
