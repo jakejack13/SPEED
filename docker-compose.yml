@@ -83,7 +83,7 @@ services:
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     ports:
-      - "6789:6789"
+      - "27017:27017"
     environment:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: example
