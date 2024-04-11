@@ -63,7 +63,7 @@ public final class RepositoryFactory {
                     .call();
             return new JUnit5RepositoryImpl(topDir);
         } catch (GitAPIException | ConfigSyntaxException e) {
-            LOGGER.error("Error while cloning repository " + url, e);
+            LOGGER.error("Error while cloning repository", e);
             throw new RepositoryCloneException("Error while cloning repository " + url, e);
         }
     }
