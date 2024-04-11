@@ -9,10 +9,12 @@ app = Flask(__name__)
 
 DATABASE_FILE: str = "opt.db"
 
+
 @app.before_request
 def before_request() -> None:
     """Adds the database manager to request context"""
     g.db_manager = DBManager(DATABASE_FILE)
+
 
 @app.route("/partition", methods=["POST"])
 def partition_tests() -> tuple[Response, int]:
@@ -76,6 +78,7 @@ def update_times() -> tuple[Response, int]:
         return jsonify({"error": "Key error - missing data in request"}), 400
     except ValueError:
         return jsonify({"error": "Value error - invalid data type"}), 400
+
 
 if __name__ == "__main__":
     app.run(port=5002)
