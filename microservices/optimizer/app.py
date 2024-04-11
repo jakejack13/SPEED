@@ -12,7 +12,7 @@ app = Flask(__name__)
 @app.before_request
 def before_request() -> None:
     """Adds the database manager to request context"""
-    g.db_manager = DBManager(DATABASE_FILE)
+    g.db_manager = DBManager()
 
 
 @app.route("/partition", methods=["POST"])
