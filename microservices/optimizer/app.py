@@ -61,7 +61,9 @@ def update_times() -> tuple[Response, int]:
 
             # Update database (Fixed in SPEED-41)
 
-            app.logger(f"Updated {name} in {url} on branch {branch} with time {time}")
+            app.logger.info(
+                f"Updated {name} in {url} on branch {branch} with time {time}"
+            )
         return (
             jsonify({"message": "Test class execution times updated successfully"}),
             200,
