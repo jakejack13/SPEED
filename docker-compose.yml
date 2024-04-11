@@ -1,4 +1,3 @@
-version: '2'
 services:
   leaders:
     container_name: speed-leaders
@@ -67,11 +66,22 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: firstdb
-
-
+      
   optimizer:
     container_name: speed-optimizer
+    depends_on:
+      - optdb
     build: microservices/optimizer
     image: ghcr.io/jakejack13/speed-optimizer
     ports:
       - 5002:5002
+
+  optdb:
+    container_name: speed-optdb
+    image: mongo
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    ports:
+      - "6789:6789"
+    environment:
