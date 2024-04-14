@@ -1,5 +1,6 @@
 package edu.cornell.testoutputstream;
 
+import edu.cornell.Main;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -31,7 +32,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     /**
      * Current address to the kafka service <b>within the kafka network</b>.
      */
-    private static final @NonNull String KAFKA_ADDRESS = "kafka:29092";
+    private static final @NonNull String KAFKA_ADDRESS = System.getenv(Main.ENV_KAFKA_ADDRESS);
 
     /**
      * Creates a new TestOutputStream.

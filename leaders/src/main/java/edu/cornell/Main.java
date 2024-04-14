@@ -1,7 +1,6 @@
 package edu.cornell;
 
 import edu.cornell.partitioner.ClassPartitioner;
-import edu.cornell.partitioner.methods.NumSplitPartitionMethod;
 import edu.cornell.repository.Repository;
 import edu.cornell.repository.RepositoryBuildException;
 import edu.cornell.repository.RepositoryCloneException;
@@ -66,16 +65,8 @@ public class Main {
     private static final int deploymentID = Integer.parseInt(
         System.getenv(ENV_DEPLOYMENT_ID).strip());
 
-    /**
-     * Base of endpoint leader uses to update its status.
-     */
-    private static final @NonNull String UPDATE_ENDPOINT_BASE = 
-        "http://host.docker.internal:5000/update/";
-
-    /**
-     * Endpoint leader uses to update its status.
-     */
-    public static final @NonNull String UPDATE_ENDPOINT = UPDATE_ENDPOINT_BASE + deploymentID;
+    private static final String UPDATE_ENDPOINT = ENDPOINTS.BASE_ENDPOINT + ENDPOINTS.FIRST_PORT +
+            ENDPOINTS.UPDATE_ROUTE + "/" + deploymentID;
 
     /**
      * The main method of the leader.
@@ -153,9 +144,9 @@ public class Main {
     private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
             Set<String> tests, int numWorkers, String kafkaAddress) {
         List<String> testsList = new ArrayList<>(tests);
-        ClassPartitioner classPartitioner = new ClassPartitioner(new NumSplitPartitionMethod(), 
-            testsList, Math.min(numWorkers, testsList.size()));
-        List<Set<String>> partitionedTestsList = classPartitioner.getClasses();
+        List<Set<String>> partitionedTestsList = ClassPartitioner.partitionClasses(
+                ENDPOINTS.BASE_ENDPOINT + ENDPOINTS.OPT_PORT + ENDPOINTS.PARTITION_ROUTE, testsList
+        );
         CloseableSet<Worker> workers = new CloseableSet<>();
         for (Set<String> testSet : partitionedTestsList) {
             workers.add(Worker.createWorker(url,
