@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "first"
+version = "0.0.1"
+description = "First tier microservice for SPEED"
+authors = ["Jacob Kerr <jck268@cornell.edu>", "Mitchell Gray <meg346@cornell.edu>", "Owen Ralbovsky <oxr2@cornell.edu>"]
+readme = "../README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+Flask = "*"
+psycopg = "*"
+psycopg-binary = "*"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "*"
+pylint = "*"
+black = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
