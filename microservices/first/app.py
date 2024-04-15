@@ -68,7 +68,7 @@ def start_deployment() -> tuple[Response, int]:
             url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
         )
     except subprocess.CalledProcessError as e:
-        app.logger.error("Failed to start Docker container: " + e)
+        app.logger.error("Failed to start Docker container: %s", e)
         return jsonify({"error": "Unable to create/start docker container"}), 500
     db_manager.add_leader_id(leader_id, deployment_id)
     return jsonify({"id": deployment_id}), 201
