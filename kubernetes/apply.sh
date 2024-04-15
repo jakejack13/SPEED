@@ -8,6 +8,7 @@ docker push ghcr.io/jakejack13/speed-first:test
 docker push ghcr.io/jakejack13/speed-optimizer:test
 
 cd kubernetes
+microk8s kubectl apply -f rbac-authorization.yaml
 microk8s kubectl apply -f zoo-kafka-deployment.yaml,zoo-kafka-service.yaml
 microk8s kubectl apply -f firstdb-deployment.yaml,firstdb-service.yaml
 microk8s kubectl wait --for=condition=ready pod -l app=zoo-kafka --timeout 300s

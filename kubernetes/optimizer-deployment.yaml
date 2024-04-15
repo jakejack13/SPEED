@@ -15,6 +15,7 @@ spec:
       containers:
         - image: ghcr.io/jakejack13/speed-optimizer:test
           name: speed-optimizer
+          imagePullPolicy: Always
           ports:
             - containerPort: 5002
               hostPort: 5002

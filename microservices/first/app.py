@@ -17,26 +17,17 @@ hostname: str | None = None
 
 # Must be place top level to prevent global variable modification
 with app.app_context():
-
     config.load_incluster_config()  # type: ignore
-    v1 = client.CoreV1Api()
-    print("Listing pods with their IPs:")
-    ret = v1.list_pod_for_all_namespaces(watch=False)
-    for i in ret.items:
-        print(f"{i.status.pod_ip}\t{i.metadata.namespace}\t{i.metadata.name}")  # type: ignore
-
-    # config.load_incluster_config()  # type: ignore
-    # kube_client = client.CoreV1Api()
-    # services = kube_client.list_service_for_all_namespaces(watch=False)
-    # services = kube_client.list_pod_for_all_namespaces(watch=False)
-    # for service in services.items:
-    #     if service.metadata is not None and service.metadata.name == "firstdb":
-    #         if service.spec is not None:
-    #             hostname = service.spec.load_balancer_ip
-    # if hostname is None:
-    #     app.logger.error("firstdb not found")
-    #     raise ConnectionError()
-    # app.logger.info("hostname=%s", hostname)
+    kube_client = client.CoreV1Api()
+    services = kube_client.list_service_for_all_namespaces(watch=False)
+    for service in services.items:
+        if service.metadata is not None and service.metadata.name == "firstdb":
+            if service.spec is not None:
+                hostname = service.spec.load_balancer_ip
+    if hostname is None:
+        app.logger.error("firstdb not found")
+        raise ConnectionError()
+    app.logger.info("hostname=%s", hostname)
 
 
 def initialize() -> None:
@@ -173,6 +164,6 @@ def get_results(deployment_id: int) -> tuple[Response, int]:
     return jsonify({"results": results}), 200
 
 
-# initialize()
+initialize()
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)

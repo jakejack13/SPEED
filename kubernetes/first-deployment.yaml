@@ -24,6 +24,7 @@ spec:
               value: "5432"
           image: ghcr.io/jakejack13/speed-first:test
           name: speed-first
+          imagePullPolicy: Always
           ports:
             - containerPort: 5001
               hostPort: 5001
