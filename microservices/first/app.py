@@ -1,13 +1,14 @@
 """First: the first-tier microservice to SPEED. More information can be found
 in the documentation at `first_api_doc.md`"""
 
+import subprocess
+
 from flask import Flask, request, jsonify, Response, g
 
 from psycopg import OperationalError
 
 from utils import DBManager
 import utils
-import subprocess
 
 app = Flask(__name__)
 
@@ -67,7 +68,7 @@ def start_deployment() -> tuple[Response, int]:
             url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
         )
     except subprocess.CalledProcessError as e:
-        app.logger.error(f"Failed to start Docker container: {e}")
+        app.logger.error("Failed to start Docker container: " + e)
         return jsonify({"error": "Unable to create/start docker container"}), 500
     db_manager.add_leader_id(leader_id, deployment_id)
     return jsonify({"id": deployment_id}), 201
