@@ -64,5 +64,4 @@ def run_docker_container(
         result = subprocess.run(command, check=True, text=True, capture_output=True)
         return result.stdout.strip()[:12]
     except subprocess.CalledProcessError as e:
-        print(f"Failed to start Docker container: {e.stderr}")
         raise

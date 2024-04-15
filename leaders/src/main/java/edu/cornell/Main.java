@@ -137,15 +137,26 @@ public class Main {
      * @param url the url of the repository to test
      * @param branch the branch of the repository to test
      * @param tests the set of tests to execute
-     * @param numWorkers the number of workers to create
+     * @param numWorkers the number of workers to use
      * @param kafkaAddress the Kafka message bus address
      * @return the set of workers
+     * @throws IOException if there is an I/O error during the operation,
+     *                     potentially during communication with the
+     *                     partitioning service or during
+     *                     initialization of the workers.
+     * @throws InterruptedException if the thread running the method is interrupted,
+     *                      typically this would be during
+     *                      the HTTP request execution in {@link ClassPartitioner}.
+     *
      */
     private static @NonNull CloseableSet<Worker> createWorkerSet(String url, String branch,
-            Set<String> tests, int numWorkers, String kafkaAddress) {
+            Set<String> tests, int numWorkers, String kafkaAddress)
+            throws IOException, InterruptedException {
         List<String> testsList = new ArrayList<>(tests);
         List<Set<String>> partitionedTestsList = ClassPartitioner.partitionClasses(
-                ENDPOINTS.BASE_ENDPOINT + ENDPOINTS.OPT_PORT + ENDPOINTS.PARTITION_ROUTE, testsList
+                ENDPOINTS.BASE_ENDPOINT + ENDPOINTS.OPT_PORT + ENDPOINTS.PARTITION_ROUTE,
+                testsList,
+                numWorkers
         );
         CloseableSet<Worker> workers = new CloseableSet<>();
         for (Set<String> testSet : partitionedTestsList) {
