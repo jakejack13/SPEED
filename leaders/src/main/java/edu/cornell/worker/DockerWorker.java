@@ -74,16 +74,12 @@ public class DockerWorker implements Worker {
                 .build();
 
         dockerClient = DockerClientImpl.getInstance(config, httpClient);
-//
-//        HostConfig hostConfig = new HostConfig()
-//                .withNetworkMode("kafka-network"); //default kafka network name
 
         id = dockerClient.createContainerCmd(IMAGE_URL)
                 .withEnv(ENV_REPO_URL + '=' + repoUrl,
                         ENV_REPO_BRANCH + '=' + repoBranch,
                         ENV_REPO_TESTS + '=' + String.join(",", tests),
                         ENV_KAFKA_ADDRESS + '=' + kafkaAddress)
-//                .withHostConfig(hostConfig)
                 .exec().getId();
     }
 
