@@ -60,8 +60,5 @@ def run_docker_container(
         img_url,
     ]
 
-    try:
-        result = subprocess.run(command, check=True, text=True, capture_output=True)
-        return result.stdout.strip()[:12]
-    except subprocess.CalledProcessError as e:
-        raise
+    result = subprocess.run(command, check=True, text=True, capture_output=True)
+    return result.stdout.strip()[:12]
