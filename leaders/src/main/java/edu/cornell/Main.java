@@ -73,6 +73,7 @@ public class Main {
      * @param args not used
      */
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.STARTED);
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
@@ -108,6 +109,9 @@ public class Main {
             LOGGER.error("Unable to build the repository", e);
             System.exit(1);
         }
+        long endTime = System.currentTimeMillis();
+        double setupTime = (endTime - startTime) / 1000.0;
+        LOGGER.info("SETUP TIME TOOK: " + setupTime);
 
         StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.IN_PROGRESS);
         try (CloseableSet<Worker> workers = createWorkerSet(url, branch, tests, numWorkers,
@@ -128,6 +132,11 @@ public class Main {
             LOGGER.error("Leader failed", e);
             System.exit(1);
         }
+        endTime = System.currentTimeMillis();
+        double totalTime = (endTime - startTime) / 1000.0;
+        LOGGER.info("LEADER TIME TOOK: " + totalTime);
+        double testTime = totalTime - setupTime;
+        LOGGER.info("LEADER TEST TIME TOOK: " + testTime);
 
         StatusUpdater.updateDeploymentStatus(UPDATE_ENDPOINT, DeploymentStatus.DONE);
     }

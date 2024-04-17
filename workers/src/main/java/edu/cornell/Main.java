@@ -44,6 +44,7 @@ public class Main {
      * @param args not used
      */
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
         String tests = System.getenv(ENV_REPO_TESTS);
@@ -59,8 +60,16 @@ public class Main {
             Config config = repository.getConfig();
             LOGGER.info("Building");
             repository.build(config.getBuildCommands());
+            long endTime = System.currentTimeMillis();
+            double setupTime = (endTime - startTime) / 1000.0;
+            LOGGER.info("WORKER SETUP TIME TOOK: " + setupTime);
             LOGGER.info("Testing");
             repository.test(listOfTests, output);
+            endTime = System.currentTimeMillis();
+            double totalTime = (endTime - startTime) / 1000.0;
+            LOGGER.info("WORKER TIME TOOK: " + totalTime);
+            double testTime = totalTime - setupTime;
+            LOGGER.info("WORKER TEST TIME TOOK: " + testTime);
             LOGGER.info("Done");
             output.done();
             LOGGER.info(repository.toString());

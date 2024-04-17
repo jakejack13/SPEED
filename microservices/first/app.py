@@ -56,6 +56,7 @@ def start_deployment() -> tuple[Response, int]:
     try:
         url: str = data["url"]
         branch: str = data["branch"]
+        num_workers: int = data["num_workers"]
     except KeyError:
         return jsonify({"error": "missing necessary json body data"}), 400
     db_manager: DBManager | None = getattr(g, "db_manager", None)
@@ -65,7 +66,11 @@ def start_deployment() -> tuple[Response, int]:
     deployment_id = db_manager.add_deployment(url, branch)
     try:
         leader_id = utils.run_docker_container(
-            url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
+            url,
+            branch,
+            num_workers,
+            "ghcr.io/jakejack13/speed-leaders:latest",
+            deployment_id,
         )
     except subprocess.CalledProcessError as e:
         app.logger.error("Failed to start Docker container: %s", e)
