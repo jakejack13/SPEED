@@ -7,7 +7,7 @@ This repository is made public for educational and research visibility. Any use 
 ## Contact
 - Jacob Kerr (jck268@cornell.edu, jacob.the.kerr@gmail.com)
 - Owen Ralbovsky (oxr2@cornell.edu, oe.aoy1@gmail.com)
-- Mitchell Gray (meg346@cornell.edu)
+- Mitchell Gray (meg346@cornell.edu, mitchellgray100@gmail.com)
 
 ## More Info
 - [Our Boom 2024 Poster](https://docs.google.com/presentation/d/1Vxpm8MZzUWHhbQwato39Cqiy4ikL9opZ2rYh8Wbds88)
