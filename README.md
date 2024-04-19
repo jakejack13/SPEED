@@ -10,6 +10,5 @@ This repository is made public for educational and research visibility. Any use 
 - Mitchell Gray (meg346@cornell.edu)
 
 ## More Info
-- [Our Boom 2024 Poster](https://docs.google.com/presentation/d/1Vxpm8MZzUWHhbQwato39Cqiy4ikL9opZ2rYh8Wbds88)
-
-![1000021860](https://github.com/jakejack13/SPEED/assets/67762738/e29e7da0-4ef4-468c-a0c0-acb479460da5)
+![Speed Logo](https://github.com/jakejack13/SPEED/assets/67762738/e29e7da0-4ef4-468c-a0c0-acb479460da5)
+![Our BOOM 2024 Poster](https://github.com/jakejack13/SPEED/assets/67762738/8018a006-026d-4f2f-bdcc-0704f5527e38)
