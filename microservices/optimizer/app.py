@@ -39,6 +39,7 @@ def partition_tests() -> tuple[Response, int]:
     return jsonify({"partitions": partitions}), 200
 
 
+# pylint: disable=too-many-return-statements
 @app.route("/update", methods=["POST"])
 def update_times() -> tuple[Response, int]:
     """The `update` endpoint. This endpoint takes in the url and branch
