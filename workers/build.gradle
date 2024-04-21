@@ -1,8 +1,8 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.4'
+    id 'org.springframework.boot' version '3.2.5'
     id 'application'
-    id 'com.github.spotbugs' version '6.0.11'
+    id 'com.github.spotbugs' version '6.0.12'
     id 'checkstyle'
 }
 
@@ -26,8 +26,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
-    implementation 'org.slf4j:slf4j-api:2.0.12'
-    implementation 'org.slf4j:slf4j-simple:2.0.12'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
 
     implementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     implementation 'org.junit.platform:junit-platform-launcher:1.10.2'

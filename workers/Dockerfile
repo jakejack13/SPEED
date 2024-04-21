@@ -22,7 +22,6 @@ ENV APP_HOME=/app/
 WORKDIR $APP_HOME
 COPY --from=build $APP_HOME/build/libs/$ARTIFACT_NAME .
 
-EXPOSE 29092
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="workers image"
 CMD exec java -jar ${ARTIFACT_NAME}
