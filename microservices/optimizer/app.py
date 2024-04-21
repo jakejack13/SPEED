@@ -9,7 +9,6 @@ from utils.partition import PartitionMethod
 app = Flask(__name__)
 
 
-
 @app.before_request
 def before_request() -> None:
     """Adds the database manager to request context"""
