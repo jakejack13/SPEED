@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: optdb
+  template:
+    metadata:
+      labels:
+        app: optdb
+    spec:
+      containers:
+        - env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: example
+          image: mongo
+          name: speed-optdb
+          ports:
+            - containerPort: 27017
+              hostPort: 27017
+              protocol: TCP
+      restartPolicy: Always
