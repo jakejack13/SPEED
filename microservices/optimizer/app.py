@@ -1,11 +1,18 @@
 """Optimizer: the optimization microservice. More information can be found
 in the documentation at `optimizer_api_doc.md`"""
 
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, g
 
-from utils import optimize
+from utils import DBManager, optimize
+from utils.partition import PartitionMethod
 
 app = Flask(__name__)
+
+
+@app.before_request
+def before_request() -> None:
+    """Adds the database manager to request context"""
+    g.db_manager = DBManager()
 
 
 @app.route("/partition", methods=["POST"])
@@ -28,10 +35,13 @@ def partition_tests() -> tuple[Response, int]:
         app.logger.warning("internal endpoint `partition` made bad request")
         return jsonify({"error": "missing necessary json body data"}), 400
     testclasses = list(map(lambda d: d["name"], testclasses_dict))
-    partitions = optimize(url, branch, num_workers, testclasses)
+    partitions = optimize(
+        url, branch, num_workers, testclasses, PartitionMethod.EVEN_SPLIT
+    )
     return jsonify({"partitions": partitions}), 200
 
 
+# pylint: disable=too-many-return-statements
 @app.route("/update", methods=["POST"])
 def update_times() -> tuple[Response, int]:
     """The `update` endpoint. This endpoint takes in the url and branch
@@ -58,10 +68,14 @@ def update_times() -> tuple[Response, int]:
                     jsonify({"error": "missing test class name or execution time"}),
                     400,
                 )
-
-            # Update database (Fixed in SPEED-41)
-
+              
             app.logger.info("Updated %s in %s on branch %s with time %s")
+            
+            db_manager: DBManager | None = getattr(g, "db_manager", None)
+            if db_manager is not None:
+                db_manager.update_execution_time(url, branch, name, time)
+            else:
+                return jsonify({"Can not connect to optDB"}), 400
         return (
             jsonify({"message": "Test class execution times updated successfully"}),
             200,

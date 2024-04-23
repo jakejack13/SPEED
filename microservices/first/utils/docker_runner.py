@@ -45,8 +45,6 @@ def run_docker_container(
         "docker",
         "run",
         "-d",
-        "--network",
-        "host",
         "-v",
         "/var/run/docker.sock:/var/run/docker.sock",
         "-e",
@@ -54,26 +52,13 @@ def run_docker_container(
         "-e",
         f"SPEED_REPO_BRANCH={branch}",
         "-e",
-        "SPEED_KAFKA_ADDRESS=localhost:9092",
+        "SPEED_KAFKA_ADDRESS=host.docker.internal:9092",
         "-e",
-        f"SPEED_NUM_WORKERS={str(num_workers)}",
+        f"SPEED_NUM_WORKERS={num_workers}",
         "-e",
-        f"DEPLOYMENT_ID={str(deployment_id)}",
+        f"DEPLOYMENT_ID={deployment_id}",
         img_url,
     ]
 
-    stdout = None
-    # Open subprocess with PIPE to capture output
-    with subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    ) as process:
-        stdout, stderr = process.communicate()
-
-        # Check if the command was successful
-        if process.returncode != 0:
-            raise subprocess.CalledProcessError(
-                process.returncode, command, stderr.decode("utf-8")
-            )
-
-    # Return captured output
-    return stdout.decode("utf-8")[0:12]
+    result = subprocess.run(command, check=True, text=True, capture_output=True)
+    return result.stdout.strip()[:12]

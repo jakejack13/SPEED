@@ -86,8 +86,9 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
             }
         }
 
-        TestOutputSender.sendResults(testOutputParser.toJson(), 
-            "http://host.docker.internal:5000/add_results/" + deploymentID);
+        TestOutputSender.sendResults(testOutputParser.toJson(),
+            ENDPOINTS.BASE_ENDPOINT + ENDPOINTS.FIRST_PORT +
+                    ENDPOINTS.ADD_RESULTS_ROUTE + "/" + deploymentID);
     }
 
     @Override

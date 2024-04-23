@@ -37,7 +37,7 @@ public class Main {
     /**
      * The name of the KAFKA_ADDRESS environment variable.
      */
-    private static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
+    public static final @NonNull String ENV_KAFKA_ADDRESS = "SPEED_KAFKA_ADDRESS";
 
     /**
      * The main method for the worker.

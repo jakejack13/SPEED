@@ -1,6 +1,8 @@
 """First: the first-tier microservice to SPEED. More information can be found
 in the documentation at `first_api_doc.md`"""
 
+import subprocess
+
 from flask import Flask, request, jsonify, Response, g
 
 from psycopg import OperationalError
@@ -61,9 +63,13 @@ def start_deployment() -> tuple[Response, int]:
         app.logger.error("unable to get DBManager")
         return jsonify({"error": "no database manager"}), 500
     deployment_id = db_manager.add_deployment(url, branch)
-    leader_id = utils.run_docker_container(
-        url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
-    )
+    try:
+        leader_id = utils.run_docker_container(
+            url, branch, 2, "ghcr.io/jakejack13/speed-leaders:latest", deployment_id
+        )
+    except subprocess.CalledProcessError as e:
+        app.logger.error("Failed to start Docker container: %s", e)
+        return jsonify({"error": "Unable to create/start docker container"}), 500
     db_manager.add_leader_id(leader_id, deployment_id)
     return jsonify({"id": deployment_id}), 201
 

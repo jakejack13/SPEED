@@ -1,4 +1,3 @@
-version: '2'
 services:
   leaders:
     container_name: speed-leaders
@@ -12,7 +11,6 @@ services:
     image: ghcr.io/jakejack13/speed-workers
     command: echo Do not start workers during docker compose up
 
-
   zookeeper:
     container_name: speed-zookeeper
     image: confluentinc/cp-zookeeper:latest
@@ -21,23 +19,26 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
-  
+    networks:
+      - kafka-network
+
   kafka:
     container_name: speed-kafka
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
-      - 29092:29092
-      - 9092:9092
+      - "9092:9092"  # Expose 9092 for external traffic
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ZOOKEEPER_CONNECT: speed-zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_EXTERNAL:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT_EXTERNAL://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_EXTERNAL://host.docker.internal:9092,PLAINTEXT_INTERNAL://speed-kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-    
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+    networks:
+      - kafka-network
 
   first:
     container_name: speed-first
@@ -59,7 +60,6 @@ services:
     container_name: speed-firstdb
     image: postgres
     restart: always
-    # set shared memory limit when using docker-compose
     shm_size: 128mb
     ports:
       - "5432:5432"
@@ -67,11 +67,28 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: firstdb
-
-
+      
   optimizer:
     container_name: speed-optimizer
+    depends_on:
+      - optdb
     build: microservices/optimizer
     image: ghcr.io/jakejack13/speed-optimizer
     ports:
       - 5002:5002
+
+  optdb:
+    container_name: speed-optdb
+    image: mongo
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    ports:
+      - "27017:27017"
+    environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: example
+
+  networks:
+    kafka-network:
+      driver: bridge
