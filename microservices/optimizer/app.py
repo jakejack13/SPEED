@@ -69,6 +69,8 @@ def update_times() -> tuple[Response, int]:
                     400,
                 )
 
+            app.logger.info("Updated %s in %s on branch %s with time %s")
+
             db_manager: DBManager | None = getattr(g, "db_manager", None)
             if db_manager is not None:
                 db_manager.update_execution_time(url, branch, name, time)
