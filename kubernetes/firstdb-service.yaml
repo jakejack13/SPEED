@@ -11,4 +11,4 @@ spec:
     name: firstdb-1
   selector:
     app: firstdb
-  type: LoadBalancer
+  type: ClusterIP

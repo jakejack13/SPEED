@@ -11,4 +11,4 @@ spec:
     name: optimizer-1
   selector:
     app: optimizer
-  type: LoadBalancer
+  type: ClusterIP

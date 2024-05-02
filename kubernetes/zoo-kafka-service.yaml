@@ -17,4 +17,4 @@ spec:
     name: zoo-1
   selector:
     app: zoo-kafka
-  type: LoadBalancer
+  type: ClusterIP

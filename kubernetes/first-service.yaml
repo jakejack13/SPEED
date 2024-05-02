@@ -11,4 +11,4 @@ spec:
     name: first-1
   selector:
     app: first
-  type: LoadBalancer
+  type: ClusterIP

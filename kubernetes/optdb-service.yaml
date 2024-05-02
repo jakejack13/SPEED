@@ -11,4 +11,4 @@ spec:
     name: optdb-1
   selector:
     app: optdb
-  type: LoadBalancer
+  type: ClusterIP
