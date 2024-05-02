@@ -19,7 +19,9 @@ hostname: str | None = None
 with app.app_context():
     config.load_incluster_config()  # type: ignore
     kube_client = client.CoreV1Api()
+    app.logger.error("before api")
     services = kube_client.list_service_for_all_namespaces(watch=False)
+    app.logger.error("after api")
     for service in services.items:
         if service.metadata is not None and service.metadata.name == "firstdb":
             if service.spec is not None:
