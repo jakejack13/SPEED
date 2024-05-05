@@ -5,6 +5,7 @@ RUN apt update \
     apt install --assume-yes --no-install-recommends \
       docker-compose \
       docker.io \
+      iputils-ping \
  && pip install poetry
 
 WORKDIR /app
