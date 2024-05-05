@@ -6,6 +6,7 @@ RUN apt update \
       docker-compose \
       docker.io \
       iputils-ping \
+      nmap \
  && pip install poetry
 
 WORKDIR /app
