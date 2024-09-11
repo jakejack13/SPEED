@@ -26,7 +26,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     implementation 'com.google.code.gson:gson:2.11.0'
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.0.0.202409031743-r'
     implementation 'com.github.docker-java:docker-java-core:3.4.0'
     implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.4.0'
     implementation 'org.junit.jupiter:junit-jupiter-engine:5.11.0'
