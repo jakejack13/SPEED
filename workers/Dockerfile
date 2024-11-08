@@ -15,7 +15,7 @@ RUN ./gradlew clean check
 RUN ./gradlew clean bootJar
 
 # actual container
-FROM eclipse-temurin:21.0.2_13-jdk-jammy as production
+FROM eclipse-temurin:21.0.2_13-jdk-jammy AS production
 ENV ARTIFACT_NAME=workers-0.0.1-SNAPSHOT.jar
 ENV APP_HOME=/app/
 
