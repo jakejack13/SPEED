@@ -1,3 +1,5 @@
+# check=error=true
+
 FROM python:3.13.0-slim
 
 RUN apt update \
@@ -21,4 +23,4 @@ EXPOSE 5001
 LABEL org.opencontainers.image.source=https://github.com/jakejack13/speed
 LABEL org.opencontainers.image.description="first image"
 
-CMD . /venv/bin/activate && python3 -m flask run --host=0.0.0.0 --port=5001
+CMD [".", "/venv/bin/activate", "&&", "python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
