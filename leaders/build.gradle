@@ -29,7 +29,7 @@ dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.1.0.202411261347-r'
     implementation 'com.github.docker-java:docker-java-core:3.4.1'
     implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.4.1'
-    implementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
     implementation 'org.junit.jupiter:junit-jupiter:5.11.3'
 
     implementation 'org.slf4j:slf4j-api:2.0.16'
