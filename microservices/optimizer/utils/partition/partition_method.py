@@ -1,5 +1,5 @@
 """
-    Enum representing different partition methods.
+Enum representing different partition methods.
 """
 
 from enum import Enum
