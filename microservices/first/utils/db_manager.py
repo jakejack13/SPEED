@@ -9,7 +9,7 @@ status: TEXT, (DeploymentStatus in text form) Status of the deployment.
 
 Results Table Schema:
 id: Integer, Primary key identifying each row
-deployment_ID: Integer, Foreign Key pointing to Deployment Table "id". 
+deployment_ID: Integer, Foreign Key pointing to Deployment Table "id".
     Deployment the result is associated with.
 result: TEXT, one test result object.
 """
