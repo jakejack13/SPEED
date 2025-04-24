@@ -25,7 +25,7 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.38'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
 
-    implementation 'com.google.code.gson:gson:2.13.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.2.0.202503040940-r'
     implementation 'com.github.docker-java:docker-java-core:3.5.0'
     implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.5.0'
