@@ -23,6 +23,8 @@ from psycopg.rows import TupleRow
 
 from . import deployment_status
 
+# pylint: disable=no-member
+
 DEPLOYMENT_FIELDS = ["leader_ID", "repo_name", "repo_branch", "status"]
 RESULTS_FIELDS = ["deployment_ID", "result"]
 
