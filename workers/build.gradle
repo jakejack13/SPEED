@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'application'
-    id 'com.github.spotbugs' version '6.1.12'
+    id 'com.github.spotbugs' version '6.1.13'
     id 'checkstyle'
 }
 
