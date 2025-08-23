@@ -65,12 +65,11 @@ public abstract class Repository {
 
                 Process process = builder.start();
                 if (process.waitFor() != 0) {
-                    LOGGER.error("Command exited with nonzero exit code: " + command);
+                    LOGGER.error("Command exited with nonzero exit code: {}", command);
                     throw new RepositoryBuildException("Error executing command: " + command, null);
                 }
             } catch (IOException | InterruptedException e) {
-                LOGGER.error("Error thrown when executing command: " +
-                        command, e);
+                LOGGER.error("Error thrown when executing command: {}", command, e);
                 throw new RepositoryBuildException("Error executing command: " + command, e);
             }
         }

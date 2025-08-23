@@ -13,7 +13,7 @@ public class Config {
     /**
      * Parser for parsing config file.
      */
-    private ConfigParser parser;
+    private final ConfigParser parser;
 
     /**
      * Creates config file.

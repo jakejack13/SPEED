@@ -36,7 +36,7 @@ public class WorkerRunner implements Runnable, Closeable {
     @Override
     public void run() {
         threads.addAll(workers.stream().map(Thread::new).toList());
-        LOGGER.info("Executing WorkerRunner: " + this);
+        LOGGER.info("Executing WorkerRunner: {}", this);
         threads.forEach(Thread::start);
         LOGGER.info("Started all threads");
         for (Thread t : threads) {

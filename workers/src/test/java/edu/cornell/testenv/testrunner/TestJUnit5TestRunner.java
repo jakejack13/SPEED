@@ -4,7 +4,6 @@ import edu.cornell.testenv.testcontext.JUnitTestContext;
 import edu.cornell.testoutputstream.TestOutputStream;
 import org.junit.jupiter.api.Test;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +19,7 @@ public class TestJUnit5TestRunner {
     private static class NoopTestOutputStream implements TestOutputStream {
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // Noop
         }
 
@@ -58,7 +57,7 @@ public class TestJUnit5TestRunner {
     /**
      * Tests external JUnit runner.
      */
-    // @Test
+    @Test
     public void testJUnitRunnerExternal() {
         String pathToSpeedTest = "PATH_TO_SPEED_TESTER";
 

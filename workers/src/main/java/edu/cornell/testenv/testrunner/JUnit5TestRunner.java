@@ -32,7 +32,7 @@ public class JUnit5TestRunner implements TestRunner {
     public boolean runTest(TestEnvContext context, TestOutputStream outputStream, File baseDir) {
         try {
             String baseRootPath = baseDir.toString();
-            LOGGER.info("Discovery .class files in location: " + baseRootPath);
+            LOGGER.info("Discovery .class files in location: {}", baseRootPath);
 
             // Open a Launcher session
             try (LauncherSession session = LauncherFactory.openSession()) {

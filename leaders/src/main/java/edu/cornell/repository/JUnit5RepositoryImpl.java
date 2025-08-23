@@ -6,7 +6,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,12 +26,8 @@ final class JUnit5RepositoryImpl extends Repository {
     public @NonNull Set<String> getTests() {
         List<String> configTestPaths = getConfig().getTestPaths();
         Set<String> classes = new HashSet<>();
-        try {
-            for (String testPath : configTestPaths) {
-                classes.addAll(JUnitClassFinder.findJUnitClasses(getRootDir() + testPath.trim()));
-            }
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            LOGGER.error("Error in JUnit5RepositoryImpl: ", e);
+        for (String testPath : configTestPaths) {
+            classes.addAll(JUnitClassFinder.findJUnitClasses(getRootDir() + testPath.trim()));
         }
 
         return classes;

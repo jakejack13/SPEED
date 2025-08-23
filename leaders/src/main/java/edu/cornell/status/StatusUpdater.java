@@ -1,5 +1,6 @@
 package edu.cornell.status;
 
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,13 +38,13 @@ public class StatusUpdater {
 
             // Write payload to the connection's output stream
             try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes("utf-8");
+                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
             // Get response code (optional)
             int responseCode = connection.getResponseCode();
-            LOGGER.debug("Response Code: " + responseCode);
+            LOGGER.debug("Response Code: {}", responseCode);
 
             // Disconnect
             connection.disconnect();

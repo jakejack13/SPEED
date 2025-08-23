@@ -16,35 +16,34 @@ public class DetailedTestExecutionListener implements TestExecutionListener {
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
-        LOGGER.info("Execution started for: " + 
-            (testIdentifier.isTest() ? "Test: " : "Container: ") + 
-            testIdentifier.getDisplayName());
+        LOGGER.info("Execution started for: {}{}",
+                testIdentifier.isTest() ? "Test: " : "Container: ",
+                testIdentifier.getDisplayName());
     }
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, 
             TestExecutionResult testExecutionResult) {
-        LOGGER.info("Execution finished for: " + 
-            (testIdentifier.isTest() ? "Test: " : "Container: ") + 
-            testIdentifier.getDisplayName() +
-            ", Result: " + testExecutionResult.getStatus());
+        LOGGER.info("Execution finished for: {}{}, Result: {}",
+                testIdentifier.isTest() ? "Test: " : "Container: ", testIdentifier.getDisplayName(),
+                testExecutionResult.getStatus());
         testExecutionResult.getThrowable().ifPresent(t -> LOGGER.info("Test Exception: ", t));
     }
 
     @Override
     public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-        LOGGER.info("Execution skipped for: " + testIdentifier.getDisplayName() + 
-            ", Reason: " + reason);
+        LOGGER.info("Execution skipped for: {}, Reason: {}", testIdentifier.getDisplayName(),
+                reason);
     }
 
     @Override
     public void dynamicTestRegistered(TestIdentifier testIdentifier) {
-        LOGGER.info("Dynamic test registered: " + testIdentifier.getDisplayName());
+        LOGGER.info("Dynamic test registered: {}", testIdentifier.getDisplayName());
     }
 
     @Override
     public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
-        LOGGER.info("Reporting entry published for: " + testIdentifier.getDisplayName() + 
-            ", Entry: " + entry);
+        LOGGER.info("Reporting entry published for: {}, Entry: {}", testIdentifier.getDisplayName(),
+                entry);
     }
 }

@@ -38,7 +38,7 @@ public class TestResultsRecordDeserializer implements Deserializer<TestResultsRe
         String dataString = new String(data, StandardCharsets.UTF_8);
         String result = dataString.substring(dataString.indexOf("RESULT:") + 7, 
             dataString.indexOf(";TIME_TAKEN:"));
-        Integer elapsedTime = Integer.parseInt(dataString.substring(
+        int elapsedTime = Integer.parseInt(dataString.substring(
             dataString.indexOf(";TIME_TAKEN:") + 12));
         // Construct and return a new TestResultsRecord object
         return new TestResultsRecord(result, elapsedTime);

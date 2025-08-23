@@ -16,7 +16,7 @@ import java.util.List;
  * - inputTwo of the category
  * this is still inputTwo because there was no dash
  * ::
- *
+ * <p>
  * CATEGORY::
  * - inputOne of the category
  * this is still inputOne because there was no dash
@@ -26,7 +26,7 @@ public class ConfigParser {
     /**
      * Maps the category to the category's respective information from the config file.
      */
-    private EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
+    private final EnumMap<Category, List<String>> configMap = new EnumMap<>(Category.class);
 
     /**
      * Path of the config file.
@@ -37,7 +37,7 @@ public class ConfigParser {
      * Parses config files.
      * @param configFilePath Path of the config file.
      */
-    public ConfigParser(Path configFilePath) throws IOException, ConfigSyntaxException {
+    public ConfigParser(@NonNull Path configFilePath) throws IOException, ConfigSyntaxException {
         this.configFilePath = configFilePath;
         parseConfig();
     }

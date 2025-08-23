@@ -36,14 +36,14 @@ public class TestOutputSender {
 
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                LOGGER.info("JSON sent successfully to: " + url);
+                LOGGER.info("JSON sent successfully to: {}", url);
             } else {
-                LOGGER.error("Failed to send JSON. Response code: " + responseCode);
+                LOGGER.error("Failed to send JSON. Response code: {}", responseCode);
             }
 
             connection.disconnect();
         } catch (MalformedURLException e) {
-            LOGGER.error("Invalid URL: " + url, e);
+            LOGGER.error("Invalid URL: {}", url, e);
         } catch (Exception e) {
             LOGGER.error("Error while sending JSON", e);
         }

@@ -50,7 +50,7 @@ class KafkaTestOutputStream implements TestOutputStream {
             throw new RuntimeException(e);
         }
 
-        LOGGER.info("topicName = " + topicName + " kafkaAddress = " + KAFKA_ADDRESS);
+        LOGGER.info("topicName = {} kafkaAddress = {}", topicName, KAFKA_ADDRESS);
 
         // create instance for properties to access producer configs
         Properties properties = new Properties();
@@ -85,7 +85,7 @@ class KafkaTestOutputStream implements TestOutputStream {
     @Override
     public void sendTestResult(@NonNull String testName, @NonNull TestResult result, 
             int elapsedTime) {
-        LOGGER.info(testName + ":" + result);
+        LOGGER.info("{}:{}", testName, result);
         LOGGER.debug("Sent");
         producer.send(new ProducerRecord<>(topicName,
                     testName, new TestResultsRecord(result.toString(), elapsedTime)));

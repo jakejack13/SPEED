@@ -5,16 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements Test Environment Context Class.
- * Uses the TestEnvContext to create the necessary context
- * needed to run JUnit Tests
+ * Implements Test Environment Context Class. Uses the TestEnvContext to create the necessary
+ * context needed to run JUnit Tests
  */
-public class JUnitTestContext implements TestEnvContext {
-
-    private final @NonNull List<String> classNames;
+public record JUnitTestContext(@NonNull List<String> classNames) implements TestEnvContext {
 
     /**
      * Create The Test Environment Context to Run JUnit Tests.
+     *
      * @param classNames - List of String paths to JUnit classes to run.
      * @Precondition: classNames are in the [package.class] format
      */

@@ -4,6 +4,7 @@ import edu.cornell.testenv.testcontext.JUnitTestContext;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Simple sample JUnit5 test class.
@@ -16,8 +17,7 @@ public class JUnitClassRunnerTest {
     @Test
     public void testSuccess() {
         new JUnitTestContext(List.of(""));
-        int i = 1;
-        assertTrue(i + 1 == 2);
+        assertTrue(true);
     }
 
     /**
@@ -25,7 +25,7 @@ public class JUnitClassRunnerTest {
      */
     @Test
     public void testFailure() {
-        assertTrue(1 + 1 == 3);
+        fail();
     }
 
 
