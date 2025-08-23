@@ -27,7 +27,7 @@ public class JUnitClassFinder extends ClassLoader {
      * Finds all JUnit classes in the subdirectories of directory path.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: The directory has a subdirectory of /test/java or /java/test
+     *                      The directory must have a subdirectory of /test/java or /java/test
      * @return set of JUnit classes in the subdirectories of the given directory
      */
     public static Set<String> findJUnitClasses(String directoryPath) 

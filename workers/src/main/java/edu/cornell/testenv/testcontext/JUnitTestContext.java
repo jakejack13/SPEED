@@ -19,7 +19,7 @@ public class JUnitTestContext implements TestEnvContext {
      * Create The Test Environment Context to Run JUnit Tests.
      *
      * @param classNames - List of String paths to JUnit classes to run.
-     * @Precondition: classNames are in the [package.class] format
+     *                   Should be in the [package.class] format
      */
     public JUnitTestContext(@NonNull List<String> classNames) {
         this.classNames = new ArrayList<>(classNames);

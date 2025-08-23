@@ -27,9 +27,9 @@ public class JUnitContextClassLoader extends ClassLoader {
      * Loads the .class files from the given path and all of its subdirectories.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: test package+classname files are in the direct subdirectory of "/test/java/"
-     * or "/java/test" and source package+classname files are in the direct subdirectory of 
-     * "/main/java" or "/java/main"
+     *                      test package+classname files are in the direct subdirectory of
+     *                      "/test/java/" or "/java/test" and source package+classname files
+     *                      are in the direct subdirectory of "/main/java" or "/java/main"
      * @return the class loader for the given class files in the directory
      */
     public static ClassLoader loadClassesFromDirectory(String directoryPath) 
