@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +59,7 @@ public abstract class Repository {
      * Returns the set of tests found in the repository.
      * @return the set of tests found in the repository
      */
-    public abstract @NonNull Set<String> getTests();
+    public abstract @NonNull Set<String> getTests() throws MalformedURLException;
 
     /**
      * Builds the repository and generates build artifacts.
@@ -76,13 +77,21 @@ public abstract class Repository {
                     builder.command("sh", "-c", command);
                 }
                 Process process = builder.start();
-                if (process.waitFor() != 0) {
-                    LOGGER.error("Command exited with nonzero exit code: {}", command);
-                    throw new RepositoryBuildException("Error executing command: " + command,
-                        null);
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    LOGGER.error("Command '{}' exited with non-zero status {}", command, exitCode);
+                    throw new RepositoryBuildException(
+                            "Error executing command: " + command +
+                                    " (exit code: " + exitCode + ")",
+                            null
+                    );
                 }
-            } catch (IOException | InterruptedException e) {
-                LOGGER.error("Error thrown when executing command: {}", command, e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("Error executing command: {}", command, e);
+                throw new RepositoryBuildException("Error executing command: " + command, e);
+            } catch (IOException e) {
+                LOGGER.error("I/O error executing command: {}", command, e);
                 throw new RepositoryBuildException("Error executing command: " + command, e);
             }
         }

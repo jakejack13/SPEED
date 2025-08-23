@@ -8,7 +8,12 @@ import java.util.List;
  * Implements Test Environment Context Class. Uses the TestEnvContext to create the necessary
  * context needed to run JUnit Tests
  */
-public record JUnitTestContext(@NonNull List<String> classNames) implements TestEnvContext {
+public class JUnitTestContext implements TestEnvContext {
+
+    /**
+     * List of String paths to JUnit classes to run.
+     */
+    private final List<String> classNames;
 
     /**
      * Create The Test Environment Context to Run JUnit Tests.

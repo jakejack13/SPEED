@@ -1,12 +1,12 @@
 package edu.cornell.status;
 
-import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A utility class for updating deployment status by sending HTTP POST requests to a specified URL.

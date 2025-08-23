@@ -79,7 +79,7 @@ public class KafkaConsumerRunner implements Runnable, AutoCloseable {
             for (ConsumerRecord<String, TestResultsRecord> record : records) {
                 testOutputParser.appendTestResult(record.key(), record.value().result(), 
                     record.value().elapsedTime());
-                LOGGER.info("Key: {}, Value: {}", record.key(), record.value().toString());
+                LOGGER.info("Key: {}, Value: {}", record.key(), record.value());
 
                 LOGGER.info("Partition: {}, Offset:{}", record.partition(), record.offset());
                 testConsumer.processTestOutput(record.key(), record.value().result());
