@@ -16,7 +16,7 @@ import java.util.List;
  * - inputTwo of the category
  * this is still inputTwo because there was no dash
  * ::
- *
+ * <p>
  * CATEGORY::
  * - inputOne of the category
  * this is still inputOne because there was no dash
@@ -38,7 +38,7 @@ public final class ConfigParser {
      * Parses config files.
      * @param configFilePath Path of the config file.
      */
-    public ConfigParser(Path configFilePath) throws IOException, ConfigSyntaxException {
+    public ConfigParser(@NonNull Path configFilePath) throws IOException, ConfigSyntaxException {
         this.configFilePath = configFilePath;
         parseConfig();
     }

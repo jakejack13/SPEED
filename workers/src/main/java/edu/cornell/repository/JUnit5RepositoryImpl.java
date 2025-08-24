@@ -27,7 +27,7 @@ final class JUnit5RepositoryImpl extends Repository {
      * @param output the output stream to log test results to
      */
     @Override
-    public void test(@NonNull List<String> tests, TestOutputStream output) {
+    public void test(@NonNull List<String> tests, @NonNull TestOutputStream output) {
         JUnitTestContext context = new JUnitTestContext(tests);
         JUnit5TestRunner runner = new JUnit5TestRunner();
         List<String> configTestPaths = getConfig().getTestPaths();

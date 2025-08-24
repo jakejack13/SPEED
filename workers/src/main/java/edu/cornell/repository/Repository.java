@@ -64,14 +64,19 @@ public abstract class Repository {
                 }
 
                 Process process = builder.start();
-                if (process.waitFor() != 0) {
-                    LOGGER.error("Command exited with nonzero exit code: " + command);
-                    throw new RepositoryBuildException("Error executing command: " + command, null);
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    LOGGER.error("Command exited with nonzero exit code {}: {}", exitCode, command);
+                    throw new RepositoryBuildException("Error executing command: " + command +
+                            " (exit code: " + exitCode + ")", null);
                 }
-            } catch (IOException | InterruptedException e) {
-                LOGGER.error("Error thrown when executing command: " +
-                        command, e);
+            } catch (IOException e) {
+                LOGGER.error("Error thrown when executing command: {}", command, e);
                 throw new RepositoryBuildException("Error executing command: " + command, e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("Command interrupted: {}", command, e);
+                throw new RepositoryBuildException("Command interrupted: " + command, e);
             }
         }
     }

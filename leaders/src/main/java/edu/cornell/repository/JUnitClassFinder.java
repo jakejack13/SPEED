@@ -27,11 +27,11 @@ public class JUnitClassFinder extends ClassLoader {
      * Finds all JUnit classes in the subdirectories of directory path.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: The directory has a subdirectory of /test/java or /java/test
+     *                      The directory must have a subdirectory of /test/java or /java/test
      * @return set of JUnit classes in the subdirectories of the given directory
      */
     public static Set<String> findJUnitClasses(String directoryPath) 
-        throws PathIsNotValidException, MalformedURLException, ClassNotFoundException {
+        throws PathIsNotValidException, MalformedURLException {
         File directory = new File(directoryPath);
 
         ClassLoadingResult result = loadClassResults(directory);
@@ -42,7 +42,7 @@ public class JUnitClassFinder extends ClassLoader {
         for (URL url : result.urlArray()) {
             String fileName = url.getFile();
 
-            if (!(new File(fileName).isFile()) && fileName.length() > 0) { 
+            if (!(new File(fileName).isFile()) && !fileName.isEmpty()) {
                 continue; 
             }
 
@@ -65,7 +65,7 @@ public class JUnitClassFinder extends ClassLoader {
                         break;
                     }
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException ignored) {
 
             }
         }
@@ -86,9 +86,9 @@ public class JUnitClassFinder extends ClassLoader {
 
         searchSubdirectories(directory, urls);
 
-        if (urls.size() == 0) {
+        if (urls.isEmpty()) {
             throw new PathIsNotValidException("Cannot find test class path in " + 
-                directory.toPath() + "", null);
+                directory.toPath(), null);
         }
 
         // Add all .class or .jar files within subdirectories
@@ -99,8 +99,7 @@ public class JUnitClassFinder extends ClassLoader {
         // Create a new class loader with the specified URLs
         ClassLoader customClassLoader = new URLClassLoader(urlArray, Thread.currentThread()
             .getContextClassLoader());
-        ClassLoadingResult result = new ClassLoadingResult(urlArray, customClassLoader);
-        return result;
+        return new ClassLoadingResult(urlArray, customClassLoader);
     }
 
     /**
@@ -156,7 +155,7 @@ public class JUnitClassFinder extends ClassLoader {
                         URL url = file.toURI().toURL();
                         urls.add(url);
                     } catch (MalformedURLException e) {
-                        LOGGER.error("Error converting file to URL: {}", e);
+                        LOGGER.error("Error converting file to URL", e);
                     }
                 }
             }

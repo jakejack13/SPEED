@@ -27,12 +27,13 @@ final class JUnit5RepositoryImpl extends Repository {
     public @NonNull Set<String> getTests() {
         List<String> configTestPaths = getConfig().getTestPaths();
         Set<String> classes = new HashSet<>();
-        try {
-            for (String testPath : configTestPaths) {
-                classes.addAll(JUnitClassFinder.findJUnitClasses(getRootDir() + testPath.trim()));
+        for (String testPath : configTestPaths) {
+            try {
+                String dir = new File(getRootDir(), testPath.trim()).getPath();
+                classes.addAll(JUnitClassFinder.findJUnitClasses(dir));
+            } catch (MalformedURLException | PathIsNotValidException e) {
+                throw new RepositoryDiscoveryException("Failed to discover tests", e);
             }
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            LOGGER.error("Error in JUnit5RepositoryImpl: ", e);
         }
 
         return classes;

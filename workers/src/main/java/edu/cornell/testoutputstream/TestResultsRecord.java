@@ -15,7 +15,7 @@ public record TestResultsRecord(@NonNull String result, int elapsedTime) {
      * @return A string in the format "RESULT:{result};TIME_TAKEN:{elapsedTime}".
      */
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "RESULT:" + result + ";TIME_TAKEN:" + elapsedTime;
     }
 }

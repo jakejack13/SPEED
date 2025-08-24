@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A utility class for updating deployment status by sending HTTP POST requests to a specified URL.
@@ -37,13 +38,13 @@ public class StatusUpdater {
 
             // Write payload to the connection's output stream
             try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = payload.getBytes("utf-8");
+                byte[] input = payload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
             // Get response code (optional)
             int responseCode = connection.getResponseCode();
-            LOGGER.debug("Response Code: " + responseCode);
+            LOGGER.debug("Response Code: {}", responseCode);
 
             // Disconnect
             connection.disconnect();

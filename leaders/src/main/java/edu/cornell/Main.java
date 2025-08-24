@@ -77,7 +77,7 @@ public class Main {
         String kafkaAddress = System.getenv(ENV_KAFKA_ADDRESS);
         String url = System.getenv(ENV_REPO_URL);
         String branch = System.getenv(ENV_REPO_BRANCH);
-        LOGGER.info("DEPLOYMENT ID: " + deploymentID);
+        LOGGER.info("DEPLOYMENT ID: {}", deploymentID);
 
         int numWorkers = 0;
         try {

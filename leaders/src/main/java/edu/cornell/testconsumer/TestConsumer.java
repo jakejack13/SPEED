@@ -60,10 +60,9 @@ public abstract class TestConsumer {
             return;
         }
 
-        String testName = serializedKey;
         TestResult result = TestResult.valueOf(serializedValue);
 
-        displayTestResult(testName, result);
+        displayTestResult(serializedKey, result);
     }
 
     /**

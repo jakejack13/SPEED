@@ -15,7 +15,7 @@ public class TestOutputParser {
     /**
      * List to store test result records.
      */
-    private List<ParsedResultRecord> results = new LinkedList<>();
+    private final List<ParsedResultRecord> results = new LinkedList<>();
 
     /**
      * Appends a test result to the list of results.

@@ -90,7 +90,7 @@ public class DockerWorker implements Worker {
 
     @Override
     public synchronized void run() {
-        LOGGER.info("Executing DockerWorker: " + id);
+        LOGGER.info("Executing DockerWorker: {}", id);
         dockerClient.startContainerCmd(id).exec();
         dockerClient.waitContainerCmd(id).exec(new WaitCallback<>());
         while (!done) {
@@ -100,7 +100,7 @@ public class DockerWorker implements Worker {
                 throw new RuntimeException(e);
             }
         }
-        LOGGER.info("Finished executing DockerWorker: " + id);
+        LOGGER.info("Finished executing DockerWorker: {}", id);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class DockerWorker implements Worker {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             // No-op
         }
     }

@@ -1,6 +1,5 @@
 package edu.cornell.repository;
 
-import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
@@ -9,7 +8,6 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * A factory class to create Projects from repositories and artifact storage.
@@ -45,16 +43,15 @@ public final class RepositoryFactory {
      * @param url the url to clone the repo from
      * @param branch the branch to clone
      * @return a Project object representing the clone project
-     * @throws GitAPIException when a problem arises with cloning the repository
      * @throws IOException when a problem arises with reading the repository on disk
      */
     public static @NonNull Repository fromGitRepo(@NonNull String url, @NonNull String branch)
             throws RepositoryCloneException, IOException {
         try {
             String[] split = url.split("/");
-            String name = split[split.length - 1].replaceAll(".git", "");
-            File topDir = Paths.get(WORKSPACE.getAbsolutePath() + name).toFile();
-            @Cleanup Git repo = Git.cloneRepository()
+            String name = split[split.length - 1].replaceFirst("\\.git$", "");
+            File topDir = new File(WORKSPACE, name);
+            Git.cloneRepository()
                     .setURI(url)
                     .setBranch(branch)
                     .setDirectory(topDir)
@@ -111,20 +108,19 @@ public final class RepositoryFactory {
             this.currentWork = 0;
             this.totalWork = totalWork;
             this.currentTaskName = title;
-            LOGGER.info("GIT SUBTASK START: " + title +
-                    " (" + currentTasks + "/" + totalTasks + ")");
+            LOGGER.info("GIT SUBTASK START: {} ({}/{})", title, currentTasks, totalTasks);
         }
 
         @Override
         public void update(int completed) {
             currentWork += completed;
-            LOGGER.info(currentTaskName + ": " + currentWork + "/" + totalWork);
+            LOGGER.info("{}: {}/{}", currentTaskName, currentWork, totalWork);
         }
 
         @Override
         public void endTask() {
             currentTasks++;
-            LOGGER.info("GIT SUBTASK END: " + currentTaskName);
+            LOGGER.info("GIT SUBTASK END: {}", currentTaskName);
         }
 
         @Override

@@ -27,9 +27,9 @@ public class JUnitContextClassLoader extends ClassLoader {
      * Loads the .class files from the given path and all of its subdirectories.
      * <br><b>NOTE</b>: Files are loaded into the current thread.</br>
      * @param directoryPath - The path containing the .class files to load.
-     * @Precondition: test package+classname files are in the direct subdirectory of "/test/java/"
-     * or "/java/test" and source package+classname files are in the direct subdirectory of 
-     * "/main/java" or "/java/main"
+     *                      test package+classname files are in the direct subdirectory of
+     *                      "/test/java/" or "/java/test" and source package+classname files
+     *                      are in the direct subdirectory of "/main/java" or "/java/main"
      * @return the class loader for the given class files in the directory
      */
     public static ClassLoader loadClassesFromDirectory(String directoryPath) 
@@ -47,9 +47,9 @@ public class JUnitContextClassLoader extends ClassLoader {
         // Turn all files found in subdirectories into URLs
         getSubdirectories(directory, urls);
 
-        if (urls.size() == 0) {
+        if (urls.isEmpty()) {
             throw new PathIsNotValidException("Cannot find class path in " + 
-                directory.toPath() + "", null);
+                directory.toPath(), null);
         }
 
         // Add all .class or .jar files within subdirectories
@@ -60,7 +60,7 @@ public class JUnitContextClassLoader extends ClassLoader {
         for (URL url : urls) {
             String fileName = url.getFile();
 
-            if (!(new File(fileName).isFile()) && fileName.length() > 0) { 
+            if (!(new File(fileName).isFile()) && !fileName.isEmpty()) {
                 continue; 
             }
 
@@ -89,9 +89,8 @@ public class JUnitContextClassLoader extends ClassLoader {
         }
 
         // Create a new class loader with the specified URLs
-        ClassLoader customClassLoader = new URLClassLoader(moddedURLArray.toArray(new URL[0]), 
+        return new URLClassLoader(moddedURLArray.toArray(new URL[0]),
             Thread.currentThread().getContextClassLoader());
-        return customClassLoader;
     }
 
     // Finds all files in the subdirectories of the given directory. Add if it contains 
@@ -140,7 +139,7 @@ public class JUnitContextClassLoader extends ClassLoader {
                         URL url = file.toURI().toURL();
                         urls.add(url);
                     } catch (MalformedURLException e) {
-                        LOGGER.error("Error converting file to URL: {}", e);
+                        LOGGER.error("Error converting file to URL", e);
                     }
                 }
             }

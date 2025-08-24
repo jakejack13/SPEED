@@ -26,7 +26,7 @@ public abstract class Repository {
      * The root directory of the project.
      * @return File - the root directory of the project
      */
-    public File getRootDir() {
+    public @NonNull File getRootDir() {
         return rootDir;
     }
 
@@ -39,7 +39,7 @@ public abstract class Repository {
      * The configuration for SPEED.
      * @return Config - the configuration object for SPEED
      */
-    public Config getConfig() {
+    public @NonNull Config getConfig() {
         return config;
     }
 
@@ -76,14 +76,21 @@ public abstract class Repository {
                     builder.command("sh", "-c", command);
                 }
                 Process process = builder.start();
-                if (process.waitFor() != 0) {
-                    LOGGER.error("Command exited with nonzero exit code: " + command);
-                    throw new RepositoryBuildException("Error executing command: " + command,
-                        null);
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    LOGGER.error("Command '{}' exited with non-zero status {}", command, exitCode);
+                    throw new RepositoryBuildException(
+                            "Error executing command: " + command +
+                                    " (exit code: " + exitCode + ")",
+                            null
+                    );
                 }
-            } catch (IOException | InterruptedException e) {
-                LOGGER.error("Error thrown when executing command: " +
-                        command, e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("Error executing command: {}", command, e);
+                throw new RepositoryBuildException("Error executing command: " + command, e);
+            } catch (IOException e) {
+                LOGGER.error("I/O error executing command: {}", command, e);
                 throw new RepositoryBuildException("Error executing command: " + command, e);
             }
         }
