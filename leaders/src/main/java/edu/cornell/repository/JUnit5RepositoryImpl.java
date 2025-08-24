@@ -24,12 +24,16 @@ final class JUnit5RepositoryImpl extends Repository {
     }
 
     @Override
-    public @NonNull Set<String> getTests() throws MalformedURLException {
+    public @NonNull Set<String> getTests() {
         List<String> configTestPaths = getConfig().getTestPaths();
         Set<String> classes = new HashSet<>();
         for (String testPath : configTestPaths) {
-            String dir = new File(getRootDir(), testPath.trim()).getPath();
-            classes.addAll(JUnitClassFinder.findJUnitClasses(dir));
+            try {
+                String dir = new File(getRootDir(), testPath.trim()).getPath();
+                classes.addAll(JUnitClassFinder.findJUnitClasses(dir));
+            } catch (MalformedURLException | PathIsNotValidException e) {
+                throw new RepositoryDiscoveryException("Failed to discover tests", e);
+            }
         }
 
         return classes;

@@ -6,7 +6,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +58,7 @@ public abstract class Repository {
      * Returns the set of tests found in the repository.
      * @return the set of tests found in the repository
      */
-    public abstract @NonNull Set<String> getTests() throws MalformedURLException;
+    public abstract @NonNull Set<String> getTests();
 
     /**
      * Builds the repository and generates build artifacts.

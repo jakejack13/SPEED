@@ -8,7 +8,6 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * A factory class to create Projects from repositories and artifact storage.
@@ -50,8 +49,8 @@ public final class RepositoryFactory {
             throws RepositoryCloneException, IOException {
         try {
             String[] split = url.split("/");
-            String name = split[split.length - 1].replaceAll(".git", "");
-            File topDir = Paths.get(WORKSPACE.getAbsolutePath() + name).toFile();
+            String name = split[split.length - 1].replaceFirst("\\.git$", "");
+            File topDir = new File(WORKSPACE, name);
             Git.cloneRepository()
                     .setURI(url)
                     .setBranch(branch)
