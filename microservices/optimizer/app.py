@@ -69,7 +69,7 @@ def update_times() -> tuple[Response, int]:
                     400,
                 )
 
-            app.logger.info("Updated %s in %s on branch %s with time %s")
+            app.logger.info("Updated %s in %s on branch %s with time %s", name, url, branch, time)
 
             db_manager: DBManager | None = getattr(g, "db_manager", None)
             if db_manager is not None:
