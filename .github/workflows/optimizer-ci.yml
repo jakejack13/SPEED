@@ -22,6 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Build
       run: cd microservices/optimizer && docker build -t ghcr.io/jakejack13/speed-optimizer:latest .
