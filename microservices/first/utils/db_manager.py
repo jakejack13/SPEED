@@ -61,27 +61,23 @@ class DBManager:
     def create_deployments_table(self) -> None:
         """Create the deployments table in the database."""
         with self._get_db().cursor() as c:
-            c.execute(
-                """CREATE TABLE IF NOT EXISTS deployments (
+            c.execute("""CREATE TABLE IF NOT EXISTS deployments (
                     id SERIAL PRIMARY KEY, 
                     leader_ID TEXT,
                     repo_name TEXT, 
                     repo_branch TEXT,
-                    status TEXT DEFAULT 'STARTED')"""
-            )
+                    status TEXT DEFAULT 'STARTED')""")
             self._get_db().commit()
 
     def create_results_table(self) -> None:
         """Create the results table in the database."""
         with self._get_db().cursor() as c:
-            c.execute(
-                """CREATE TABLE IF NOT EXISTS results (
+            c.execute("""CREATE TABLE IF NOT EXISTS results (
                     id SERIAL PRIMARY KEY,
                     deployment_ID INTEGER,
                     result TEXT,
                     FOREIGN KEY(deployment_ID) REFERENCES deployments(id)
-                )"""
-            )
+                )""")
             self._get_db().commit()
 
     def add_results(
