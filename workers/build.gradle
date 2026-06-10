@@ -25,7 +25,7 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.46'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
 
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r'
     implementation 'org.slf4j:slf4j-api:2.0.18'
     implementation 'org.slf4j:slf4j-simple:2.0.18'
 
