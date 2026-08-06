@@ -1,6 +1,6 @@
 # check=error=true
 
-FROM python:3.14.6-slim
+FROM python:3.15.0b3-slim
 
 RUN pip install poetry
 
