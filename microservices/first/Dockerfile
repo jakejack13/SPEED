@@ -1,6 +1,6 @@
 # check=error=true
 
-FROM python:3.15.0rc3-slim
+FROM python:3.16.0a1-slim
 
 RUN apt update \
  && DEBIAN_FRONTEND=noninteractive \
